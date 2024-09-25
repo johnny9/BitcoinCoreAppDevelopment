@@ -14,79 +14,81 @@ Page {
     id: root
     background: null
 
-    ColumnLayout {
-        id: columnLayout
-        width: Math.min(parent.width, 450)
-        spacing: 30
-        anchors.horizontalCenter: parent.horizontalCenter
+    ScrollView {
+        width: parent.width
+        height: parent.height
+        clip: true
+        ColumnLayout {
+            id: columnLayout
+            width: Math.min(parent.width, 450)
+            spacing: 30
+            anchors.horizontalCenter: parent.horizontalCenter
 
-        RowLayout {
-            id: header
-            CoreText {
-                text: qsTr("Request bitcoin")
+            RowLayout {
+                id: header
+                CoreText {
+                    text: qsTr("Request bitcoin")
+                }
+                CoreText {
+                    text: qsTr("...")
+                }
             }
+
             CoreText {
-                text: qsTr("...")
+                text: qsTr("All fields are optional. Information is only knowable by the person you share it with.")
             }
-        }
 
-        CoreText {
-            text: qsTr("All fields are optional. Information is only knowable by the person you share it with.")
-        }
+            CoreText {
+                text: "Amount"
+            }
 
-        CoreText {
-            text: "Amount"
-        }
+            CoreTextField {
+                text: "0.00 000 000"
+            }
 
-        CoreTextField {
-            text: "0.00 000 000"
-        }
+            Separator {
+            }
 
-        Separator {
-        }
+            CoreText {
+                text: "Name"
+            }
 
-        CoreText {
-            text: "Name"
-        }
+            CoreTextField {
+                text: "..."
+            }
 
-        CoreTextField {
-            text: "..."
-        }
+            Separator {
+            }
 
-        Separator {
-        }
+            CoreText {
+                text: "Message"
+            }
 
-        CoreText {
-            text: "Message"
-        }
+            CoreTextField {
+                text: "..."
+            }
 
-        CoreTextField {
-            text: "..."
-        }
+            Separator {
+            }
 
-        Separator {
-        }
+            CoreText {
+                text: "Note to self"
+            }
 
-        CoreText {
-            text: "Note to self"
-        }
+            CoreTextField {
+                text: "..."
+            }
 
-        CoreTextField {
-            text: "..."
-        }
-    }
-
-    ContinueButton {
-        id: continueButton
-        Layout.preferredWidth: Math.min(300, parent.width - 2 * Layout.leftMargin)
-        Layout.leftMargin: 20
-        Layout.rightMargin: 20
-        Layout.alignment: Qt.AlignCenter
-        enabled: walletNameInput.text.length > 0
-        text: qsTr("Continue")
-        onClicked: {
-            console.log("Creating wallet with name: " + walletNameInput.text)
-            root.StackView.view.push(createPassword)
+            ContinueButton {
+                id: continueButton
+                Layout.preferredWidth: Math.min(300, parent.width - 2 * Layout.leftMargin)
+                Layout.leftMargin: 20
+                Layout.rightMargin: 20
+                Layout.alignment: Qt.AlignCenter
+                text: qsTr("Continue")
+                onClicked: {
+                }
+            }
         }
     }
 }
