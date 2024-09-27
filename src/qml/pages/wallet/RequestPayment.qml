@@ -29,8 +29,11 @@ Page {
                 CoreText {
                     text: qsTr("Request bitcoin")
                 }
-                CoreText {
-                    text: qsTr("...")
+                Icon {
+                    Layout.alignment: Qt.AlignRight
+                    source: "image://images/ellipsis"
+                    color: Theme.color.neutral9
+                    size: 30
                 }
             }
 

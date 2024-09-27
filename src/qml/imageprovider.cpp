@@ -171,5 +171,10 @@ QPixmap ImageProvider::requestPixmap(const QString& id, QSize* size, const QSize
         *size = requested_size;
         return QIcon(":/icons/plus").pixmap(requested_size);
     }
+
+    if (id == "ellipsis") {
+        *size = requested_size;
+        return QIcon(":/icons/ellipsis").pixmap(requested_size);
+    }
     return {};
 }
