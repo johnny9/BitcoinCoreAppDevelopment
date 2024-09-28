@@ -15,22 +15,28 @@ Page {
     background: null
 
     ScrollView {
+        clip: true
         width: parent.width
         height: parent.height
-        clip: true
+        contentWidth: width
+
         ColumnLayout {
             id: columnLayout
+            anchors.horizontalCenter: parent.horizontalCenter
             width: Math.min(parent.width, 450)
             spacing: 30
-            anchors.horizontalCenter: parent.horizontalCenter
 
-            RowLayout {
+            Item {
                 id: header
+                Layout.fillWidth: true
                 CoreText {
-                    text: qsTr("Request bitcoin")
+                    anchors.left: parent.left
+                    text: qsTr("Request a payment")
+                    font.pixelSize: 21
+                    bold: true
                 }
                 Icon {
-                    Layout.alignment: Qt.AlignRight
+                    anchors.right: parent.right
                     source: "image://images/ellipsis"
                     color: Theme.color.neutral9
                     size: 30
