@@ -47,45 +47,93 @@ Page {
                 text: qsTr("All fields are optional. Information is only knowable by the person you share it with.")
             }
 
-            CoreText {
-                text: "Amount"
+            Item {
+                height: 50
+                Layout.fillWidth: true
+                CoreText {
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    color: Theme.color.neutral7
+                    text: "Note to self"
+                    font.pixelSize: 21
+                }
+
+                TextInput {
+                    anchors.left: parent.left
+                    anchors.bottom: parent.bottom
+                    selectByMouse: true
+                    font.family: "Inter"
+                    font.styleName: "Regular"
+                    font.pointSize: 18
+                    color: Theme.color.neutral9
+                    text: "Enter note..."
+                }
             }
 
-            CoreTextField {
-                text: "0.00 000 000"
+            Item {
+                height: 50
+                Layout.fillWidth: true
+                CoreText {
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    color: Theme.color.neutral7
+                    text: "Amount"
+                    font.pixelSize: 21
+                }
+
+                TextInput {
+                    anchors.left: parent.left
+                    anchors.bottom: parent.bottom
+                    font.family: "Inter"
+                    font.styleName: "Regular"
+                    font.pointSize: 18
+                    color: Theme.color.neutral9
+                    text: "0.00000000"
+                }
             }
 
-            Separator {
+            Item {
+                height: 50
+                Layout.fillWidth: true
+                CoreText {
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    color: Theme.color.neutral7
+                    text: "Your name"
+                    font.pixelSize: 21
+                }
+
+                TextInput {
+                    anchors.left: parent.left
+                    anchors.bottom: parent.bottom
+                    font.family: "Inter"
+                    font.styleName: "Regular"
+                    font.pointSize: 18
+                    color: Theme.color.neutral9
+                    text: "Enter name..."
+                }
             }
 
-            CoreText {
-                text: "Name"
-            }
+            Item {
+                height: 50
+                Layout.fillWidth: true
+                CoreText {
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    color: Theme.color.neutral7
+                    text: "Message"
+                    font.pixelSize: 21
+                }
 
-            CoreTextField {
-                text: "..."
-            }
-
-            Separator {
-            }
-
-            CoreText {
-                text: "Message"
-            }
-
-            CoreTextField {
-                text: "..."
-            }
-
-            Separator {
-            }
-
-            CoreText {
-                text: "Note to self"
-            }
-
-            CoreTextField {
-                text: "..."
+                TextInput {
+                    anchors.left: parent.left
+                    anchors.bottom: parent.bottom
+                    font.family: "Inter"
+                    font.styleName: "Regular"
+                    font.pointSize: 18
+                    color: Theme.color.neutral9
+                    text: "Enter message..."
+                }
             }
 
             ContinueButton {
