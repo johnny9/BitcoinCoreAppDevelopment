@@ -29,6 +29,7 @@ Page {
             Item {
                 id: header
                 Layout.fillWidth: true
+
                 CoreText {
                     anchors.left: parent.left
                     text: qsTr("Request a payment")
@@ -44,7 +45,9 @@ Page {
             }
 
             CoreText {
-                text: qsTr("All fields are optional. Information is only knowable by the person you share it with.")
+                text: qsTr("All fields are optional.")
+                color: Theme.color.neutral7
+                font.pixelSize: 15
             }
 
             Item {
@@ -55,18 +58,20 @@ Page {
                     anchors.top: parent.top
                     color: Theme.color.neutral7
                     text: "Note to self"
-                    font.pixelSize: 21
+                    font.pixelSize: 15
                 }
 
-                TextInput {
+                TextField {
                     anchors.left: parent.left
                     anchors.bottom: parent.bottom
-                    selectByMouse: true
+                    leftPadding: 0
                     font.family: "Inter"
                     font.styleName: "Regular"
-                    font.pointSize: 18
+                    font.pixelSize: 18
                     color: Theme.color.neutral9
-                    text: "Enter note..."
+                    placeholderTextColor: Theme.color.neutral7
+                    background: Item {}
+                    placeholderText: qsTr("Enter note...")
                 }
             }
 
@@ -78,17 +83,20 @@ Page {
                     anchors.top: parent.top
                     color: Theme.color.neutral7
                     text: "Amount"
-                    font.pixelSize: 21
+                    font.pixelSize: 15
                 }
 
-                TextInput {
+                TextField {
                     anchors.left: parent.left
                     anchors.bottom: parent.bottom
+                    leftPadding: 0
                     font.family: "Inter"
                     font.styleName: "Regular"
-                    font.pointSize: 18
+                    font.pixelSize: 18
                     color: Theme.color.neutral9
-                    text: "0.00000000"
+                    placeholderTextColor: Theme.color.neutral7
+                    background: Item {}
+                    placeholderText: "0.00000000"
                 }
             }
 
@@ -100,17 +108,20 @@ Page {
                     anchors.top: parent.top
                     color: Theme.color.neutral7
                     text: "Your name"
-                    font.pixelSize: 21
+                    font.pixelSize: 15
                 }
 
-                TextInput {
+                TextField {
                     anchors.left: parent.left
                     anchors.bottom: parent.bottom
+                    leftPadding: 0
                     font.family: "Inter"
                     font.styleName: "Regular"
-                    font.pointSize: 18
+                    font.pixelSize: 18
                     color: Theme.color.neutral9
-                    text: "Enter name..."
+                    placeholderTextColor: Theme.color.neutral7
+                    background: Item {}
+                    placeholderText: qsTr("Enter name...")
                 }
             }
 
@@ -122,17 +133,20 @@ Page {
                     anchors.top: parent.top
                     color: Theme.color.neutral7
                     text: "Message"
-                    font.pixelSize: 21
+                    font.pixelSize: 15
                 }
 
-                TextInput {
+                TextField {
                     anchors.left: parent.left
                     anchors.bottom: parent.bottom
+                    leftPadding: 0
                     font.family: "Inter"
                     font.styleName: "Regular"
-                    font.pointSize: 18
+                    font.pixelSize: 18
                     color: Theme.color.neutral9
-                    text: "Enter message..."
+                    placeholderTextColor: Theme.color.neutral7
+                    background: Item {}
+                    placeholderText: qsTr("Enter message...")
                 }
             }
 
