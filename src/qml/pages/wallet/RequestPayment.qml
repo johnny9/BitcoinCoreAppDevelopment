@@ -5,6 +5,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import org.bitcoincore.qt 1.0
 
 import "../../controls"
 import "../../components"
@@ -76,6 +77,10 @@ Page {
             }
 
             Item {
+                BitcoinAmount {
+                    id: bitcoinAmount
+                }
+
                 height: 50
                 Layout.fillWidth: true
                 CoreText {
@@ -87,6 +92,7 @@ Page {
                 }
 
                 TextField {
+                    id: bitcoinAmountText
                     anchors.left: parent.left
                     anchors.bottom: parent.bottom
                     leftPadding: 0
@@ -97,6 +103,9 @@ Page {
                     placeholderTextColor: Theme.color.neutral7
                     background: Item {}
                     placeholderText: "0.00000000"
+                    onTextChanged: {
+                        bitcoinAmountText.text = bitcoinAmount.sanitize(bitcoinAmountText.text)
+                    }
                 }
             }
 
