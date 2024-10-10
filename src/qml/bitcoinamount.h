@@ -19,4 +19,4 @@ public Q_SLOTS:
     QString sanitize(const QString &text);
 };
 
-#endif // BITCOIN_QML_BITCOINAMOUNTS_H
+#endif // BITCOIN_QML_BITCOINAMOUNT_H
