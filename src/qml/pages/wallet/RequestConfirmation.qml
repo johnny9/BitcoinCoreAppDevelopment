@@ -17,6 +17,34 @@ Page {
     id: root
     background: null
 
+    header: NavigationBar2 {
+        id: navbar
+        leftItem: NavButton {
+            iconSource: "image://images/caret-left"
+            text: qsTr("Back")
+            onClicked: {
+                root.StackView.view.pop()
+            }
+        }
+        centerItem: Item {
+            id: header
+            Layout.fillWidth: true
+
+            CoreText {
+                anchors.left: parent.left
+                text: qsTr("Payment request")
+                font.pixelSize: 21
+                bold: true
+            }
+        }
+        rightItem: Icon {
+            anchors.right: parent.right
+            source: "image://images/ellipsis"
+            color: Theme.color.neutral9
+            size: 40
+        }
+    }
+
     ScrollView {
         clip: true
         width: parent.width
@@ -28,24 +56,6 @@ Page {
             anchors.horizontalCenter: parent.horizontalCenter
             width: Math.min(parent.width, 450)
             spacing: 30
-
-            Item {
-                id: header
-                Layout.fillWidth: true
-
-                CoreText {
-                    anchors.left: parent.left
-                    text: qsTr("Payment request")
-                    font.pixelSize: 21
-                    bold: true
-                }
-                Icon {
-                    anchors.right: parent.right
-                    source: "image://images/ellipsis"
-                    color: Theme.color.neutral9
-                    size: 30
-                }
-            }
 
             CoreText {
                 text: qsTr("Created just now")
