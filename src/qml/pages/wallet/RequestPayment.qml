@@ -127,6 +127,7 @@ StackView {
                         }
 
                         TextField {
+                            id: name
                             anchors.left: parent.left
                             anchors.bottom: parent.bottom
                             leftPadding: 0
@@ -173,11 +174,18 @@ StackView {
                         Layout.alignment: Qt.AlignCenter
                         text: qsTr("Continue")
                         onClicked: {
-                            stackView.push(Qt.resolvedUrl("RequestConfirmation.qml"))
+                            stackView.push(confirmationPage)
                         }
                     }
                 }
             }
+        }
+    }
+
+    Component {
+        id: confirmationPage
+        RequestConfirmation {
+            name: name.text
         }
     }
 }
