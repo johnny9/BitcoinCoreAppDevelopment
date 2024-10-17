@@ -21,6 +21,21 @@ StackView {
             id: root
             background: null
 
+            header: NavigationBar2 {
+                id: navbar
+                centerItem: Item {
+                    id: header
+                    Layout.fillWidth: true
+
+                    CoreText {
+                        anchors.left: parent.left
+                        text: qsTr("Request a payment")
+                        font.pixelSize: 21
+                        bold: true
+                    }
+                }
+            }
+
             ScrollView {
                 clip: true
                 width: parent.width
@@ -33,25 +48,8 @@ StackView {
                     width: Math.min(parent.width, 450)
                     spacing: 30
 
-                    Item {
-                        id: header
-                        Layout.fillWidth: true
-
-                        CoreText {
-                            anchors.left: parent.left
-                            text: qsTr("Request a payment")
-                            font.pixelSize: 21
-                            bold: true
-                        }
-                        Icon {
-                            anchors.right: parent.right
-                            source: "image://images/ellipsis"
-                            color: Theme.color.neutral9
-                            size: 30
-                        }
-                    }
-
                     CoreText {
+                        Layout.alignment: Qt.AlignHCenter
                         text: qsTr("All fields are optional.")
                         color: Theme.color.neutral7
                         font.pixelSize: 15
