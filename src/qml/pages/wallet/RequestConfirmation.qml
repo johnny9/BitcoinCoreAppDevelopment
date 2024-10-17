@@ -12,7 +12,9 @@ import "../../components"
 import "../settings"
 
 Page {
-    required property string name
+    required property string label
+    required property string amount
+    required property string message
 
     id: root
     background: null
@@ -70,7 +72,7 @@ Page {
                     anchors.left: parent.left
                     anchors.top: parent.top
                     color: Theme.color.neutral7
-                    text: qsTr("Your name")
+                    text: qsTr("Label")
                     font.pixelSize: 15
                 }
 
@@ -84,7 +86,7 @@ Page {
                     color: Theme.color.neutral9
                     placeholderTextColor: Theme.color.neutral7
                     background: Item {}
-                    placeholderText: qsTr("Cristianos ")
+                    text: amount
                 }
             }
 
@@ -99,7 +101,7 @@ Page {
                     anchors.left: parent.left
                     anchors.top: parent.top
                     color: Theme.color.neutral7
-                    text: "Amount"
+                    text: qsTr("Amount")
                     font.pixelSize: 15
                 }
 
@@ -115,6 +117,7 @@ Page {
                     placeholderTextColor: Theme.color.neutral7
                     background: Item {}
                     placeholderText: "0.00000000"
+                    text: amount
                     onTextChanged: {
                         bitcoinAmountText.text = bitcoinAmount.sanitize(bitcoinAmountText.text)
                     }

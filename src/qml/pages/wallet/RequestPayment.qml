@@ -62,11 +62,12 @@ StackView {
                             anchors.left: parent.left
                             anchors.top: parent.top
                             color: Theme.color.neutral7
-                            text: "Note to self"
+                            text: "Label"
                             font.pixelSize: 15
                         }
 
                         TextField {
+                            id: label
                             anchors.left: parent.left
                             anchors.bottom: parent.bottom
                             leftPadding: 0
@@ -76,7 +77,7 @@ StackView {
                             color: Theme.color.neutral9
                             placeholderTextColor: Theme.color.neutral7
                             background: Item {}
-                            placeholderText: qsTr("Enter note...")
+                            placeholderText: qsTr("Enter label...")
                         }
                     }
 
@@ -96,7 +97,7 @@ StackView {
                         }
 
                         TextField {
-                            id: bitcoinAmountText
+                            id: amount
                             anchors.left: parent.left
                             anchors.bottom: parent.bottom
                             leftPadding: 0
@@ -108,34 +109,8 @@ StackView {
                             background: Item {}
                             placeholderText: "0.00000000"
                             onTextChanged: {
-                                bitcoinAmountText.text = bitcoinAmount.sanitize(bitcoinAmountText.text)
+                                amount.text = bitcoinAmount.sanitize(bitcoinAmountText.text)
                             }
-                        }
-                    }
-
-                    Item {
-                        height: 50
-                        Layout.fillWidth: true
-                        CoreText {
-                            anchors.left: parent.left
-                            anchors.top: parent.top
-                            color: Theme.color.neutral7
-                            text: "Your name"
-                            font.pixelSize: 15
-                        }
-
-                        TextField {
-                            id: name
-                            anchors.left: parent.left
-                            anchors.bottom: parent.bottom
-                            leftPadding: 0
-                            font.family: "Inter"
-                            font.styleName: "Regular"
-                            font.pixelSize: 18
-                            color: Theme.color.neutral9
-                            placeholderTextColor: Theme.color.neutral7
-                            background: Item {}
-                            placeholderText: qsTr("Enter name...")
                         }
                     }
 
@@ -151,6 +126,7 @@ StackView {
                         }
 
                         TextField {
+                            id: message
                             anchors.left: parent.left
                             anchors.bottom: parent.bottom
                             leftPadding: 0
@@ -183,7 +159,9 @@ StackView {
     Component {
         id: confirmationPage
         RequestConfirmation {
-            name: name.text
+            label: label.text
+            amount: amount.text
+            message: message.text
         }
     }
 }
