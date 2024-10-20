@@ -112,6 +112,38 @@ StackView {
                                 amount.text = bitcoinAmount.sanitize(bitcoinAmountText.text)
                             }
                         }
+                        Item {
+                            width: unitLabel.width + flipIcon.width
+                            height: Math.max(unitLabel.height, flipIcon.height)
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    if (unitLabel.text == "₿") {
+                                        unitLabel.text = "S"
+                                    } else {
+                                        unitLabel.text = "₿"
+                                    }
+                                }
+                            }
+                            CoreText {
+                                id: unitLabel
+                                anchors.right: flipIcon.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: "₿"
+                                font.pixelSize: 18
+                                color: Theme.color.neutral7
+                            }
+                            Icon {
+                                id: flipIcon
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                source: "image://images/flip-vertical"
+                                color: Theme.color.neutral8
+                                size: 30
+                            }
+                        }
                     }
 
                     Item {
