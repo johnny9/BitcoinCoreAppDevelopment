@@ -97,7 +97,7 @@ StackView {
                         }
 
                         TextField {
-                            id: amount
+                            id: amountInput
                             anchors.left: parent.left
                             anchors.bottom: parent.bottom
                             leftPadding: 0
@@ -108,8 +108,8 @@ StackView {
                             placeholderTextColor: Theme.color.neutral7
                             background: Item {}
                             placeholderText: "0.00000000"
-                            onTextChanged: {
-                                amount.text = bitcoinAmount.sanitize(bitcoinAmountText.text)
+                            onTextEdited: {
+                                amountInput.text = bitcoinAmount.sanitize(amountInput.text)
                             }
                         }
                         Item {
@@ -120,10 +120,12 @@ StackView {
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
-                                    if (unitLabel.text == "₿") {
-                                        unitLabel.text = "S"
+                                    if (bitcoinAmount.unit == BitcoinAmount.BTC) {
+                                        amountInput.text = bitcoinAmount.convert(amountInput.text, BitcoinAmount.BTC)
+                                        bitcoinAmount.unit = BitcoinAmount.SAT
                                     } else {
-                                        unitLabel.text = "₿"
+                                        amountInput.text = bitcoinAmount.convert(amountInput.text, BitcoinAmount.SAT)
+                                        bitcoinAmount.unit = BitcoinAmount.BTC
                                     }
                                 }
                             }
@@ -131,7 +133,7 @@ StackView {
                                 id: unitLabel
                                 anchors.right: flipIcon.left
                                 anchors.verticalCenter: parent.verticalCenter
-                                text: "₿"
+                                text: bitcoinAmount.unitLabel
                                 font.pixelSize: 18
                                 color: Theme.color.neutral7
                             }
