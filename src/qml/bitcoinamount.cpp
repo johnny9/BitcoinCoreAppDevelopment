@@ -76,6 +76,7 @@ void BitcoinAmount::setAmount(const QString& new_amount)
 
 long long BitcoinAmount::toSatoshis(QString& amount, const Unit unit)
 {
+
     int num_decimals = decimals(unit);
 
     QStringList parts = amount.remove(' ').split(".");
@@ -94,6 +95,10 @@ long long BitcoinAmount::toSatoshis(QString& amount, const Unit unit)
 
 QString BitcoinAmount::convert(const QString &amount, Unit unit)
 {
+    if (amount == "") {
+        return amount;
+    }
+
     QString result = amount;
     int decimalPosition  = result.indexOf(".");
 

@@ -47,7 +47,7 @@ QT_MOC_CPP = \
   qml/models/moc_walletqmlmodel.cpp \
   qml/moc_appmode.cpp \
   qml/moc_bitcoinamount.cpp \
-  qml/moc_walletcontroller.cpp \
+  qml/moc_walletqmlcontroller.cpp \
   qt/moc_addressbookpage.cpp \
   qt/moc_addresstablemodel.cpp \
   qt/moc_askpassphrasedialog.cpp \

@@ -12,9 +12,7 @@ import "../../components"
 import "../settings"
 
 Page {
-    required property string label
-    required property string amount
-    required property string message
+    required property PaymentRequest request
 
     id: root
     background: null
@@ -171,18 +169,6 @@ Page {
                     placeholderTextColor: Theme.color.neutral7
                     background: Item {}
                     placeholderText: qsTr("Enter message...")
-                }
-            }
-
-            ContinueButton {
-                id: continueButton
-                Layout.preferredWidth: Math.min(300, parent.width - 2 * Layout.leftMargin)
-                Layout.leftMargin: 20
-                Layout.rightMargin: 20
-                Layout.alignment: Qt.AlignCenter
-                text: qsTr("Continue")
-                onClicked: {
-                    stackView.push(Qt.resolvedUrl("RequestConfirmation.qml"))
                 }
             }
         }

@@ -6,6 +6,8 @@
 
 #include <qt/bitcoinunits.h>
 
+#include <key_io.h>
+
 #include <QTimer>
 
 WalletQmlModel::WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObject *parent)
@@ -33,4 +35,19 @@ QString WalletQmlModel::name() const
         return QString();
     }
     return QString::fromStdString(m_wallet->getWalletName());
+}
+
+PaymentRequest WalletQmlModel::createPaymentRequest(const QString& amount,
+                                                    const QString& label,
+                                                    const QString& message)
+{
+    PaymentRequest request;
+    request.setAmount(amount);
+    request.setLabel(label);
+
+    // TODO: handle issues with getting the new address (wallet unlock?)
+    auto destination = m_wallet->getNewDestination(OutputType.BECH32M, label.toStdString()).value();
+    // TODO: integrate with RecentRequestsTableModel
+    m_wallet->setAddressReceiveRequest(EncodeDestination(*destination), label.toStdString(), "");
+    request.setAddress(QString::fromStdString(destination));
 }
