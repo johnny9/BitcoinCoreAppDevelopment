@@ -4,6 +4,7 @@
 
 #include <qml/models/walletqmlmodel.h>
 
+#include <outputtype.h>
 #include <qt/bitcoinunits.h>
 
 #include <key_io.h>
@@ -46,7 +47,7 @@ PaymentRequest WalletQmlModel::createPaymentRequest(const QString& amount,
     request.setLabel(label);
 
     // TODO: handle issues with getting the new address (wallet unlock?)
-    auto destination = m_wallet->getNewDestination(OutputType.BECH32M, label.toStdString()).value();
+    auto destination = m_wallet->getNewDestination(OutputType::BECH32M, label.toStdString()).value();
     // TODO: integrate with RecentRequestsTableModel
     m_wallet->setAddressReceiveRequest(EncodeDestination(*destination), label.toStdString(), "");
     request.setAddress(QString::fromStdString(destination));

@@ -7,6 +7,8 @@
 
 #include <interfaces/wallet.h>
 
+#include <qml/models/paymentrequest.h>
+
 #include <QObject>
 
 class WalletQmlModel : public QObject
@@ -22,6 +24,9 @@ public:
 
     QString name() const;
     QString balance() const;
+    Q_INVOKABLE PaymentRequest createPaymentRequest(const QString& amount,
+                                                    const QString& label,
+                                                    const QString& message);
 
 Q_SIGNALS:
     void nameChanged();
