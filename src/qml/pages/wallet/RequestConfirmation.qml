@@ -12,7 +12,7 @@ import "../../components"
 import "../settings"
 
 Page {
-    required property PaymentRequest request
+    property PaymentRequest request
 
     id: root
     background: null
@@ -84,7 +84,7 @@ Page {
                     color: Theme.color.neutral9
                     placeholderTextColor: Theme.color.neutral7
                     background: Item {}
-                    text: amount
+                    text: root.request.amount
                 }
             }
 
@@ -115,7 +115,7 @@ Page {
                     placeholderTextColor: Theme.color.neutral7
                     background: Item {}
                     placeholderText: "0.00000000"
-                    text: amount
+                    text: root.request.amount
                     onTextChanged: {
                         bitcoinAmountText.text = bitcoinAmount.sanitize(bitcoinAmountText.text)
                     }

@@ -182,21 +182,23 @@ StackView {
                         Layout.alignment: Qt.AlignCenter
                         text: qsTr("Continue")
                         onClicked: {
-                            confirmationPage.request = = selectedWallet.newPaymentRequest({
-                                label: label.text,
-                                amount: bitcoinAmount.sanitize(amountInput.text),
-                                message: message.text
-                            })
-                            stackView.push(confirmationPage)
+                            var newRequest = walletController.selectedWallet.createPaymentRequest(
+                                label.text,
+                                bitcoinAmount.sanitize(amountInput.text),
+                                message.text
+                            )
+                            stackView.push(confirmationComponent, { request: newRequest })
                         }
                     }
                 }
             }
         }
-    }t
+    }
 
     Component {
-        id: confirmationPage
-        RequestConfirmation {}
+        id: confirmationComponent
+        RequestConfirmation {
+            property PaymentRequest request
+        }
     }
 }

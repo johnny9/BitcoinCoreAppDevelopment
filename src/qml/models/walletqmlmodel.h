@@ -10,6 +10,7 @@
 #include <qml/models/paymentrequest.h>
 
 #include <QObject>
+#include <vector>
 
 class WalletQmlModel : public QObject
 {
@@ -20,13 +21,13 @@ class WalletQmlModel : public QObject
 public:
     WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObject *parent = nullptr);
     WalletQmlModel(QObject *parent = nullptr);
-    ~WalletQmlModel() = default;
+    ~WalletQmlModel();
 
     QString name() const;
     QString balance() const;
-    Q_INVOKABLE PaymentRequest createPaymentRequest(const QString& amount,
-                                                    const QString& label,
-                                                    const QString& message);
+    Q_INVOKABLE PaymentRequest* createPaymentRequest(const QString& amount,
+                                                     const QString& label,
+                                                     const QString& message);
 
 Q_SIGNALS:
     void nameChanged();
@@ -34,6 +35,7 @@ Q_SIGNALS:
 
 private:
     std::unique_ptr<interfaces::Wallet> m_wallet;
+    std::vector<PaymentRequest*> m_payment_requests;
 };
 
 #endif // BITCOIN_QML_MODELS_WALLETQMLMODEL_H

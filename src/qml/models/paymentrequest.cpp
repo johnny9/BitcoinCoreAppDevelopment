@@ -4,6 +4,11 @@
 
 #include <qml/models/paymentrequest.h>
 
+PaymentRequest::PaymentRequest(QObject *parent)
+    : QObject(parent)
+{
+}
+
 QString PaymentRequest::address() const
 {
     return m_address;
