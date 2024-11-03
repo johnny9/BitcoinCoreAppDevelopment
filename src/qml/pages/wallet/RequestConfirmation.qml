@@ -57,7 +57,15 @@ Page {
             width: Math.min(parent.width, 450)
             spacing: 30
 
+            Icon {
+                Layout.alignment: Qt.AlignHCenter
+                source: "image://images/pending"
+                width: 60
+                height: width
+            }
+
             CoreText {
+                Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Created just now")
                 color: Theme.color.neutral7
                 font.pixelSize: 18
