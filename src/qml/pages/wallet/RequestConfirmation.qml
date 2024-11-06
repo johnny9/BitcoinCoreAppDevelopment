@@ -12,7 +12,12 @@ import "../../components"
 import "../settings"
 
 Page {
-    property PaymentRequest request
+    PaymentRequest {
+        id: request
+        label: ""
+        message: ""
+        amount: ""
+    }
 
     id: root
     background: null
@@ -57,11 +62,13 @@ Page {
             width: Math.min(parent.width, 450)
             spacing: 30
 
-            Icon {
+            Image {
+                width: 60
+                height: 60
                 Layout.alignment: Qt.AlignHCenter
                 source: "image://images/pending"
-                width: 60
-                height: width
+                sourceSize.width: 60
+                sourceSize.height: 60
             }
 
             CoreText {
@@ -74,6 +81,7 @@ Page {
             Item {
                 height: 50
                 Layout.fillWidth: true
+                visible: request.label != ""
                 CoreText {
                     anchors.left: parent.left
                     anchors.top: parent.top
@@ -92,7 +100,7 @@ Page {
                     color: Theme.color.neutral9
                     placeholderTextColor: Theme.color.neutral7
                     background: Item {}
-                    text: root.request.amount
+                    text: request.label
                 }
             }
 
@@ -103,6 +111,7 @@ Page {
 
                 height: 50
                 Layout.fillWidth: true
+                visible: request.amount != ""
                 CoreText {
                     anchors.left: parent.left
                     anchors.top: parent.top
@@ -123,7 +132,7 @@ Page {
                     placeholderTextColor: Theme.color.neutral7
                     background: Item {}
                     placeholderText: "0.00000000"
-                    text: root.request.amount
+                    text: request.amount
                     onTextChanged: {
                         bitcoinAmountText.text = bitcoinAmount.sanitize(bitcoinAmountText.text)
                     }
@@ -133,32 +142,9 @@ Page {
             Item {
                 height: 50
                 Layout.fillWidth: true
+                visible: request.message != ""
                 CoreText {
-                    anchors.left: parent.left
-                    anchors.top: parent.top
-                    color: Theme.color.neutral7
-                    text: "Your name"
-                    font.pixelSize: 15
-                }
-
-                TextField {
-                    anchors.left: parent.left
-                    anchors.bottom: parent.bottom
-                    leftPadding: 0
-                    font.family: "Inter"
-                    font.styleName: "Regular"
-                    font.pixelSize: 18
-                    color: Theme.color.neutral9
-                    placeholderTextColor: Theme.color.neutral7
-                    background: Item {}
-                    placeholderText: qsTr("Enter name...")
-                }
-            }
-
-            Item {
-                height: 50
-                Layout.fillWidth: true
-                CoreText {
+                    visible: parent.visible
                     anchors.left: parent.left
                     anchors.top: parent.top
                     color: Theme.color.neutral7
@@ -167,6 +153,7 @@ Page {
                 }
 
                 TextField {
+                    visible: parent.visible
                     anchors.left: parent.left
                     anchors.bottom: parent.bottom
                     leftPadding: 0
@@ -177,6 +164,29 @@ Page {
                     placeholderTextColor: Theme.color.neutral7
                     background: Item {}
                     placeholderText: qsTr("Enter message...")
+                }
+            }
+
+            Item {
+                height: 50
+                Layout.fillWidth: true
+                CoreText {
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    color: Theme.color.neutral7
+                    text: qsTr("Address")
+                    font.pixelSize: 15
+                }
+
+                CoreText {
+                    anchors.left: parent.left
+                    anchors.bottom: parent.bottom
+                    leftPadding: 0
+                    font.family: "Inter"
+                    font.styleName: "Regular"
+                    font.pixelSize: 18
+                    color: Theme.color.neutral9
+                    text: "bc1q wvlv mha3 cvhy q6qz tjzu mq2d 63ff htzy xxu6 q8"
                 }
             }
         }

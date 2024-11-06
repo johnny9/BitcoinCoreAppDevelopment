@@ -7,6 +7,10 @@
 PaymentRequest::PaymentRequest(QObject *parent)
     : QObject(parent)
 {
+    m_amount = "";
+    m_address = "";
+    m_label = "";
+    m_message = "";
 }
 
 QString PaymentRequest::address() const

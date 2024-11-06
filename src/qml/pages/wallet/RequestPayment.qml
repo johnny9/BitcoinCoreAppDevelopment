@@ -182,12 +182,12 @@ StackView {
                         Layout.alignment: Qt.AlignCenter
                         text: qsTr("Continue")
                         onClicked: {
-                            var newRequest = walletController.selectedWallet.createPaymentRequest(
+                            /*var newRequest = walletController.selectedWallet.createPaymentRequest(
                                 label.text,
                                 bitcoinAmount.sanitize(amountInput.text),
                                 message.text
-                            )
-                            stackView.push(confirmationComponent, { request: newRequest })
+                            )*/
+                            stackView.push(confirmationComponent)
                         }
                     }
                 }

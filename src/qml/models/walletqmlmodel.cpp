@@ -41,8 +41,8 @@ QString WalletQmlModel::name() const
 }
 
 PaymentRequest* WalletQmlModel::createPaymentRequest(const QString& amount,
-                                                    const QString& label,
-                                                    const QString& message)
+                                                     const QString& label,
+                                                     const QString& message)
 {
     PaymentRequest* request = new PaymentRequest(this);
     request->setAmount(amount);
