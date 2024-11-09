@@ -62,7 +62,7 @@ StackView {
                             anchors.left: parent.left
                             anchors.top: parent.top
                             color: Theme.color.neutral7
-                            text: "Label"
+                            text: qsTr("Label")
                             font.pixelSize: 15
                         }
 

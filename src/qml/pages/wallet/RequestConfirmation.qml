@@ -168,9 +168,10 @@ Page {
             }
 
             Item {
-                height: 50
+                height: addressLabel.height + addressText.height
                 Layout.fillWidth: true
                 CoreText {
+                    id: addressLabel
                     anchors.left: parent.left
                     anchors.top: parent.top
                     color: Theme.color.neutral7
@@ -179,14 +180,30 @@ Page {
                 }
 
                 CoreText {
+                    id: addressText
                     anchors.left: parent.left
-                    anchors.bottom: parent.bottom
+                    anchors.right: copyIcon.left
+                    anchors.top: addressLabel.bottom
                     leftPadding: 0
                     font.family: "Inter"
                     font.styleName: "Regular"
                     font.pixelSize: 18
+                    horizontalAlignment: Text.AlignLeft
                     color: Theme.color.neutral9
                     text: "bc1q wvlv mha3 cvhy q6qz tjzu mq2d 63ff htzy xxu6 q8"
+                }
+
+                Icon {
+                    id: copyIcon
+                    anchors.right: parent.right
+                    anchors.verticalCenter: addressText.verticalCenter
+                    source: "image://images/copy"
+                    color: Theme.color.neutral8
+                    size: 30
+                    enabled: true
+                    onClicked: {
+                        Clipboard.setText(addressText.text)
+                    }
                 }
             }
         }

@@ -191,5 +191,10 @@ QPixmap ImageProvider::requestPixmap(const QString& id, QSize* size, const QSize
         *size = requested_size;
         return QIcon(":/icons/pending").pixmap(requested_size);
     }
+
+    if (id == "copy") {
+        *size = requested_size;
+        return QIcon(":/icons/copy").pixmap(requested_size);
+    }
     return {};
 }
