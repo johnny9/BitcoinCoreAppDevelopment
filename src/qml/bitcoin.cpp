@@ -16,6 +16,7 @@
 #include <noui.h>
 #include <qml/appmode.h>
 #include <qml/bitcoinamount.h>
+#include <qml/clipboard.h>
 #ifdef __ANDROID__
 #include <qml/androidnotifier.h>
 #endif
@@ -327,8 +328,10 @@ int QmlGuiMain(int argc, char* argv[])
     engine.rootContext()->setContextProperty("needOnboarding", need_onboarding);
 
     AppMode app_mode = SetupAppMode();
+    Clipboard clipboard;
 
     qmlRegisterSingletonInstance<AppMode>("org.bitcoincore.qt", 1, 0, "AppMode", &app_mode);
+    qmlRegisterSingletonInstance<Clipboard>("org.bitcoincore.qt", 1, 0, "Clipboard", &clipboard);
     qmlRegisterType<BlockClockDial>("org.bitcoincore.qt", 1, 0, "BlockClockDial");
     qmlRegisterType<LineGraph>("org.bitcoincore.qt", 1, 0, "LineGraph");
     qmlRegisterUncreatableType<PeerDetailsModel>("org.bitcoincore.qt", 1, 0, "PeerDetailsModel", "");
