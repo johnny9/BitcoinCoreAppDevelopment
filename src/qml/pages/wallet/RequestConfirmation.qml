@@ -42,12 +42,6 @@ Page {
                 bold: true
             }
         }
-        rightItem: Icon {
-            anchors.right: parent.right
-            source: "image://images/ellipsis"
-            color: Theme.color.neutral9
-            size: 40
-        }
     }
 
     ScrollView {
