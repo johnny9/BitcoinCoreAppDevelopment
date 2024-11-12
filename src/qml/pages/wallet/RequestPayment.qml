@@ -55,30 +55,11 @@ StackView {
                         font.pixelSize: 15
                     }
 
-                    Item {
-                        height: 50
+                    LabeledTextInput {
+                        id: label
                         Layout.fillWidth: true
-                        CoreText {
-                            anchors.left: parent.left
-                            anchors.top: parent.top
-                            color: Theme.color.neutral7
-                            text: qsTr("Label")
-                            font.pixelSize: 15
-                        }
-
-                        TextField {
-                            id: label
-                            anchors.left: parent.left
-                            anchors.bottom: parent.bottom
-                            leftPadding: 0
-                            font.family: "Inter"
-                            font.styleName: "Regular"
-                            font.pixelSize: 18
-                            color: Theme.color.neutral9
-                            placeholderTextColor: Theme.color.neutral7
-                            background: Item {}
-                            placeholderText: qsTr("Enter label...")
-                        }
+                        labelText: qsTr("Label")
+                        placeholderText: qsTr("Enter label...")
                     }
 
                     Item {
