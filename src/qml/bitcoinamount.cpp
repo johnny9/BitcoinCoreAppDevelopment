@@ -57,8 +57,8 @@ void BitcoinAmount::setUnit(const Unit unit)
 QString BitcoinAmount::unitLabel() const
 {
     switch (m_unit) {
-    case Unit::BTC: return "B";
-    case Unit::SAT: return "S";
+    case Unit::BTC: return "₿";
+    case Unit::SAT: return "Sat";
     }
     assert(false);
 }
