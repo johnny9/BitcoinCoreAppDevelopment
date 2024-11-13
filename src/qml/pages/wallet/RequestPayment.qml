@@ -129,30 +129,11 @@ StackView {
                         }
                     }
 
-                    Item {
-                        height: 50
+                    LabeledTextInput {
+                        id: message
                         Layout.fillWidth: true
-                        CoreText {
-                            anchors.left: parent.left
-                            anchors.top: parent.top
-                            color: Theme.color.neutral7
-                            text: "Message"
-                            font.pixelSize: 15
-                        }
-
-                        TextField {
-                            id: message
-                            anchors.left: parent.left
-                            anchors.bottom: parent.bottom
-                            leftPadding: 0
-                            font.family: "Inter"
-                            font.styleName: "Regular"
-                            font.pixelSize: 18
-                            color: Theme.color.neutral9
-                            placeholderTextColor: Theme.color.neutral7
-                            background: Item {}
-                            placeholderText: qsTr("Enter message...")
-                        }
+                        labelText: qsTr("Message")
+                        placeholderText: qsTr("Enter message...")
                     }
 
                     ContinueButton {
