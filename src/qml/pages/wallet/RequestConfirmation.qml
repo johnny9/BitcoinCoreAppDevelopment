@@ -72,30 +72,13 @@ Page {
                 font.pixelSize: 18
             }
 
-            Item {
-                height: 50
+            LabeledTextInput {
+                id: label
                 Layout.fillWidth: true
+                labelText: qsTr("Label")
                 visible: request.label != ""
-                CoreText {
-                    anchors.left: parent.left
-                    anchors.top: parent.top
-                    color: Theme.color.neutral7
-                    text: qsTr("Label")
-                    font.pixelSize: 15
-                }
-
-                TextField {
-                    anchors.left: parent.left
-                    anchors.bottom: parent.bottom
-                    leftPadding: 0
-                    font.family: "Inter"
-                    font.styleName: "Regular"
-                    font.pixelSize: 18
-                    color: Theme.color.neutral9
-                    placeholderTextColor: Theme.color.neutral7
-                    background: Item {}
-                    text: request.label
-                }
+                enabled: false
+                text: request.label
             }
 
             Item {
@@ -133,32 +116,14 @@ Page {
                 }
             }
 
-            Item {
-                height: 50
-                Layout.fillWidth: true
-                visible: request.message != ""
-                CoreText {
-                    visible: parent.visible
-                    anchors.left: parent.left
-                    anchors.top: parent.top
-                    color: Theme.color.neutral7
-                    text: "Message"
-                    font.pixelSize: 15
-                }
 
-                TextField {
-                    visible: parent.visible
-                    anchors.left: parent.left
-                    anchors.bottom: parent.bottom
-                    leftPadding: 0
-                    font.family: "Inter"
-                    font.styleName: "Regular"
-                    font.pixelSize: 18
-                    color: Theme.color.neutral9
-                    placeholderTextColor: Theme.color.neutral7
-                    background: Item {}
-                    placeholderText: qsTr("Enter message...")
-                }
+            LabeledTextInput {
+                id: message
+                Layout.fillWidth: true
+                labelText: qsTr("Message")
+                visible: request.message != ""
+                enabled: false
+                text: request.message
             }
 
             Item {

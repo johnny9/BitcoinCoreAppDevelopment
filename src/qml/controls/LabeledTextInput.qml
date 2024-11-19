@@ -12,6 +12,7 @@ Item {
     property alias placeholderText: input.placeholderText
     property alias iconSource: icon.source
     property alias customIcon: iconContainer.data
+    property alias enabled: input.enabled
     
     signal iconClicked
     signal textEdited
