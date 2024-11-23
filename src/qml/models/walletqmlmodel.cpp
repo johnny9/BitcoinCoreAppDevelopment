@@ -2,7 +2,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "qml/models/paymentrequest.h"
+#include <qml/models/paymentrequest.h>
 #include <qml/models/walletqmlmodel.h>
 
 #include <outputtype.h>

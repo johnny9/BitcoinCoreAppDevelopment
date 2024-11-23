@@ -27,7 +27,7 @@
 #include <qml/models/networktraffictower.h>
 #include <qml/models/nodemodel.h>
 #include <qml/models/options_model.h>
-#include "qml/models/paymentrequest.h"
+#include <qml/models/paymentrequest.h>
 #include <qml/models/peerdetailsmodel.h>
 #include <qml/models/peerlistsortproxy.h>
 #include <qml/models/walletlistmodel.h>
