@@ -11,6 +11,7 @@
 #include <interfaces/wallet.h>
 
 #include <QObject>
+#include <QThread>
 #include <memory>
 
 class WalletQmlController : public QObject
