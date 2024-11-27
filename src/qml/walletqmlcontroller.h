@@ -6,7 +6,6 @@
 #define BITCOIN_QML_WALLETQMLCONTROLLER_H
 
 #include <qml/models/walletqmlmodel.h>
-#include <qml/worker.h>
 #include <interfaces/handler.h>
 #include <interfaces/node.h>
 #include <interfaces/wallet.h>
@@ -39,7 +38,8 @@ private:
 
     interfaces::Node& m_node;
     WalletQmlModel* m_selected_wallet;
-    Worker m_worker;
+    QObject* m_worker;
+    QThread* m_worker_thread;
     std::vector<WalletQmlModel*> m_wallets;
     std::unique_ptr<interfaces::Handler> m_handler_load_wallet;
 

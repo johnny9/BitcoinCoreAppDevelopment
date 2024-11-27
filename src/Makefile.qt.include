@@ -50,7 +50,6 @@ QT_MOC_CPP = \
   qml/moc_bitcoinamount.cpp \
   qml/moc_clipboard.cpp \
   qml/moc_walletqmlcontroller.cpp \
-  qml/moc_worker.cpp \
   qt/moc_addressbookpage.cpp \
   qt/moc_addresstablemodel.cpp \
   qt/moc_askpassphrasedialog.cpp \
@@ -141,7 +140,6 @@ BITCOIN_QT_H = \
   qml/imageprovider.h \
   qml/util.h \
   qml/walletqmlcontroller.h \
-  qml/worker.h \
   qt/addressbookpage.h \
   qt/addresstablemodel.h \
   qt/askpassphrasedialog.h \
@@ -333,7 +331,6 @@ BITCOIN_QML_BASE_CPP = \
   qml/imageprovider.cpp \
   qml/util.cpp \
   qml/walletqmlcontroller.cpp \
-  qml/worker.cpp
 
 QML_RES_FONTS = \
   qml/res/fonts/Inter-Regular.otf \
