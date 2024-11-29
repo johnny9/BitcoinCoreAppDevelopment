@@ -110,6 +110,7 @@ Page {
                     background: Item {}
                     placeholderText: "0.00000000"
                     text: request.amount
+                    selectByMouse: true
                     onTextChanged: {
                         bitcoinAmountText.text = bitcoinAmount.sanitize(bitcoinAmountText.text)
                     }
