@@ -113,6 +113,10 @@ QString BitcoinAmount::convert(const QString &amount, Unit unit)
             result.append(QString(8 - numDigitsAfterDecimal, '0'));
         }
         result.remove(decimalPosition, 1);
+
+        while (result.startsWith('0') && result.length() > 1) {
+            result.remove(0, 1);
+        }
     } else if (unit == Unit::SAT) {
         result.remove(decimalPosition, 1);
         int newDecimalPosition = decimalPosition - 8;
@@ -121,6 +125,16 @@ QString BitcoinAmount::convert(const QString &amount, Unit unit)
             newDecimalPosition = 0;
         }
         result.insert(newDecimalPosition, ".");
+
+        while (result.endsWith('0') && result.contains('.')) {
+            result.chop(1);
+        }
+        if (result.endsWith('.')) {
+            result.chop(1);
+        }
+        if (result.startsWith('.')) {
+            result.insert(0, "0");
+        }
     }
 
     return result;
