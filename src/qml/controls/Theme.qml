@@ -115,6 +115,7 @@ Control {
         id: darkImageSet
         blocktime: "image://images/blocktime-dark"
         network: "image://images/network-dark"
+        pending: "image://images/pending-dark"
         storage: "image://images/storage-dark"
         tooltipArrow: "qrc:/icons/tooltip-arrow-dark"
     }
@@ -123,6 +124,7 @@ Control {
         id: lightImageSet
         blocktime: "image://images/blocktime-light"
         network: "image://images/network-light"
+        pending: "image://images/pending-light"
         storage: "image://images/storage-light"
         tooltipArrow: "qrc:/icons/tooltip-arrow-light"
     }

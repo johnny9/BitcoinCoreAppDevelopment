@@ -60,7 +60,7 @@ Page {
                 width: 60
                 height: 60
                 Layout.alignment: Qt.AlignHCenter
-                source: "image://images/pending"
+                source: Theme.image.pending
                 sourceSize.width: 60
                 sourceSize.height: 60
             }
