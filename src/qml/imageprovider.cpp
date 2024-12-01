@@ -187,9 +187,14 @@ QPixmap ImageProvider::requestPixmap(const QString& id, QSize* size, const QSize
         return QIcon(":/icons/flip-vertical").pixmap(requested_size);
     }
 
-    if (id == "pending") {
+    if (id == "pending-dark") {
         *size = requested_size;
-        return QIcon(":/icons/pending").pixmap(requested_size);
+        return QIcon(":/icons/pending-dark").pixmap(requested_size);
+    }
+
+    if (id == "pending-light") {
+        *size = requested_size;
+        return QIcon(":/icons/pending-light").pixmap(requested_size);
     }
 
     if (id == "copy") {

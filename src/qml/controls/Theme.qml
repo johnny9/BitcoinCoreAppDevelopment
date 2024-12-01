@@ -44,6 +44,7 @@ Control {
         required property url blocktime
         required property url network
         required property url storage
+        required property url pending
         required property url tooltipArrow
     }
 
