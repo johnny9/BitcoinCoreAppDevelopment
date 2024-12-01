@@ -40,21 +40,7 @@ Page {
             id: columnLayout
             anchors.horizontalCenter: parent.horizontalCenter
             width: Math.min(parent.width, 450)
-            spacing: 30
-
-            CoreText {
-                Layout.alignment: Qt.AlignHCenter
-                text: qsTr("All fields are optional.")
-                color: Theme.color.neutral7
-                font.pixelSize: 15
-            }
-
-            LabeledTextInput {
-                id: label
-                Layout.fillWidth: true
-                labelText: qsTr("Label")
-                placeholderText: qsTr("Enter label...")
-            }
+            spacing: 5
 
             Item {
                 BitcoinAmount {
@@ -69,7 +55,7 @@ Page {
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
                     horizontalAlignment: Text.AlignLeft
-                    color: Theme.color.neutral7
+                    color: Theme.color.neutral9
                     text: "Amount"
                     font.pixelSize: 18
                 }
@@ -127,6 +113,21 @@ Page {
                 }
             }
 
+            Separator {
+                Layout.fillWidth: true
+            }
+
+            LabeledTextInput {
+                id: label
+                Layout.fillWidth: true
+                labelText: qsTr("Label")
+                placeholderText: qsTr("Enter label...")
+            }
+
+            Separator {
+                Layout.fillWidth: true
+            }
+
             LabeledTextInput {
                 id: message
                 Layout.fillWidth: true
@@ -134,14 +135,17 @@ Page {
                 placeholderText: qsTr("Enter message...")
             }
 
+            Separator {
+                Layout.fillWidth: true
+            }
+
             ContinueButton {
                 id: continueButton
-                Layout.preferredWidth: Math.min(300, parent.width - 2 * Layout.leftMargin)
-                Layout.leftMargin: 20
-                Layout.rightMargin: 20
-                Layout.alignment: Qt.AlignCenter
-                text: qsTr("Continue")
+                Layout.fillWidth: true
+                Layout.topMargin: 30
+                text: qsTr("Create bitcoin address")
             }
+
         }
     }
 }

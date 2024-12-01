@@ -26,7 +26,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         horizontalAlignment: Text.AlignLeft
         width: 110
-        color: Theme.color.neutral7
+        color: Theme.color.neutral9
         font.pixelSize: 18
     }
 
