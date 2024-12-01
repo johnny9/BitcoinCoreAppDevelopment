@@ -67,20 +67,23 @@ StackView {
                             id: bitcoinAmount
                         }
 
-                        height: 50
+                        height: amountInput.height
                         Layout.fillWidth: true
                         CoreText {
+                            id: amountLabel
+                            width: 110
                             anchors.left: parent.left
-                            anchors.top: parent.top
+                            anchors.verticalCenter: parent.verticalCenter
+                            horizontalAlignment: Text.AlignLeft
                             color: Theme.color.neutral7
                             text: "Amount"
-                            font.pixelSize: 15
+                            font.pixelSize: 18
                         }
 
                         TextField {
                             id: amountInput
-                            anchors.left: parent.left
-                            anchors.bottom: parent.bottom
+                            anchors.left: amountLabel.right
+                            anchors.verticalCenter: parent.verticalCenter
                             leftPadding: 0
                             font.family: "Inter"
                             font.styleName: "Regular"
