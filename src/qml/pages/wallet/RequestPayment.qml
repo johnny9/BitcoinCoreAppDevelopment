@@ -17,7 +17,7 @@ Page {
 
     header: NavigationBar2 {
         id: navbar
-        centerItem: Item {
+        leftItem: Item {
             id: header
             Layout.fillWidth: true
 
