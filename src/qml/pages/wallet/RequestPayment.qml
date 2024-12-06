@@ -142,7 +142,45 @@ Page {
                 }
 
                 Item {
+                    Layout.fillWidth: true
+                    Layout.minimumHeight: addressLabel.height + copyLabel.height
+                    Layout.topMargin: 10
+                    height: addressLabel.height + copyLabel.height
+                    CoreText {
+                        id: addressLabel
+                        anchors.left: parent.left
+                        anchors.top: parent.top
+                        horizontalAlignment: Text.AlignLeft
+                        width: 110
+                        text: qsTr("Address")
+                        font.pixelSize: 18
+                        color: Theme.color.neutral9
+                    }
+                    CoreText {
+                        id: copyLabel
+                        anchors.left: parent.left
+                        anchors.top: addressLabel.bottom
+                        horizontalAlignment: Text.AlignLeft
+                        width: 110
+                        text: qsTr("copy")
+                        font.pixelSize: 18
+                        color: Theme.color.neutral7
+                    }
 
+                    Rectangle {
+                        anchors.left: addressLabel.right
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        color: Theme.color.neutral2
+                        radius: 5
+                        CoreText {
+                            id: address
+                            anchors.verticalCenter: parent.verticalCenter
+                            font.pixelSize: 18
+                            color: Theme.color.neutral9
+                        }
+                    }
                 }
 
                 ContinueButton {
