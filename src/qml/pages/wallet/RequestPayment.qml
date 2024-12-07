@@ -189,6 +189,19 @@ Page {
                     Layout.topMargin: 30
                     text: qsTr("Create bitcoin address")
                 }
+
+                ContinueButton {
+                    id: copyRequest
+                    Layout.fillWidth: true
+                    Layout.topMargin: 30
+                    borderColor: Theme.color.neutral6
+                    borderHoverColor: Theme.color.orangeLight1
+                    borderPressedColor: Theme.color.orangeLight2
+                    backgroundColor: "transparent"
+                    backgroundHoverColor: "transparent"
+                    backgroundPressedColor: "transparent"
+                    text: qsTr("Copy payment request")
+                }
             }
 
             Rectangle {
