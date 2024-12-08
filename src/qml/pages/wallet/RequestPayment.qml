@@ -15,6 +15,8 @@ Page {
     id: root
     background: null
 
+    property int requestCounter: 0
+
     ScrollView {
         clip: true
         width: parent.width
@@ -176,9 +178,12 @@ Page {
                         radius: 5
                         CoreText {
                             id: address
-                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.fill: parent
+                            anchors.leftMargin: 5
+                            horizontalAlignment: Text.AlignLeft
                             font.pixelSize: 18
                             color: Theme.color.neutral9
+                            wrap: true
                         }
                     }
                 }
@@ -188,19 +193,35 @@ Page {
                     Layout.fillWidth: true
                     Layout.topMargin: 30
                     text: qsTr("Create bitcoin address")
+                    onClicked: {
+                        if (!clearRequest.visible) {
+                            requestCounter = requestCounter + 1
+                            clearRequest.visible = true
+                            title.text = qsTr("Payment request #" + requestCounter)
+                            address.text = "bc1q f5xe y2tf 89k9 zy6k gnru wszy 5fsa truy 9te1 bu"
+                            continueButton.text = qsTr("Copy payment request")
+                        }
+                    }
                 }
 
                 ContinueButton {
-                    id: copyRequest
+                    id: clearRequest
                     Layout.fillWidth: true
-                    Layout.topMargin: 30
+                    Layout.topMargin: 10
+                    visible: false
                     borderColor: Theme.color.neutral6
                     borderHoverColor: Theme.color.orangeLight1
                     borderPressedColor: Theme.color.orangeLight2
                     backgroundColor: "transparent"
                     backgroundHoverColor: "transparent"
                     backgroundPressedColor: "transparent"
-                    text: qsTr("Copy payment request")
+                    text: qsTr("Clear")
+                    onClicked: {
+                        clearRequest.visible = false
+                        title.text = qsTr("Request a payment")
+                        address.text = ""
+                        continueButton.text = qsTr("Create bitcoin address")
+                    }
                 }
             }
 
