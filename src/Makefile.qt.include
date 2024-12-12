@@ -370,6 +370,8 @@ QML_RES_ICONS = \
   qml/res/icons/storage-light.png \
   qml/res/icons/tooltip-arrow-dark.png \
   qml/res/icons/tooltip-arrow-light.png \
+  qml/res/icons/triangle-down.png \
+  qml/res/icons/triangle-up.png \
   qml/res/icons/wallet.png \
   qml/res/icons/visible.png
 

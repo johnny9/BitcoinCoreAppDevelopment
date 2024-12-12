@@ -116,6 +116,8 @@
         <file alias="storage-light">res/icons/storage-light.png</file>
         <file alias="tooltip-arrow-dark">res/icons/tooltip-arrow-dark.png</file>
         <file alias="tooltip-arrow-light">res/icons/tooltip-arrow-light.png</file>
+        <file alias="triangle-down">res/icons/triangle-down.png</file>
+        <file alias="triangle-up">res/icons/triangle-up.png</file>
         <file alias="wallet">res/icons/wallet.png</file>
         <file alias="visible">res/icons/visible.png</file>
     </qresource>
