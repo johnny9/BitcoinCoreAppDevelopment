@@ -71,6 +71,7 @@
         <file>pages/settings/SettingsStorage.qml</file>
         <file>pages/settings/SettingsTheme.qml</file>
         <file>pages/wallet/Activity.qml</file>
+        <file>pages/wallet/ActivityDetails.qml</file>
         <file>pages/wallet/AddWallet.qml</file>
         <file>pages/wallet/CreateBackup.qml</file>
         <file>pages/wallet/CreateConfirm.qml</file>

@@ -108,6 +108,16 @@ PageStack {
                         font.pixelSize: 15
                         color: delegate.direction == "receiving" ? Theme.color.green : Theme.color.neutral9
                     }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: stackView.push(detailsPage)
+                    }
+
+                    Component {
+                        id: detailsPage
+                        amount: delegate.amount
+                    }
                 }
             }
         }

@@ -449,6 +449,7 @@ QML_RES_QML = \
   qml/pages/settings/SettingsStorage.qml \
   qml/pages/settings/SettingsTheme.qml \
   qml/pages/wallet/Activity.qml \
+  qml/pages/wallet/ActivityDetails.qml \
   qml/pages/wallet/AddWallet.qml \
   qml/pages/wallet/CreateBackup.qml \
   qml/pages/wallet/CreateConfirm.qml \
@@ -456,6 +457,7 @@ QML_RES_QML = \
   qml/pages/wallet/CreateName.qml \
   qml/pages/wallet/CreatePassword.qml \
   qml/pages/wallet/DesktopWallets.qml \
+  qml/pages/wallet/ActivityDetails.qml \
   qml/pages/wallet/RequestPayment.qml \
   qml/pages/wallet/WalletBadge.qml \
   qml/pages/wallet/WalletSelect.qml
