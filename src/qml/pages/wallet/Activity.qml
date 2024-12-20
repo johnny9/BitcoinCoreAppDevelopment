@@ -81,6 +81,7 @@ PageStack {
                         size: 12
                     }
                     CoreText {
+                        id: label
                         anchors.left: directionIcon.right
                         anchors.right: date.left
                         anchors.margins: 6
@@ -101,17 +102,23 @@ PageStack {
 
                     CoreText {
                         id: amount
+                        width: 125
                         anchors.right: parent.right
                         anchors.margins: 6
                         anchors.verticalCenter: parent.verticalCenter
                         text: delegate.amount
                         font.pixelSize: 15
+                        horizontalAlignment: Text.AlignLeft
                         color: delegate.direction == "receiving" ? Theme.color.green : Theme.color.neutral9
                     }
 
                     MouseArea {
                         anchors.fill: parent
                         onClicked: stackView.push(detailsPage)
+                        hoverEnabled: true
+                        onEntered: label.color = Theme.color.orange
+                        onExited: label.color = Theme.color.neutral9
+                        cursorShape: Qt.PointingHandCursor
                     }
 
                     Component {
