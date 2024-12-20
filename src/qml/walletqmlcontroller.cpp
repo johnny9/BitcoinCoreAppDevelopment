@@ -2,8 +2,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "qml/models/walletqmlmodel.h"
 #include <qml/walletqmlcontroller.h>
+
+#include <qml/models/walletqmlmodel.h>
 
 #include <interfaces/node.h>
 #include <util/threadnames.h>

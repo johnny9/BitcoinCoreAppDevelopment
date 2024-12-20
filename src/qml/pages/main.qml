@@ -32,7 +32,7 @@ ApplicationWindow {
         ColorAnimation { duration: 150 }
     }
 
-    StackView {
+    PageStack {
         id: main
         initialItem: {
             if (needOnboarding) {
@@ -65,23 +65,12 @@ ApplicationWindow {
 
     Component {
         id: onboardingWizard
-        SwipeView {
-            id: swipeView
-            property bool finished: false
-            interactive: false
-
-            OnboardingCover {}
-            OnboardingStrengthen {}
-            OnboardingBlockclock {}
-            OnboardingStorageLocation {}
-            OnboardingStorageAmount {}
-            OnboardingConnection {}
-
-            onFinishedChanged: {
+        OnboardingWizard {
+            onFinished: {
                 optionsModel.onboard()
                 if (AppMode.walletEnabled && AppMode.isDesktop) {
                     main.push(desktopWallets)
-                    main.push(addWallet)
+                    main.push(createWalletWizard)
                 } else {
                     main.push(node)
                 }
@@ -95,8 +84,8 @@ ApplicationWindow {
     }
 
     Component {
-        id: addWallet
-        AddWallet {
+        id: createWalletWizard
+        CreateWalletWizard {
             onFinished: {
                 main.pop()
             }
@@ -110,18 +99,24 @@ ApplicationWindow {
 
     Component {
         id: node
-        SwipeView {
-            id: node_swipe
-            interactive: false
-            orientation: Qt.Vertical
-            NodeRunner {
-                onSettingsClicked: {
-                    node_swipe.incrementCurrentIndex()
+        PageStack {
+            id: nodeStack
+            vertical: true
+            initialItem: node
+            Component {
+                id: node
+                NodeRunner {
+                    onSettingsClicked: {
+                        nodeStack.push(nodeSettings)
+                    }
                 }
             }
-            NodeSettings {
-                onDoneClicked: {
-                    node_swipe.decrementCurrentIndex()
+            Component {
+                id: nodeSettings
+                 NodeSettings {
+                    onDoneClicked: {
+                        nodeStack.pop()
+                    }
                 }
             }
         }

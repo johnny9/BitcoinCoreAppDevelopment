@@ -45,7 +45,6 @@ private:
     QMutex m_wallets_mutex;
     std::vector<WalletQmlModel*> m_wallets;
     std::unique_ptr<interfaces::Handler> m_handler_load_wallet;
-
 };
 
 #endif // BITCOIN_QML_WALLETQMLCONTROLLER_H

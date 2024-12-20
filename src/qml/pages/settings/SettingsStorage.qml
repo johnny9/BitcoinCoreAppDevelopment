@@ -9,10 +9,67 @@ import "../../controls"
 import "../../components"
 
 InformationPage {
+    id: root
+    property bool customStorage: false
+    property bool customStorageAmount
+    property bool onboarding: false
     bannerActive: false
     bold: true
+    showHeader: root.onboarding
     headerText: qsTr("Storage settings")
     headerMargin: 0
     detailActive: true
-    detailItem: StorageSettings {}
+    detailItem: StorageSettings {
+        id: storageSettings
+        onCustomStorageChanged: {
+            root.customStorage = storageSettings.customStorage
+        }
+        onCustomStorageAmountChanged: {
+            root.customStorageAmount = storageSettings.customStorageAmount
+        }
+    }
+    states: [
+        State {
+            when: root.onboarding
+            PropertyChanges {
+                target: root
+                navLeftDetail: null
+                navMiddleDetail: null
+                navRightDetail: doneButton
+            }
+        },
+        State {
+            when: !root.onboarding
+            PropertyChanges {
+                target: root
+                navLeftDetail: backButton
+                navMiddleDetail: header
+                navRightDetail: null
+            }
+        }
+    ]
+
+    Component {
+        id: backButton
+        NavButton {
+            iconSource: "image://images/caret-left"
+            text: qsTr("Back")
+            onClicked: root.back()
+        }
+    }
+    Component {
+        id: header
+        Header {
+            headerBold: true
+            headerSize: 18
+            header: qsTr("Storage Settings")
+        }
+    }
+    Component {
+        id: doneButton
+        NavButton {
+            text: qsTr("Done")
+            onClicked: root.back()
+        }
+    }
 }
