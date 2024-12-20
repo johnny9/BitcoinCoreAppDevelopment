@@ -12,10 +12,10 @@ import "../../components"
 import "../settings"
 
 Page {
-    property string message = ""
-    property string amount = ""
-    property string label = ""
-    property string address = ""
+    property string message: ""
+    property string amount: ""
+    property string label: ""
+    property string address: ""
 
     id: root
     background: null

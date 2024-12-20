@@ -116,7 +116,9 @@ PageStack {
 
                     Component {
                         id: detailsPage
-                        amount: delegate.amount
+                        ActivityDetails {
+                            amount: delegate.amount
+                        }
                     }
                 }
             }
