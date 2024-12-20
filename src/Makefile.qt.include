@@ -449,12 +449,9 @@ QML_RES_QML = \
   qml/pages/settings/SettingsProxy.qml \
   qml/pages/settings/SettingsStorage.qml \
   qml/pages/settings/SettingsTheme.qml \
-<<<<<<< HEAD
   qml/pages/wallet/Activity.qml \
   qml/pages/wallet/ActivityDetails.qml \
   qml/pages/wallet/AddWallet.qml \
-=======
->>>>>>> b4bebc316e769836a8c1c826191b2becb92d7397
   qml/pages/wallet/CreateBackup.qml \
   qml/pages/wallet/CreateConfirm.qml \
   qml/pages/wallet/CreateIntro.qml \
