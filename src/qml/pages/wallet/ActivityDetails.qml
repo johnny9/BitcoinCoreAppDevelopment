@@ -54,9 +54,11 @@ Page {
             id: columnLayout
             anchors.horizontalCenter: parent.horizontalCenter
             width: Math.min(parent.width, 450)
-            spacing: 30
+            spacing: 0
 
             Rectangle {
+                Layout.topMargin: 25
+                Layout.bottomMargin: 25
                 width: 60
                 height: 60
                 Layout.alignment: Qt.AlignHCenter
@@ -73,7 +75,9 @@ Page {
 
             CoreText {
                 Layout.alignment: Qt.AlignHCenter
+                Layout.bottomMargin: 5
                 text: root.amount
+                color: Theme.color.green
                 font.pixelSize: 28
             }
 
@@ -86,6 +90,7 @@ Page {
 
             CoreText {
                 Layout.alignment: Qt.AlignHCenter
+                Layout.bottomMargin: 10
                 text: qsTr("5 confirmations")
                 color: Theme.color.neutral7
                 font.pixelSize: 18
@@ -94,6 +99,7 @@ Page {
             LabeledTextInput {
                 id: labelTextInput
                 Layout.fillWidth: true
+                Layout.bottomMargin: 20
                 labelText: qsTr("Label")
                 visible: root.label != ""
                 enabled: false
@@ -103,6 +109,7 @@ Page {
             LabeledTextInput {
                 id: messageTextInput
                 Layout.fillWidth: true
+                Layout.bottomMargin: 20
                 labelText: qsTr("Message")
                 visible: root.message != ""
                 enabled: false
@@ -112,6 +119,7 @@ Page {
             Item {
                 height: addressLabel.height + addressText.height
                 Layout.fillWidth: true
+                Layout.bottomMargin: 20
                 CoreText {
                     id: addressLabel
                     anchors.left: parent.left
