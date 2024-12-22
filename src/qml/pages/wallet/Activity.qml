@@ -90,6 +90,7 @@ PageStack {
                         font.pixelSize: 15
                         horizontalAlignment: Text.AlignLeft
                     }
+
                     CoreText {
                         id: date
                         anchors.right: amount.left

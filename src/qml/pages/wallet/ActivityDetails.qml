@@ -16,6 +16,8 @@ Page {
     property string amount: ""
     property string label: ""
     property string address: ""
+    property string direction: ""
+    property string status: ""
 
     id: root
     background: null
@@ -35,8 +37,8 @@ Page {
 
             CoreText {
                 anchors.left: parent.left
-                text: qsTr("Payment request")
-                font.pixelSize: 21
+                text: qsTr("Transaction")
+                font.pixelSize: 18
                 bold: true
             }
         }
@@ -54,18 +56,37 @@ Page {
             width: Math.min(parent.width, 450)
             spacing: 30
 
-            Image {
+            Rectangle {
                 width: 60
                 height: 60
                 Layout.alignment: Qt.AlignHCenter
-                source: Theme.image.pending
-                sourceSize.width: 60
-                sourceSize.height: 60
+                radius: 30
+                color: Theme.color.green
+
+                Icon {
+                    anchors.centerIn: parent
+                    source: "qrc:/icons/triangle-down"
+                    color: Theme.color.white
+                    size: 30
+                }
+            }
+
+            CoreText {
+                Layout.alignment: Qt.AlignHCenter
+                text: root.amount
+                font.pixelSize: 28
             }
 
             CoreText {
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Created just now")
+                color: Theme.color.neutral7
+                font.pixelSize: 18
+            }
+
+            CoreText {
+                Layout.alignment: Qt.AlignHCenter
+                text: qsTr("5 confirmations")
                 color: Theme.color.neutral7
                 font.pixelSize: 18
             }
@@ -78,43 +99,6 @@ Page {
                 enabled: false
                 text: root.label
             }
-
-            Item {
-                BitcoinAmount {
-                    id: bitcoinAmount
-                }
-
-                height: 50
-                Layout.fillWidth: true
-                visible: root.amount != ""
-                CoreText {
-                    anchors.left: parent.left
-                    anchors.top: parent.top
-                    color: Theme.color.neutral7
-                    text: qsTr("Amount")
-                    font.pixelSize: 15
-                }
-
-                TextField {
-                    id: bitcoinAmountText
-                    anchors.left: parent.left
-                    anchors.bottom: parent.bottom
-                    leftPadding: 0
-                    font.family: "Inter"
-                    font.styleName: "Regular"
-                    font.pixelSize: 18
-                    color: Theme.color.neutral9
-                    placeholderTextColor: Theme.color.neutral7
-                    background: Item {}
-                    placeholderText: "0.00000000"
-                    text: request.amount
-                    selectByMouse: true
-                    onTextChanged: {
-                        bitcoinAmountText.text = bitcoinAmount.sanitize(bitcoinAmountText.text)
-                    }
-                }
-            }
-
 
             LabeledTextInput {
                 id: messageTextInput
