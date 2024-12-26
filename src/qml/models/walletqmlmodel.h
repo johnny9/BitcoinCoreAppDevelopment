@@ -29,6 +29,8 @@ public:
                                                      const QString& label,
                                                      const QString& message);
 
+    interfaces::Wallet& wallet() const { return *m_wallet; }
+
 Q_SIGNALS:
     void nameChanged();
     void balanceChanged();
