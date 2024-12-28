@@ -1,7 +1,14 @@
+// Copyright (c) 2024 The Bitcoin Core developers
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #include <qml/models/activitylistmodel.h>
 
-ActivityListModel::ActivityListModel(QObject *parent)
+#include <qml/models/walletqmlmodel.h>
+
+ActivityListModel::ActivityListModel(WalletQmlModel *parent)
     : QAbstractListModel(parent)
+    , m_wallet_model(parent)
 {
     m_transactions.append(QSharedPointer<Transaction>::create(
         "July 11",
@@ -32,6 +39,9 @@ ActivityListModel::ActivityListModel(QObject *parent)
         Transaction::Confirmed,
         Transaction::RecvWithAddress
     ));
+    if (m_wallet_model != nullptr) {
+        refreshWallet();
+    }
 }
 
 int ActivityListModel::rowCount(const QModelIndex &parent) const
@@ -75,4 +85,14 @@ QHash<int, QByteArray> ActivityListModel::roleNames() const
     roles[StatusRole] = "status";
     roles[TypeRole] = "type";
     return roles;
+}
+
+void ActivityListModel::refreshWallet()
+{
+    if (m_wallet_model == nullptr) {
+        return;
+    }
+    for (const auto &tx : m_wallet_model->getWalletTxs()) {
+        m_transactions.append(Transaction::fromWalletTx(tx));
+    }
 }

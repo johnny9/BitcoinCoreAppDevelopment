@@ -4,6 +4,8 @@
 
 
 #include <qml/models/walletqmlmodel.h>
+
+#include <qml/models/activitylistmodel.h>
 #include <qml/models/paymentrequest.h>
 
 #include <outputtype.h>
@@ -18,11 +20,13 @@ WalletQmlModel::WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObje
     : QObject(parent)
 {
     m_wallet = std::move(wallet);
+    m_activity_list_model = new ActivityListModel(this);
 }
 
 WalletQmlModel::WalletQmlModel(QObject *parent)
     : QObject(parent)
 {
+    m_activity_list_model = new ActivityListModel(this);
 }
 
 QString WalletQmlModel::balance() const
@@ -59,9 +63,18 @@ PaymentRequest* WalletQmlModel::createPaymentRequest(const QString& amount,
     return request;
 }
 
+std::set<interfaces::WalletTx> WalletQmlModel::getWalletTxs() const
+{
+    if (!m_wallet) {
+        return {};
+    }
+    return m_wallet->getWalletTxs();
+}
+
 WalletQmlModel::~WalletQmlModel()
 {
     for (PaymentRequest* request : m_payment_requests) {
         delete request;
     }
+    delete m_activity_list_model;
 }

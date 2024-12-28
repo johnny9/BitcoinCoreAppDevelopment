@@ -7,16 +7,21 @@
 
 #include <interfaces/wallet.h>
 
+#include <qml/models/activitylistmodel.h>
 #include <qml/models/paymentrequest.h>
 
 #include <QObject>
+#include <qobjectdefs.h>
 #include <vector>
+
+class ActivityListModel;
 
 class WalletQmlModel : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
     Q_PROPERTY(QString balance READ balance NOTIFY balanceChanged)
+    Q_PROPERTY(ActivityListModel* activityListModel READ activityListModel CONSTANT)
 
 public:
     WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObject *parent = nullptr);
@@ -28,8 +33,9 @@ public:
     Q_INVOKABLE PaymentRequest* createPaymentRequest(const QString& amount,
                                                      const QString& label,
                                                      const QString& message);
+    ActivityListModel* activityListModel() const { return m_activity_list_model; }
 
-    interfaces::Wallet& wallet() const { return *m_wallet; }
+    std::set<interfaces::WalletTx> getWalletTxs() const;
 
 Q_SIGNALS:
     void nameChanged();
@@ -38,6 +44,7 @@ Q_SIGNALS:
 private:
     std::unique_ptr<interfaces::Wallet> m_wallet;
     std::vector<PaymentRequest*> m_payment_requests;
+    ActivityListModel* m_activity_list_model{nullptr};
 };
 
 #endif // BITCOIN_QML_MODELS_WALLETQMLMODEL_H

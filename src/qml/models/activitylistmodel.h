@@ -1,74 +1,27 @@
+// Copyright (c) 2024 The Bitcoin Core developers
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #ifndef BITCOIN_QML_MODELS_ACTIVITYLISTMODEL_H
 #define BITCOIN_QML_MODELS_ACTIVITYLISTMODEL_H
 
+#include <interfaces/wallet.h>
+#include <qml/models/walletqmlmodel.h>
+#include <qml/models/transaction.h>
+
 #include <QAbstractListModel>
-#include <QVector>
+#include <QList>
 #include <QSharedPointer>
 #include <QString>
 
-class Transaction : public QObject
-{
-    Q_OBJECT
-
-public:
-    enum Type {
-        Other,
-        Generated,
-        SendToAddress,
-        SendToOther,
-        RecvWithAddress,
-        RecvFromOther,
-        SendToSelf
-    };
-    Q_ENUM(Type)
-
-    enum Status {
-        Confirmed,
-        Unconfirmed,
-        Confirming,
-        Conflicted,
-        Abandoned,
-        Immature,
-        NotAccepted
-    };
-    Q_ENUM(Status)
-
-    explicit Transaction(
-        const QString &timestamp,
-        const QString &address,
-        const QString &label,
-        const QString &amount,
-        const QString &txid,
-        Status status,
-        Type type,
-        QObject *parent = nullptr
-    )
-        : QObject(parent)
-        , timestamp(timestamp)
-        , address(address)
-        , amount(amount)
-        , label(label)
-        , txid(txid)
-        , status(status)
-        , type(type) // default
-    {
-    }
-
-    QString timestamp;
-    QString address;
-    QString amount;
-    QString label;
-    QString txid;
-    Status status;
-    Type type;
-};
+class WalletQmlModel;
 
 class ActivityListModel : public QAbstractListModel
 {
     Q_OBJECT
 
 public:
-    explicit ActivityListModel(QObject *parent = nullptr);
+    explicit ActivityListModel(WalletQmlModel * parent = nullptr);
 
     enum TransactionRoles {
         AmountRole = Qt::UserRole + 1,
@@ -84,7 +37,11 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
 private:
-    QVector<QSharedPointer<Transaction>> m_transactions;
+    void refreshWallet();
+
+private:
+    QList<QSharedPointer<Transaction>> m_transactions;
+    WalletQmlModel* m_wallet_model;
 };
 
 #endif // BITCOIN_QML_MODELS_ACTIVITYLISTMODEL_H

@@ -35,7 +35,7 @@ PageStack {
             anchors.top: title.bottom
             anchors.bottom: parent.bottom
 
-            model: activityListModel
+            model: walletController.selectedWallet.activityListModel
             delegate: ItemDelegate {
                 id: delegate
                 required property string label;
