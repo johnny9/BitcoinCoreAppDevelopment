@@ -49,9 +49,30 @@ Transaction::Transaction(
 }
 
 Transaction::Transaction(uint256 hash, qint64 time)
-    : hash(hash)
+    : address("")
+    , credit(0)
+    , debit(0)
+    , hash(hash)
     , time(time)
+    , type(Type::Other)
 {
+}
+
+QString Transaction::prettyAmount() const
+{
+    CAmount net = credit - debit;
+    QString sign = (net > 0) ? "+" : (net < 0) ? "-" : "";
+    net = std::abs(net);
+
+    qint64 bitcoins = net / 100000000;
+    qint64 remainder = net % 100000000;
+
+    QString result = QString("₿ %1%2.%3")
+        .arg(sign)
+        .arg(bitcoins)
+        .arg(remainder, 8, 10, QChar('0'));
+
+    return result;
 }
 
 QList<QSharedPointer<Transaction>> Transaction::fromWalletTx(const interfaces::WalletTx& wtx)

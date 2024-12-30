@@ -59,7 +59,7 @@ QVariant ActivityListModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
     case AmountRole:
-        return tx->amount;
+        return tx->prettyAmount();
     case AddressRole:
         return tx->address;
     case LabelRole:

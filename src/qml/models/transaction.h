@@ -61,6 +61,8 @@ public:
 
     Transaction(uint256 hash, qint64 time);
 
+    QString prettyAmount() const;
+
     QString address;
     QString amount;
     CAmount credit;
