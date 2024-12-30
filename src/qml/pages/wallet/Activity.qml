@@ -39,6 +39,7 @@ PageStack {
             delegate: ItemDelegate {
                 id: delegate
                 required property string label;
+                required property string address;
                 required property string date;
                 required property string amount;
                 required property int type;
@@ -87,7 +88,13 @@ PageStack {
                         anchors.right: date.left
                         anchors.margins: 6
                         anchors.verticalCenter: parent.verticalCenter
-                        text: delegate.label
+                        text: {
+                            if (delegate.label != "") {
+                                delegate.label
+                            } else {
+                                delegate.address
+                            }
+                        }
                         font.pixelSize: 15
                         horizontalAlignment: Text.AlignLeft
                     }
