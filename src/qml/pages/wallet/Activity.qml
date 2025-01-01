@@ -62,7 +62,9 @@ PageStack {
                         anchors.margins: 6
                         anchors.verticalCenter: parent.verticalCenter
                         source: {
-                            if (delegate.type == Transaction.RecvWithAddress || delegate.type == Transaction.RecvFromOther) {
+                            if (delegate.type == Transaction.RecvWithAddress
+                                || delegate.type == Transaction.RecvFromOther
+                                || delegate.type == Transaction.Generated) {
                                 "qrc:/icons/triangle-down"
                             } else {
                                 "qrc:/icons/triangle-up"
@@ -118,7 +120,15 @@ PageStack {
                         text: delegate.amount
                         font.pixelSize: 15
                         horizontalAlignment: Text.AlignLeft
-                        color: delegate.direction == "receiving" ? Theme.color.green : Theme.color.neutral9
+                        color: {
+                            if (delegate.type == Transaction.RecvWithAddress
+                                || delegate.type == Transaction.RecvFromOther
+                                || delegate.type == Transaction.Generated) {
+                                Theme.color.green
+                            } else {
+                                Theme.color.neutral9
+                            }
+                        }
                     }
 
                     MouseArea {
