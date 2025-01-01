@@ -187,7 +187,7 @@ QList<QSharedPointer<Transaction>> Transaction::fromWalletTx(const interfaces::W
                     nValue += nTxFee;
                     nTxFee = 0;
                 }
-                sub->debit = -nValue;
+                sub->debit = nValue;
 
                 parts.append(sub);
             }
