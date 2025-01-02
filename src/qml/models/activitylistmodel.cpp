@@ -10,35 +10,6 @@ ActivityListModel::ActivityListModel(WalletQmlModel *parent)
     : QAbstractListModel(parent)
     , m_wallet_model(parent)
 {
-    m_transactions.append(QSharedPointer<Transaction>::create(
-        "July 11",
-        "bc1q wvlv mha3 cvhy q6qz tjzu mq2d 63ff htzy xxu6 q8",
-        "Payment from Alex for freelance coding work.",
-        "₿ +0.00 001 000",
-        "abcd1234efgh5678...",
-        Transaction::Unconfirmed,
-        Transaction::RecvWithAddress
-    ));
-
-    m_transactions.append(QSharedPointer<Transaction>::create(
-        "July 12",
-        "bc1q wvlv mha3 cvhy q6qz tjzu mq2d 63ff htzy xxu6 q8",
-        "Coffee from xpub.",
-        "₿ -0.00 001 000",
-        "mnop3456qrst7890...",
-        Transaction::Confirmed,
-        Transaction::SendToAddress
-    ));
-
-    m_transactions.append(QSharedPointer<Transaction>::create(
-        "February 2",
-        "bc1q wvlv mha3 cvhy q6qz tjzu mq2d 63ff htzy xxu6 q8",
-        "Received rent payment from Lisa.",
-        "₿ +0.00 001 000",
-        "cdef6789abcd1234...",
-        Transaction::Confirmed,
-        Transaction::RecvWithAddress
-    ));
     if (m_wallet_model != nullptr) {
         refreshWallet();
     }
@@ -50,12 +21,28 @@ int ActivityListModel::rowCount(const QModelIndex &parent) const
     return m_transactions.size();
 }
 
+void ActivityListModel::updateTransactionStatus(QSharedPointer<Transaction> tx) const
+{
+    if (m_wallet_model == nullptr) {
+        return;
+    }
+    interfaces::WalletTxStatus wtx;
+    int num_blocks;
+    int64_t block_time;
+    if (m_wallet_model->tryGetTxStatus(tx->hash, wtx, num_blocks, block_time)) {
+        tx->updateStatus(wtx, num_blocks, block_time);
+    } else {
+        tx->status = Transaction::Status::NotAccepted;
+    }
+}
+
 QVariant ActivityListModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid() || index.row() < 0 || index.row() >= m_transactions.size())
         return QVariant();
 
     QSharedPointer<Transaction> tx = m_transactions.at(index.row());
+    updateTransactionStatus(tx);
 
     switch (role) {
     case AmountRole:

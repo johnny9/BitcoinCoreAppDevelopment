@@ -71,6 +71,17 @@ std::set<interfaces::WalletTx> WalletQmlModel::getWalletTxs() const
     return m_wallet->getWalletTxs();
 }
 
+bool WalletQmlModel::tryGetTxStatus(const uint256& txid,
+                                    interfaces::WalletTxStatus& tx_status,
+                                    int& num_blocks,
+                                    int64_t& block_time) const
+{
+    if (!m_wallet) {
+        return false;
+    }
+    return m_wallet->tryGetTxStatus(txid, tx_status, num_blocks, block_time);
+}
+
 WalletQmlModel::~WalletQmlModel()
 {
     for (PaymentRequest* request : m_payment_requests) {

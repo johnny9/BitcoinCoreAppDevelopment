@@ -11,25 +11,8 @@
 using wallet::ISMINE_SPENDABLE;
 using wallet::isminetype;
 
-Transaction::Transaction(
-    const QString &timestamp,
-    const QString &address,
-    const QString &label,
-    const QString &amount,
-    const QString &txid,
-    Status status,
-    Type type,
-    QObject *parent
-)
-    : QObject(parent)
-    , address(address)
-    , amount(amount)
-    , label(label)
-    , status(status)
-    , timestamp(timestamp)
-    , type(type)
-    , txid(txid)
-{
+namespace {
+    const int RecommendedNumConfirmations = 6;
 }
 
 Transaction::Transaction(
@@ -43,6 +26,7 @@ Transaction::Transaction(
     , credit(credit)
     , debit(debit)
     , hash(hash)
+    , status(Unconfirmed)
     , time(time)
     , type(type)
 {
@@ -73,6 +57,47 @@ QString Transaction::prettyAmount() const
         .arg(remainder, 8, 10, QChar('0'));
 
     return result;
+}
+
+void Transaction::updateStatus(const interfaces::WalletTxStatus& wtx, int num_blocks, int64_t block_time)
+{
+    int depth = wtx.depth_in_main_chain; 
+    if (type == Generated) {
+        if (wtx.blocks_to_maturity > 0)
+        {
+            status = Immature;
+
+            if (!wtx.is_in_main_chain)
+            {
+                status = NotAccepted;
+            }
+        }
+        else
+        {
+            status = Confirmed;
+        }
+    }
+    else
+    {
+        if (depth < 0)
+        {
+            status = Conflicted;
+        }
+        else if (depth == 0)
+        {
+            status = Unconfirmed;
+            if (wtx.is_abandoned)
+                status = Abandoned;
+        }
+        else if (depth < RecommendedNumConfirmations)
+        {
+            status = Confirming;
+        }
+        else
+        {
+            status = Confirmed;
+        }
+    }
 }
 
 QList<QSharedPointer<Transaction>> Transaction::fromWalletTx(const interfaces::WalletTx& wtx)

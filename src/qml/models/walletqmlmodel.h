@@ -36,6 +36,10 @@ public:
     ActivityListModel* activityListModel() const { return m_activity_list_model; }
 
     std::set<interfaces::WalletTx> getWalletTxs() const;
+    bool tryGetTxStatus(const uint256& txid,
+                        interfaces::WalletTxStatus& tx_status,
+                        int& num_blocks,
+                        int64_t& block_time) const;
 
 Q_SIGNALS:
     void nameChanged();

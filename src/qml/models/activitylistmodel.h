@@ -38,6 +38,7 @@ public:
 
 private:
     void refreshWallet();
+    void updateTransactionStatus(QSharedPointer<Transaction> tx) const;
 
 private:
     QList<QSharedPointer<Transaction>> m_transactions;

@@ -62,6 +62,7 @@ public:
     Transaction(uint256 hash, qint64 time);
 
     QString prettyAmount() const;
+    void updateStatus(const interfaces::WalletTxStatus& wtx, int num_blocks, int64_t block_time);
 
     QString address;
     QString amount;
@@ -75,6 +76,7 @@ public:
     QString timestamp;
     Type type;
     QString txid;
+    bool countsForBalance;
 
     static QList<QSharedPointer<Transaction>> fromWalletTx(const interfaces::WalletTx& tx);
 };
