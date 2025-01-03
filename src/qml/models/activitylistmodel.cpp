@@ -85,4 +85,8 @@ void ActivityListModel::refreshWallet()
     for (const auto &tx : m_wallet_model->getWalletTxs()) {
         m_transactions.append(Transaction::fromWalletTx(tx));
     }
+    std::sort(m_transactions.begin(), m_transactions.end(),
+              [](const QSharedPointer<Transaction> &a, const QSharedPointer<Transaction> &b) {
+                  return a->time > b->time;
+              });
 }
