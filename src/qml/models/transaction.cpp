@@ -61,7 +61,7 @@ QString Transaction::prettyAmount() const
 
 void Transaction::updateStatus(const interfaces::WalletTxStatus& wtx, int num_blocks, int64_t block_time)
 {
-    int depth = wtx.depth_in_main_chain; 
+    depth = wtx.depth_in_main_chain;
     if (type == Generated) {
         if (wtx.blocks_to_maturity > 0)
         {

@@ -64,13 +64,14 @@ public:
     QString prettyAmount() const;
     void updateStatus(const interfaces::WalletTxStatus& wtx, int num_blocks, int64_t block_time);
 
-    QString address;
-    QString amount;
-    CAmount credit;
-    CAmount debit;
-    uint256 hash;
-    int idx;
-    QString label;
+    QString address{""};
+    QString amount{""};
+    CAmount credit{0};
+    int depth{0};
+    CAmount debit{0};
+    uint256 hash{0};
+    int idx{0};
+    QString label{""};
     Status status;
     qint64 time;
     QString timestamp;

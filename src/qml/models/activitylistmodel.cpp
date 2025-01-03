@@ -57,6 +57,8 @@ QVariant ActivityListModel::data(const QModelIndex &index, int role) const
         return tx->status;
     case TypeRole:
         return tx->type;
+    case DepthRole:
+        return tx->depth;
     default:
         return QVariant();
     }
@@ -71,6 +73,7 @@ QHash<int, QByteArray> ActivityListModel::roleNames() const
     roles[DateTimeRole] = "date";
     roles[StatusRole] = "status";
     roles[TypeRole] = "type";
+    roles[DepthRole] = "depth";
     return roles;
 }
 

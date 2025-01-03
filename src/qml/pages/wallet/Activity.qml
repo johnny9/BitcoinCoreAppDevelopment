@@ -44,6 +44,7 @@ PageStack {
                 required property string amount;
                 required property int type;
                 required property int status;
+                required property int depth;
 
                 width: listView.width
                 height: 51
@@ -144,6 +145,7 @@ PageStack {
                         id: detailsPage
                         ActivityDetails {
                             amount: delegate.amount
+                            depth: delegate.depth
                         }
                     }
                 }

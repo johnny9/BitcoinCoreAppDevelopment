@@ -29,7 +29,8 @@ public:
         LabelRole,
         DateTimeRole,
         StatusRole,
-        TypeRole
+        TypeRole,
+        DepthRole
     };
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;

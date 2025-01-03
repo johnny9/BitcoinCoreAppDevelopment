@@ -18,6 +18,7 @@ Page {
     property string address: ""
     property string direction: ""
     property string status: ""
+    property int depth: 0;
 
     id: root
     background: null
@@ -91,7 +92,7 @@ Page {
             CoreText {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.bottomMargin: 10
-                text: qsTr("5 confirmations")
+                text: qsTr("%1 confirmations").arg(root.depth)
                 color: Theme.color.neutral7
                 font.pixelSize: 18
             }
