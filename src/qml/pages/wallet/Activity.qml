@@ -64,9 +64,10 @@ PageStack {
                         anchors.verticalCenter: parent.verticalCenter
                         source: {
                             if (delegate.type == Transaction.RecvWithAddress
-                                || delegate.type == Transaction.RecvFromOther
-                                || delegate.type == Transaction.Generated) {
+                                || delegate.type == Transaction.RecvFromOther) {
                                 "qrc:/icons/triangle-down"
+                            } else if (delegate.type == Transaction.Generated) {
+                                "qrc:/icons/coinbase"
                             } else {
                                 "qrc:/icons/triangle-up"
                             }
@@ -74,7 +75,8 @@ PageStack {
                         color: {
                             if (delegate.status == Transaction.Confirmed) {
                                 if (delegate.type == Transaction.RecvWithAddress ||
-                                    delegate.type == Transaction.RecvFromOther) {
+                                    delegate.type == Transaction.RecvFromOther ||
+                                    delegate.type == Transaction.Generated) {
                                     Theme.color.green
                                 } else {
                                     Theme.color.orange

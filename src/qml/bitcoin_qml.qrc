@@ -98,6 +98,7 @@
         <file alias="caret-left">res/icons/caret-left.png</file>
         <file alias="caret-right">res/icons/caret-right.png</file>
         <file alias="check">res/icons/check.png</file>
+        <file alias="coinbase">res/icons/coinbase.png</file>
         <file alias="copy">res/icons/copy.png</file>
         <file alias="cross">res/icons/cross.png</file>
         <file alias="ellipsis">res/icons/ellipsis.png</file>

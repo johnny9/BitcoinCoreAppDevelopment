@@ -211,5 +211,10 @@ QPixmap ImageProvider::requestPixmap(const QString& id, QSize* size, const QSize
         *size = requested_size;
         return QIcon(":/icons/copy").pixmap(requested_size);
     }
+
+    if (id == "coinbase") {
+        *size = requested_size;
+        return QIcon(":/icons/coinbase").pixmap(requested_size);
+    }
     return {};
 }
