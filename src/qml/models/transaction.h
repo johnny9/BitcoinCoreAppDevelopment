@@ -41,17 +41,6 @@ public:
     };
     Q_ENUM(Status)
 
-    Transaction(
-        const QString &timestamp,
-        const QString &address,
-        const QString &label,
-        const QString &amount,
-        const QString &txid,
-        Status status,
-        Type type,
-        QObject *parent = nullptr
-    );
-
     Transaction(uint256 hash,
                 qint64 time,
                 Type type,

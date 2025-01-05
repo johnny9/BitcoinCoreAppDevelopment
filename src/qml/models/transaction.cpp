@@ -34,8 +34,6 @@ Transaction::Transaction(
 
 Transaction::Transaction(uint256 hash, qint64 time)
     : address("")
-    , credit(0)
-    , debit(0)
     , hash(hash)
     , time(time)
     , type(Type::Other)
