@@ -85,7 +85,7 @@ PageStack {
                                 Theme.color.blue
                             }
                         }
-                        size: 12
+                        size: 14
                     }
                     CoreText {
                         id: label
