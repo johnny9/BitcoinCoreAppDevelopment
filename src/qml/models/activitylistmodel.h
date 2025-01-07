@@ -5,6 +5,7 @@
 #ifndef BITCOIN_QML_MODELS_ACTIVITYLISTMODEL_H
 #define BITCOIN_QML_MODELS_ACTIVITYLISTMODEL_H
 
+#include <interfaces/handler.h>
 #include <interfaces/wallet.h>
 #include <qml/models/walletqmlmodel.h>
 #include <qml/models/transaction.h>
@@ -13,6 +14,8 @@
 #include <QList>
 #include <QSharedPointer>
 #include <QString>
+
+#include <memory>
 
 class WalletQmlModel;
 
@@ -40,10 +43,14 @@ public:
 private:
     void refreshWallet();
     void updateTransactionStatus(QSharedPointer<Transaction> tx) const;
+    void subsctribeToCoreSignals();
+    void unsubscribeFromCoreSignals();
 
 private:
     QList<QSharedPointer<Transaction>> m_transactions;
     WalletQmlModel* m_wallet_model;
+    std::unique_ptr<interfaces::Handler> m_handler_transaction_changed;
+    std::unique_ptr<interfaces::Handler> m_handler_show_progress;
 };
 
 #endif // BITCOIN_QML_MODELS_ACTIVITYLISTMODEL_H

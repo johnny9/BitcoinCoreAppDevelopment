@@ -5,6 +5,7 @@
 #ifndef BITCOIN_QML_MODELS_WALLETQMLMODEL_H
 #define BITCOIN_QML_MODELS_WALLETQMLMODEL_H
 
+#include "interfaces/handler.h"
 #include <interfaces/wallet.h>
 
 #include <qml/models/activitylistmodel.h>
@@ -40,6 +41,11 @@ public:
                         interfaces::WalletTxStatus& tx_status,
                         int& num_blocks,
                         int64_t& block_time) const;
+
+    using ShowProgressFn = std::function<void(const std::string& title, int progress)>;
+    std::unique_ptr<interfaces::Handler> handleShowProgress(ShowProgressFn fn);
+    using TransactionChangedFn = std::function<void(const uint256& txid, ChangeType status)>;
+    virtual std::unique_ptr<interfaces::Handler> handleTransactionChanged(TransactionChangedFn fn);
 
 Q_SIGNALS:
     void nameChanged();
