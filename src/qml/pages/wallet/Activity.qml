@@ -150,6 +150,8 @@ PageStack {
                             amount: delegate.amount
                             date: delegate.date
                             depth: delegate.depth
+                            type: delegate.type
+                            status: delegate.status
                         }
                     }
                 }

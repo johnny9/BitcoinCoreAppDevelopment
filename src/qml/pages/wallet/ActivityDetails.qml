@@ -17,9 +17,24 @@ Page {
     property string label: ""
     property string address: ""
     property string direction: ""
-    property string status: ""
     property string date: ""
-    property int depth: 0;
+    property int depth: 0
+    property int type: 0
+    property int status: 0
+
+    property color iconColor: {
+        if (delegate.status == Transaction.Confirmed) {
+            if (delegate.type == Transaction.RecvWithAddress ||
+                delegate.type == Transaction.RecvFromOther ||
+                delegate.type == Transaction.Generated) {
+                Theme.color.green
+            } else {
+                Theme.color.orange
+            }
+        } else {
+            Theme.color.blue
+        }
+    }
 
     id: root
     background: null
@@ -65,11 +80,20 @@ Page {
                 height: 60
                 Layout.alignment: Qt.AlignHCenter
                 radius: 30
-                color: Theme.color.green
+                color: root.iconColor
 
                 Icon {
                     anchors.centerIn: parent
-                    source: "qrc:/icons/triangle-down"
+                    source: {
+                        if (root.type == Transaction.RecvWithAddress
+                            || root.type == Transaction.RecvFromOther) {
+                            "qrc:/icons/triangle-down"
+                        } else if (root.type == Transaction.Generated) {
+                            "qrc:/icons/coinbase"
+                        } else {
+                            "qrc:/icons/triangle-up"
+                        }
+                    }
                     color: Theme.color.white
                     size: 30
                 }
@@ -79,7 +103,7 @@ Page {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.bottomMargin: 5
                 text: root.amount
-                color: Theme.color.green
+                color: Theme.color.neutral9
                 font.pixelSize: 28
             }
 
