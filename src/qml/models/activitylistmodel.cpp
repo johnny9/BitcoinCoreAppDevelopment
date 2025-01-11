@@ -52,7 +52,7 @@ QVariant ActivityListModel::data(const QModelIndex &index, int role) const
     case LabelRole:
         return tx->label;
     case DateTimeRole:
-        return tx->timestamp;
+        return tx->dateTimeString();
     case StatusRole:
         return tx->status;
     case TypeRole:

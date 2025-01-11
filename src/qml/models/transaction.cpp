@@ -8,6 +8,8 @@
 #include <key_io.h>
 #include <wallet/types.h>
 
+#include <QDateTime>
+
 using wallet::ISMINE_SPENDABLE;
 using wallet::isminetype;
 
@@ -55,6 +57,12 @@ QString Transaction::prettyAmount() const
         .arg(remainder, 8, 10, QChar('0'));
 
     return result;
+}
+
+QString Transaction::dateTimeString() const
+{
+    QDateTime dateTime = QDateTime::fromSecsSinceEpoch(time);
+    return dateTime.toString("MMMM d");
 }
 
 void Transaction::updateStatus(const interfaces::WalletTxStatus& wtx, int num_blocks, int64_t block_time)

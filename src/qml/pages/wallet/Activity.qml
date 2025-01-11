@@ -102,6 +102,7 @@ PageStack {
                         }
                         font.pixelSize: 15
                         horizontalAlignment: Text.AlignLeft
+                        clip: true
                     }
 
                     CoreText {
