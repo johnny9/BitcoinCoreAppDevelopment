@@ -95,19 +95,24 @@ void ActivityListModel::refreshWallet()
               });
 }
 
-void ActivityListModel::subscribeToCoreSignals()
+void ActivityListModel::subsctribeToCoreSignals()
 {
     // Connect signals to wallet
-    m_handler_transaction_changed = m_wallet_model->handleTransactionChanged(std::bind(&TransactionTablePriv::NotifyTransactionChanged, priv, std::placeholders::_1, std::placeholders::_2));
-    m_handler_show_progress = m_wallet_model->handleShowProgress([this](const std::string&, int progress) {
-        priv->m_loading = progress < 100;
-        priv->DispatchNotifications();
+    m_handler_transaction_changed = m_wallet_model->handleTransactionChanged([this](const uint256&, ChangeType) {
+        refreshWallet();
+    });
+    m_handler_show_progress = m_wallet_model->handleShowProgress([this](const std::string&, int) {
+        refreshWallet();
     });
 }
 
 void ActivityListModel::unsubscribeFromCoreSignals()
 {
     // Disconnect signals from wallet
-    m_handler_transaction_changed->disconnect();
-    m_handler_show_progress->disconnect();
+    if (m_handler_transaction_changed) {
+        m_handler_transaction_changed->disconnect();
+    }
+    if (m_handler_show_progress) {
+        m_handler_show_progress->disconnect();
+    }
 }

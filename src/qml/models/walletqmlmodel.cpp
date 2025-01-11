@@ -89,3 +89,19 @@ WalletQmlModel::~WalletQmlModel()
     }
     delete m_activity_list_model;
 }
+
+std::unique_ptr<interfaces::Handler> WalletQmlModel::handleShowProgress(ShowProgressFn fn)
+{
+    if (!m_wallet) {
+        return nullptr;
+    }
+    return m_wallet->handleShowProgress(fn);
+}
+
+std::unique_ptr<interfaces::Handler> WalletQmlModel::handleTransactionChanged(TransactionChangedFn fn)
+{
+    if (!m_wallet) {
+        return nullptr;
+    }
+    return m_wallet->handleTransactionChanged(fn);
+}
