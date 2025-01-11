@@ -18,6 +18,7 @@ Page {
     property string address: ""
     property string direction: ""
     property string status: ""
+    property string date: ""
     property int depth: 0;
 
     id: root
@@ -84,7 +85,7 @@ Page {
 
             CoreText {
                 Layout.alignment: Qt.AlignHCenter
-                text: qsTr("Created just now")
+                text: root.date
                 color: Theme.color.neutral7
                 font.pixelSize: 18
             }

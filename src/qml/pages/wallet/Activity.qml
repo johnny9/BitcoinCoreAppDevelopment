@@ -148,6 +148,7 @@ PageStack {
                         id: detailsPage
                         ActivityDetails {
                             amount: delegate.amount
+                            date: delegate.date
                             depth: delegate.depth
                         }
                     }
