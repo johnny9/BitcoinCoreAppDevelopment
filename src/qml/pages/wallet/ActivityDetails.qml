@@ -35,6 +35,15 @@ Page {
             Theme.color.blue
         }
     }
+    property color amountColor: {
+        if (delegate.type == Transaction.RecvWithAddress
+            || delegate.type == Transaction.RecvFromOther
+            || delegate.type == Transaction.Generated) {
+            Theme.color.green
+        } else {
+            Theme.color.neutral9
+        }
+    }
 
     id: root
     background: null
@@ -103,7 +112,7 @@ Page {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.bottomMargin: 5
                 text: root.amount
-                color: Theme.color.neutral9
+                color: amountColor
                 font.pixelSize: 28
             }
 
