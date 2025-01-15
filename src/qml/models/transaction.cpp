@@ -62,7 +62,29 @@ QString Transaction::prettyAmount() const
 QString Transaction::dateTimeString() const
 {
     QDateTime dateTime = QDateTime::fromSecsSinceEpoch(time);
-    return dateTime.toString("MMMM d");
+    QDateTime now = QDateTime::currentDateTimeUtc();
+
+    qint64 elapsedSeconds = dateTime.secsTo(now);
+    const qint64 minutes = elapsedSeconds / 60;
+    if (minutes < 60) {
+        return QString("%1 minute%2 ago")
+            .arg(minutes)
+            .arg(minutes == 1 ? "" : "s");
+    }
+
+    const qint64 hours = minutes / 60;
+    if (hours < 24) {
+        return QString("%1 hour%2 ago")
+            .arg(hours)
+            .arg(hours == 1 ? "" : "s");
+    }
+
+    int currentYear = QDate::currentDate().year();
+    if (dateTime.date().year() == currentYear) {
+        return dateTime.toString("MMMM d");
+    } else {
+        return dateTime.toString("MMMM d, yyyy");
+    }
 }
 
 void Transaction::updateStatus(const interfaces::WalletTxStatus& wtx, int num_blocks, int64_t block_time)
