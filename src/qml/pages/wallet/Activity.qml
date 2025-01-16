@@ -93,6 +93,7 @@ PageStack {
                         anchors.right: date.left
                         anchors.margins: 6
                         anchors.verticalCenter: parent.verticalCenter
+                        elide: Text.ElideMiddle
                         text: {
                             if (delegate.label != "") {
                                 delegate.label
