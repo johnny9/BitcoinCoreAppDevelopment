@@ -118,13 +118,12 @@ PageStack {
 
                     CoreText {
                         id: amount
-                        width: 125
                         anchors.right: parent.right
                         anchors.margins: 6
                         anchors.verticalCenter: parent.verticalCenter
                         text: delegate.amount
                         font.pixelSize: 15
-                        horizontalAlignment: Text.AlignLeft
+                        horizontalAlignment: Text.AlignRight
                         color: {
                             if (delegate.type == Transaction.RecvWithAddress
                                 || delegate.type == Transaction.RecvFromOther
