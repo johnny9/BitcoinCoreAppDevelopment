@@ -95,14 +95,39 @@ void ActivityListModel::refreshWallet()
               });
 }
 
+void ActivityListModel::updateTransaction(const uint256& hash, const interfaces::WalletTxStatus& wtx, int num_blocks, int64_t block_time)
+{
+    int index = findTransactionIndex(hash);
+    if (index != -1) {
+        QSharedPointer<Transaction> tx = m_transactions.at(index);
+        tx->updateStatus(wtx, num_blocks, block_time);
+        Q_EMIT dataChanged(this->index(index), this->index(index));
+    }
+}
+
+
+int ActivityListModel::findTransactionIndex(const uint256& hash) const
+{
+    auto it = std::find_if(m_transactions.begin(), m_transactions.end(),
+                           [&hash](const QSharedPointer<Transaction>& tx) {
+                               return tx->hash == hash;
+                           });
+    if (it != m_transactions.end()) {
+        return std::distance(m_transactions.begin(), it);
+    }
+    return -1;
+}
+
 void ActivityListModel::subsctribeToCoreSignals()
 {
     // Connect signals to wallet
-    m_handler_transaction_changed = m_wallet_model->handleTransactionChanged([this](const uint256&, ChangeType) {
-        refreshWallet();
-    });
-    m_handler_show_progress = m_wallet_model->handleShowProgress([this](const std::string&, int) {
-        refreshWallet();
+    m_handler_transaction_changed = m_wallet_model->handleTransactionChanged([this](const uint256& hash, ChangeType status) {
+        interfaces::WalletTxStatus wtx;
+        int num_blocks;
+        int64_t block_time;
+        if (m_wallet_model->tryGetTxStatus(hash, wtx, num_blocks, block_time)) {
+            updateTransaction(hash, wtx, num_blocks, block_time);
+        }
     });
 }
 
@@ -111,8 +136,5 @@ void ActivityListModel::unsubscribeFromCoreSignals()
     // Disconnect signals from wallet
     if (m_handler_transaction_changed) {
         m_handler_transaction_changed->disconnect();
-    }
-    if (m_handler_show_progress) {
-        m_handler_show_progress->disconnect();
     }
 }

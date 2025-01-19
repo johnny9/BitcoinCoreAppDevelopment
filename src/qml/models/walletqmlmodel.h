@@ -42,8 +42,6 @@ public:
                         int& num_blocks,
                         int64_t& block_time) const;
 
-    using ShowProgressFn = std::function<void(const std::string& title, int progress)>;
-    std::unique_ptr<interfaces::Handler> handleShowProgress(ShowProgressFn fn);
     using TransactionChangedFn = std::function<void(const uint256& txid, ChangeType status)>;
     virtual std::unique_ptr<interfaces::Handler> handleTransactionChanged(TransactionChangedFn fn);
 

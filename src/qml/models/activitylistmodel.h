@@ -45,8 +45,10 @@ private:
     void updateTransactionStatus(QSharedPointer<Transaction> tx) const;
     void subsctribeToCoreSignals();
     void unsubscribeFromCoreSignals();
+    void updateTransaction(const uint256& hash, const interfaces::WalletTxStatus& wtx,
+                           int num_blocks, int64_t block_time);
+    int findTransactionIndex(const uint256& hash) const;
 
-private:
     QList<QSharedPointer<Transaction>> m_transactions;
     WalletQmlModel* m_wallet_model;
     std::unique_ptr<interfaces::Handler> m_handler_transaction_changed;
