@@ -5,8 +5,8 @@
 #ifndef BITCOIN_QML_MODELS_WALLETQMLMODEL_H
 #define BITCOIN_QML_MODELS_WALLETQMLMODEL_H
 
-#include "interfaces/handler.h"
 #include <interfaces/wallet.h>
+#include <interfaces/handler.h>
 
 #include <qml/models/activitylistmodel.h>
 #include <qml/models/paymentrequest.h>

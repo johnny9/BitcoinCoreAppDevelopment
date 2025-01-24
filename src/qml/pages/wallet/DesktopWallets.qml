@@ -131,9 +131,8 @@ Page {
         Activity {
             id: activityTab
         }
-        Item {
+        Send {
             id: sendTab
-            CoreText { text: "Send" }
         }
         RequestPayment {
             id: receiveTab
