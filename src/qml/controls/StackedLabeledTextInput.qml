@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Bitcoin Core developers
+// Copyright (c) 2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -18,23 +18,21 @@ Item {
     signal textEdited
 
     id: root
-    implicitHeight: input.height
+    implicitHeight: label.height + input.height
 
     CoreText {
         id: label
         anchors.left: parent.left
-        anchors.verticalCenter: parent.verticalCenter
-        horizontalAlignment: Text.AlignLeft
-        width: 110
+        anchors.top: parent.top
         color: Theme.color.neutral9
-        font.pixelSize: 18
+        font.pixelSize: 15
     }
 
     TextField {
         id: input
-        anchors.left: label.right
+        anchors.left: parent.left
         anchors.right: iconContainer.left
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.bottom: parent.bottom
         leftPadding: 0
         font.family: "Inter"
         font.styleName: "Regular"

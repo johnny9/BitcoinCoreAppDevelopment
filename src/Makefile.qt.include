@@ -429,6 +429,7 @@ QML_RES_QML = \
   qml/controls/ProgressIndicator.qml \
   qml/controls/qmldir \
   qml/controls/Setting.qml \
+  qml/controls/StackedLabeledTextInput.qml \
   qml/controls/TextButton.qml \
   qml/controls/Theme.qml \
   qml/controls/ToggleButton.qml \
