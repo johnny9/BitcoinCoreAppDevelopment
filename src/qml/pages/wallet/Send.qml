@@ -65,23 +65,21 @@ PageStack {
                         id: bitcoinAmount
                     }
 
-                    height: amountInput.height
+                    height: 50
                     Layout.fillWidth: true
                     CoreText {
                         id: amountLabel
-                        width: 110
                         anchors.left: parent.left
-                        anchors.verticalCenter: parent.verticalCenter
-                        horizontalAlignment: Text.AlignLeft
+                        anchors.top: parent.top
                         color: Theme.color.neutral9
                         text: "Amount"
-                        font.pixelSize: 18
+                        font.pixelSize: 15
                     }
 
                     TextField {
                         id: amountInput
-                        anchors.left: amountLabel.right
-                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.bottom: parent.bottom
                         leftPadding: 0
                         font.family: "Inter"
                         font.styleName: "Regular"
