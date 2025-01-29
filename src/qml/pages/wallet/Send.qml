@@ -23,17 +23,18 @@ PageStack {
             height: parent.height
             contentWidth: width
 
-
             ColumnLayout {
                 id: columnLayout
                 width: 450
                 anchors.horizontalCenter: parent.horizontalCenter
 
-                spacing: 5
+                spacing: 10
 
                 CoreText {
                     id: title
-                    text: qsTr("Send")
+                    Layout.topMargin: 30
+                    Layout.bottomMargin: 20
+                    text: qsTr("Send bitcoin")
                     font.pixelSize: 21
                     bold: true
                 }
@@ -79,7 +80,7 @@ PageStack {
                     TextField {
                         id: amountInput
                         anchors.left: parent.left
-                        anchors.bottom: parent.bottom
+                        anchors.top: amountLabel.bottom
                         leftPadding: 0
                         font.family: "Inter"
                         font.styleName: "Regular"
@@ -126,6 +127,32 @@ PageStack {
                             color: Theme.color.neutral8
                             size: 30
                         }
+                    }
+                }
+
+                Separator {
+                    Layout.fillWidth: true
+                }
+
+                Item {
+                    height: feeLabel.height + feeValue.height
+                    Layout.fillWidth: true
+                    CoreText {
+                        id: feeLabel
+                        anchors.left: parent.left
+                        anchors.top: parent.top
+                        color: Theme.color.neutral9
+                        text: "Fee"
+                        font.pixelSize: 15
+                    }
+
+                    CoreText {
+                        id: feeValue
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        color: Theme.color.neutral9
+                        text: qsTr("Default (~2,000 sats)")
+                        font.pixelSize: 15
                     }
                 }
 

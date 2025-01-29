@@ -32,7 +32,7 @@ Item {
         id: input
         anchors.left: parent.left
         anchors.right: iconContainer.left
-        anchors.bottom: parent.bottom
+        anchors.top: label.bottom
         leftPadding: 0
         font.family: "Inter"
         font.styleName: "Regular"
@@ -55,6 +55,7 @@ Item {
             color: Theme.color.neutral8
             size: 30
             enabled: source != ""
+            visible: source != ""
             onClicked: iconClicked()
         }
     }
