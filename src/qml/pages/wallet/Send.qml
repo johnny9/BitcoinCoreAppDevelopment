@@ -128,6 +128,14 @@ PageStack {
                         }
                     }
                 }
+
+                ContinueButton {
+                    id: continueButton
+                    Layout.fillWidth: true
+                    Layout.topMargin: 30
+                    text: qsTr("Send")
+                    enabled: false
+                }
             }
         }
     }
