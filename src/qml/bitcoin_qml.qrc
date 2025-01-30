@@ -84,6 +84,7 @@
         <file>pages/wallet/DesktopWallets.qml</file>
         <file>pages/wallet/RequestPayment.qml</file>
         <file>pages/wallet/Send.qml</file>
+        <file>pages/wallet/SendConfirmation.qml</file>
         <file>pages/wallet/WalletBadge.qml</file>
         <file>pages/wallet/WalletSelect.qml</file>
     </qresource>
