@@ -161,7 +161,22 @@ PageStack {
                     Layout.fillWidth: true
                     Layout.topMargin: 30
                     text: qsTr("Send")
-                    enabled: false
+                    onClicked: {
+                        stackView.push(sendConfirmationPage, {
+                            address: address.text,
+                            label: label.text,
+                            amount: amountInput.text
+                        })
+                    }
+                }
+
+                Component {
+                    id: sendConfirmationPage
+                    SendConfirmation {
+                        address: ""
+                        label: ""
+                        amount: "0"
+                    }
                 }
             }
         }

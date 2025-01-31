@@ -12,6 +12,13 @@ import "../../components"
 
 Page {
     id: root
+    background: null
+
+    property string amount: ""
+    property string fee: ""
+    property string total: ""
+    property string label: ""
+    property string address: ""
 
     ScrollView {
         clip: true
@@ -77,18 +84,18 @@ Page {
             }
 
             ContinueButton {
-                id: continueButton
+                id: cancelBUtton
                 Layout.fillWidth: true
                 Layout.topMargin: 30
                 text: qsTr("Cancel")
             }
 
             ContinueButton {
-                id: continueButton
+                id: confimationButton
                 Layout.fillWidth: true
                 Layout.topMargin: 30
                 text: qsTr("Send")
             }
         }
-    }z
+    }
 }
