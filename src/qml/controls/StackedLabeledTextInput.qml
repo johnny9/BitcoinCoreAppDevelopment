@@ -41,7 +41,7 @@ Item {
         placeholderTextColor: Theme.color.neutral7
         background: Item {}
         selectByMouse: true
-        onTextEdited: textEdited()
+        onTextEdited: root.textEdited()
     }
 
     Item {
@@ -56,7 +56,7 @@ Item {
             size: 30
             enabled: source != ""
             visible: source != ""
-            onClicked: iconClicked()
+            onClicked: root.iconClicked()
         }
     }
 }

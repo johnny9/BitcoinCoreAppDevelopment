@@ -7,6 +7,7 @@
 
 #include <qml/models/activitylistmodel.h>
 #include <qml/models/paymentrequest.h>
+#include <qml/models/sendrecipient.h>
 
 #include <outputtype.h>
 #include <qt/bitcoinunits.h>
@@ -21,12 +22,14 @@ WalletQmlModel::WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObje
 {
     m_wallet = std::move(wallet);
     m_activity_list_model = new ActivityListModel(this);
+    m_current_recipient = new SendRecipient(this);
 }
 
 WalletQmlModel::WalletQmlModel(QObject *parent)
     : QObject(parent)
 {
     m_activity_list_model = new ActivityListModel(this);
+    m_current_recipient = new SendRecipient(this);
 }
 
 QString WalletQmlModel::balance() const

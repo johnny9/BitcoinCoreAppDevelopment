@@ -31,6 +31,7 @@
 #include <qml/models/paymentrequest.h>
 #include <qml/models/peerdetailsmodel.h>
 #include <qml/models/peerlistsortproxy.h>
+#include <qml/models/sendrecipient.h>
 #include <qml/models/walletlistmodel.h>
 #include <qml/models/walletqmlmodel.h>
 #include <qml/imageprovider.h>
@@ -342,6 +343,7 @@ int QmlGuiMain(int argc, char* argv[])
     qmlRegisterType<BitcoinAmount>("org.bitcoincore.qt", 1, 0, "BitcoinAmount");
     qmlRegisterType<PaymentRequest>("org.bitcoincore.qt", 1, 0, "PaymentRequest");
     qmlRegisterUncreatableType<Transaction>("org.bitcoincore.qt", 1, 0, "Transaction", "");
+    qmlRegisterUncreatableType<SendRecipient>("org.bitcoincore.qt", 1, 0, "SendRecipient", "");
 
 #ifdef ENABLE_WALLET
     qmlRegisterUncreatableType<WalletQmlModel>("org.bitcoincore.qt", 1, 0, "WalletQmlModel",

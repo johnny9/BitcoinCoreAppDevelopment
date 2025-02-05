@@ -10,9 +10,9 @@
 
 #include <qml/models/activitylistmodel.h>
 #include <qml/models/paymentrequest.h>
+#include <qml/models/sendrecipient.h>
 
 #include <QObject>
-#include <qobjectdefs.h>
 #include <vector>
 
 class ActivityListModel;
@@ -23,6 +23,7 @@ class WalletQmlModel : public QObject
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
     Q_PROPERTY(QString balance READ balance NOTIFY balanceChanged)
     Q_PROPERTY(ActivityListModel* activityListModel READ activityListModel CONSTANT)
+    Q_PROPERTY(SendRecipient* sendRecipient READ sendRecipient CONSTANT)
 
 public:
     WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObject *parent = nullptr);
@@ -35,6 +36,7 @@ public:
                                                      const QString& label,
                                                      const QString& message);
     ActivityListModel* activityListModel() const { return m_activity_list_model; }
+    SendRecipient* sendRecipient() const { return m_current_recipient; }
 
     std::set<interfaces::WalletTx> getWalletTxs() const;
     bool tryGetTxStatus(const uint256& txid,
@@ -53,6 +55,7 @@ private:
     std::unique_ptr<interfaces::Wallet> m_wallet;
     std::vector<PaymentRequest*> m_payment_requests;
     ActivityListModel* m_activity_list_model{nullptr};
+    SendRecipient* m_current_recipient{nullptr};
 };
 
 #endif // BITCOIN_QML_MODELS_WALLETQMLMODEL_H

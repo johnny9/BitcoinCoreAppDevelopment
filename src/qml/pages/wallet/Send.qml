@@ -17,6 +17,8 @@ PageStack {
         id: root
         background: null
 
+        property SendRecipient recipient: walletController.selectedWallet.sendRecipient
+
         ScrollView {
             clip: true
             width: parent.width
@@ -44,6 +46,7 @@ PageStack {
                     Layout.fillWidth: true
                     labelText: qsTr("Pay to")
                     placeholderText: qsTr("Enter address...")
+                    onTextEdited: root.recipient.address = address.text
                 }
 
                 Separator {
@@ -55,7 +58,8 @@ PageStack {
                     Layout.fillWidth: true
                     labelText: qsTr("Address description")
                     placeholderText: qsTr("Enter ...")
-                }
+                    onTextEdited: root.recipient.label = address.text
+               }
 
                 Separator {
                     Layout.fillWidth: true
@@ -92,6 +96,7 @@ PageStack {
                         selectByMouse: true
                         onTextEdited: {
                             amountInput.text = bitcoinAmount.sanitize(amountInput.text)
+                            root.recipient.amount = amountInput.text
                         }
                     }
                     Item {
