@@ -139,7 +139,6 @@ Page {
         }
         Item {
             id: blockClockTab
-            anchors.fill: parent
             BlockClock {
                 parentWidth: parent.width - 40
                 parentHeight: parent.height
