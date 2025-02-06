@@ -323,9 +323,6 @@ int QmlGuiMain(int argc, char* argv[])
     WalletListModel wallet_list_model{*node, nullptr};
     engine.rootContext()->setContextProperty("walletController", &wallet_controller);
     engine.rootContext()->setContextProperty("walletListModel", &wallet_list_model);
-
-    ActivityListModel actitvity_list_model{nullptr};
-    engine.rootContext()->setContextProperty("activityListModel", &actitvity_list_model);
 #endif
 
     OptionsQmlModel options_model(*node, !need_onboarding.toBool());
