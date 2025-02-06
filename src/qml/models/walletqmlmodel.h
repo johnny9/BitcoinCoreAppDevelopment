@@ -11,6 +11,7 @@
 #include <qml/models/activitylistmodel.h>
 #include <qml/models/paymentrequest.h>
 #include <qml/models/sendrecipient.h>
+#include <qml/models/walletqmlmodeltransaction.h>
 
 #include <QObject>
 #include <vector>
@@ -37,6 +38,8 @@ public:
                                                      const QString& message);
     ActivityListModel* activityListModel() const { return m_activity_list_model; }
     SendRecipient* sendRecipient() const { return m_current_recipient; }
+    Q_INVOKABLE void prepareTransaction();
+
 
     std::set<interfaces::WalletTx> getWalletTxs() const;
     bool tryGetTxStatus(const uint256& txid,
@@ -56,6 +59,7 @@ private:
     std::vector<PaymentRequest*> m_payment_requests;
     ActivityListModel* m_activity_list_model{nullptr};
     SendRecipient* m_current_recipient{nullptr};
+    std::unique_ptr<WalletQmlModelTransaction> m_current_transaction;
 };
 
 #endif // BITCOIN_QML_MODELS_WALLETQMLMODEL_H

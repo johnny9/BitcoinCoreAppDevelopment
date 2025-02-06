@@ -2,12 +2,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-
 #include <qml/models/walletqmlmodel.h>
 
 #include <qml/models/activitylistmodel.h>
 #include <qml/models/paymentrequest.h>
 #include <qml/models/sendrecipient.h>
+#include <qml/models/walletqmlmodeltransaction.h>
 
 #include <outputtype.h>
 #include <qt/bitcoinunits.h>
@@ -15,6 +15,7 @@
 #include <key_io.h>
 
 #include <QTimer>
+#include <QList>
 #include <string>
 
 WalletQmlModel::WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObject *parent)
@@ -99,4 +100,12 @@ std::unique_ptr<interfaces::Handler> WalletQmlModel::handleTransactionChanged(Tr
         return nullptr;
     }
     return m_wallet->handleTransactionChanged(fn);
+}
+
+void WalletQmlModel::prepareTransaction()
+{
+    if (!m_wallet) {
+        return;
+    }
+
 }
