@@ -5,6 +5,7 @@
 #ifndef BITCOIN_QML_MODELS_SENDRECIPIENT_H
 #define BITCOIN_QML_MODELS_SENDRECIPIENT_H
 
+#include "consensus/amount.h"
 #include <QObject>
 #include <QString>
 
@@ -31,6 +32,10 @@ public:
     QString message() const;
     void setMessage(const QString& message);
 
+    CAmount cAmount() const;
+
+    bool subtractFeeFromAmount() const;
+
 Q_SIGNALS:
     void addressChanged();
     void labelChanged();
@@ -42,6 +47,8 @@ private:
     QString m_label;
     QString m_amount;
     QString m_message;
+    CAmount m_cAmount;
+    bool m_subtractFeeFromAmount{false};
 };
 
 #endif // BITCOIN_QML_MODELS_SENDRECIPIENT_H

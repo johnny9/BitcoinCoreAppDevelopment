@@ -2,6 +2,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include "consensus/amount.h"
+#include "wallet/coincontrol.h"
+#include "wallet/wallet.h"
 #include <qml/models/walletqmlmodel.h>
 
 #include <qml/models/activitylistmodel.h>
@@ -104,8 +107,29 @@ std::unique_ptr<interfaces::Handler> WalletQmlModel::handleTransactionChanged(Tr
 
 void WalletQmlModel::prepareTransaction()
 {
-    if (!m_wallet) {
+    if (!m_wallet || !m_current_recipient) {
         return;
     }
 
+
+    CScript scriptPubKey = GetScriptForDestination(DecodeDestination(m_current_recipient->address().toStdString()));
+    wallet::CRecipient recipient = {scriptPubKey, m_current_recipient->cAmount(), m_current_recipient->subtractFeeFromAmount()};
+    wallet::CCoinControl coinControl;
+
+    CAmount balance = m_wallet->getBalance();
+    if (balance < recipient.nAmount) {
+        return;
+    }
+
+    std::vector<wallet::CRecipient> vecSend{recipient};
+    int nChangePosRet = -1;
+    CAmount nFeeRequired = 0;
+    const auto& res = m_wallet->createTransaction(vecSend, coinControl, true, nChangePosRet, nFeeRequired);
+    if (res) {
+        CTransactionRef newTx = *res;
+        WalletQmlModelTransaction* transaction = new WalletQmlModelTransaction(m_current_recipient, this);
+        m_current_transaction.reset(transaction);
+        m_current_transaction->setWtx(newTx);
+        m_current_transaction->setTransactionFee(nFeeRequired);
+    }
 }
