@@ -20,6 +20,7 @@ Page {
     ButtonGroup { id: navigationTabs }
 
     signal addWallet()
+    signal sendTransaction()
 
     header: NavigationBar2 {
         id: navBar
@@ -133,6 +134,7 @@ Page {
         }
         Send {
             id: sendTab
+            onSendTransaction: root.sendTransaction()
         }
         RequestPayment {
             id: receiveTab

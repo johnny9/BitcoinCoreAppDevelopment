@@ -90,7 +90,7 @@ long long BitcoinAmount::toSatoshis(QString& amount, const Unit unit)
     }
     QString str = whole + decimals.leftJustified(num_decimals, '0', true);
 
-    return str.toLongLong();    
+    return str.toLongLong();
 }
 
 QString BitcoinAmount::convert(const QString &amount, Unit unit)

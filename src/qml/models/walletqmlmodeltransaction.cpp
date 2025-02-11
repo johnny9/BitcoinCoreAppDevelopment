@@ -5,10 +5,35 @@
 #include <qml/models/walletqmlmodeltransaction.h>
 
 #include <policy/policy.h>
+#include <qobject.h>
 
-WalletQmlModelTransaction::WalletQmlModelTransaction(const SendRecipient& recipient)
-    : recipient(recipient)
+WalletQmlModelTransaction::WalletQmlModelTransaction(const SendRecipient* recipient, QObject* parent)
+: QObject(parent)
+, m_address(recipient->address())
+, m_label(recipient->label())
+, m_amount(recipient->amount())
 {
+    m_total_amount = recipient->cAmount();
+}
+
+QString WalletQmlModelTransaction::amount() const
+{
+    return m_amount;
+}
+
+QString WalletQmlModelTransaction::address() const
+{
+    return m_address;
+}
+
+QString WalletQmlModelTransaction::fee() const
+{
+    return QString::number(m_fee);
+}
+
+QString WalletQmlModelTransaction::label() const
+{
+    return m_label;
 }
 
 CTransactionRef& WalletQmlModelTransaction::getWtx()
@@ -28,15 +53,14 @@ CAmount WalletQmlModelTransaction::getTransactionFee() const
 
 void WalletQmlModelTransaction::setTransactionFee(const CAmount& newFee)
 {
-    m_fee = newFee;
+    if (m_fee != newFee)
+    {
+        m_fee = newFee;
+        Q_EMIT feeChanged();
+    }
 }
 
 CAmount WalletQmlModelTransaction::getTotalTransactionAmount() const
 {
-    CAmount totalTransactionAmount = 0;
-    for (const SendRecipient &rcp : recipients)
-    {
-        totalTransactionAmount += rcp.amount;
-    }
-    return totalTransactionAmount;
+    return m_total_amount;
 }

@@ -5,9 +5,9 @@
 #ifndef BITCOIN_QML_MODELS_SENDRECIPIENT_H
 #define BITCOIN_QML_MODELS_SENDRECIPIENT_H
 
-#include "consensus/amount.h"
 #include <QObject>
 #include <QString>
+#include <qml/bitcoinamount.h>
 
 class SendRecipient : public QObject
 {
@@ -36,6 +36,8 @@ public:
 
     bool subtractFeeFromAmount() const;
 
+    Q_INVOKABLE void clear();
+
 Q_SIGNALS:
     void addressChanged();
     void labelChanged();
@@ -47,7 +49,6 @@ private:
     QString m_label;
     QString m_amount;
     QString m_message;
-    CAmount m_cAmount;
     bool m_subtractFeeFromAmount{false};
 };
 

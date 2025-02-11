@@ -5,6 +5,8 @@
 #ifndef BITCOIN_QML_BITCOINAMOUNT_H
 #define BITCOIN_QML_BITCOINAMOUNT_H
 
+#include <consensus/amount.h>
+
 #include <QObject>
 #include <QString>
 #include <qobjectdefs.h>

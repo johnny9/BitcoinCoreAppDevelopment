@@ -49,6 +49,7 @@ QT_MOC_CPP = \
   qml/models/moc_transaction.cpp \
   qml/models/moc_walletlistmodel.cpp \
   qml/models/moc_walletqmlmodel.cpp \
+  qml/models/moc_walletqmlmodeltransaction.cpp \
   qml/moc_appmode.cpp \
   qml/moc_bitcoinamount.cpp \
   qml/moc_clipboard.cpp \
@@ -138,6 +139,7 @@ BITCOIN_QT_H = \
   qml/models/sendrecipient.h \
   qml/models/walletlistmodel.h \
   qml/models/walletqmlmodel.h \
+  qml/models/walletqmlmodeltransaction.h \
   qml/appmode.h \
   qml/bitcoin.h \
   qml/bitcoinamount.h \
@@ -337,6 +339,7 @@ BITCOIN_QML_BASE_CPP = \
   qml/models/sendrecipient.cpp \
   qml/models/walletlistmodel.cpp \
   qml/models/walletqmlmodel.cpp \
+  qml/models/walletqmlmodeltransaction.cpp \
   qml/imageprovider.cpp \
   qml/util.cpp \
   qml/walletqmlcontroller.cpp
@@ -473,7 +476,8 @@ QML_RES_QML = \
   qml/pages/wallet/ActivityDetails.qml \
   qml/pages/wallet/RequestPayment.qml \
   qml/pages/wallet/Send.qml \
-  qml/pages/wallet/SendConfirmation.qml \
+  qml/pages/wallet/SendResult.qml \
+  qml/pages/wallet/SendReview.qml \
   qml/pages/wallet/WalletBadge.qml \
   qml/pages/wallet/WalletSelect.qml
 

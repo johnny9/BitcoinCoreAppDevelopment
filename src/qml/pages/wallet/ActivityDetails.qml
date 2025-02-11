@@ -187,7 +187,7 @@ Page {
                     size: 30
                     enabled: true
                     onClicked: {
-                        Clipboard.setText(addressText.text)
+                        Clipboard.setText(addressText.text.replace(/\s+/g, ""))
                     }
                 }
             }

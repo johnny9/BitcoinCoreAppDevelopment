@@ -25,6 +25,7 @@ class WalletQmlModel : public QObject
     Q_PROPERTY(QString balance READ balance NOTIFY balanceChanged)
     Q_PROPERTY(ActivityListModel* activityListModel READ activityListModel CONSTANT)
     Q_PROPERTY(SendRecipient* sendRecipient READ sendRecipient CONSTANT)
+    Q_PROPERTY(WalletQmlModelTransaction* currentTransaction READ currentTransaction NOTIFY currentTransactionChanged)
 
 public:
     WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObject *parent = nullptr);
@@ -38,7 +39,9 @@ public:
                                                      const QString& message);
     ActivityListModel* activityListModel() const { return m_activity_list_model; }
     SendRecipient* sendRecipient() const { return m_current_recipient; }
+    WalletQmlModelTransaction* currentTransaction() const { return m_current_transaction.get(); }
     Q_INVOKABLE void prepareTransaction();
+    Q_INVOKABLE void sendTransaction();
 
 
     std::set<interfaces::WalletTx> getWalletTxs() const;
@@ -53,6 +56,7 @@ public:
 Q_SIGNALS:
     void nameChanged();
     void balanceChanged();
+    void currentTransactionChanged();
 
 private:
     std::unique_ptr<interfaces::Wallet> m_wallet;

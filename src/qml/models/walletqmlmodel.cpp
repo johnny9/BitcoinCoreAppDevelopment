@@ -13,6 +13,7 @@
 #include <qml/models/walletqmlmodeltransaction.h>
 
 #include <outputtype.h>
+#include <qobjectdefs.h>
 #include <qt/bitcoinunits.h>
 
 #include <key_io.h>
@@ -111,10 +112,10 @@ void WalletQmlModel::prepareTransaction()
         return;
     }
 
-
     CScript scriptPubKey = GetScriptForDestination(DecodeDestination(m_current_recipient->address().toStdString()));
     wallet::CRecipient recipient = {scriptPubKey, m_current_recipient->cAmount(), m_current_recipient->subtractFeeFromAmount()};
     wallet::CCoinControl coinControl;
+    coinControl.m_feerate = CFeeRate(1000);
 
     CAmount balance = m_wallet->getBalance();
     if (balance < recipient.nAmount) {
@@ -131,5 +132,22 @@ void WalletQmlModel::prepareTransaction()
         m_current_transaction.reset(transaction);
         m_current_transaction->setWtx(newTx);
         m_current_transaction->setTransactionFee(nFeeRequired);
+        Q_EMIT currentTransactionChanged();
     }
+}
+
+void WalletQmlModel::sendTransaction()
+{
+    if (!m_wallet || !m_current_transaction) {
+        return;
+    }
+
+    CTransactionRef newTx = m_current_transaction->getWtx();
+    if (!newTx) {
+        return;
+    }
+
+    interfaces::WalletValueMap value_map;
+    interfaces::WalletOrderForm order_form;
+    m_wallet->commitTransaction(newTx, value_map, order_form);
 }
