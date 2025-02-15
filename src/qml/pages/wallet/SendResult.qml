@@ -13,20 +13,20 @@ import "../../components"
 
 Popup {
     modal: true
-
-    x: Math.round((parent.width - width) / 2)
-    y: Math.round((parent.height - height) / 2)
-    width: 100
-    height: 100
+    anchors.centerIn: parent
 
     Rectangle {
-        color: "lightskyblue"
+        color: Theme.color.neutral0
+        border.color: Theme.color.neutral4
+        border.width: 1
+        radius: 5
         implicitWidth: 400
         implicitHeight: 100
-        Text {
-            text: "Hello blue sky!"
-            color: "navy"
-            anchors.centerIn: parent
+        ColumnLayout {
+            CoreText {
+                Layout.alignment: Qt.AlignHCenter
+                text: qsTr("Transaction sent")
+            }
         }
     }
 }
