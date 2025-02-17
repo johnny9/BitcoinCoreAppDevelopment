@@ -43,7 +43,7 @@ Item {
         placeholderTextColor: Theme.color.neutral7
         background: Item {}
         selectByMouse: true
-        onTextEdited: textEdited()
+        onTextEdited: root.textEdited()
     }
 
     Item {
@@ -57,7 +57,7 @@ Item {
             color: Theme.color.neutral8
             size: 30
             enabled: source != ""
-            onClicked: iconClicked()
+            onClicked: root.iconClicked()
         }
     }
 }
