@@ -166,7 +166,7 @@ Page {
                 id: continueButton
                 Layout.fillWidth: true
                 Layout.topMargin: 30
-                text: qsTr("Send")
+                text: qsTr("Review")
                 onClicked: {
                     root.wallet.prepareTransaction()
                     root.sendTransaction()
