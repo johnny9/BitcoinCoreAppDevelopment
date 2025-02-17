@@ -41,25 +41,13 @@ Page {
                 bold: true
             }
 
-            StackedLabeledTextInput {
+            LabeledTextInput {
                 id: address
                 Layout.fillWidth: true
-                labelText: qsTr("Pay to")
+                labelText: qsTr("Send to")
                 placeholderText: qsTr("Enter address...")
                 text: root.recipient.address
                 onTextEdited: root.recipient.address = address.text
-            }
-
-            Separator {
-                Layout.fillWidth: true
-            }
-
-            StackedLabeledTextInput {
-                id: label
-                Layout.fillWidth: true
-                labelText: qsTr("Address description")
-                placeholderText: qsTr("Enter ...")
-                onTextEdited: root.recipient.label = address.text
             }
 
             Separator {
@@ -71,21 +59,23 @@ Page {
                     id: bitcoinAmount
                 }
 
-                height: 50
+                height: amountInput.height
                 Layout.fillWidth: true
                 CoreText {
                     id: amountLabel
+                    width: 110
                     anchors.left: parent.left
-                    anchors.top: parent.top
+                    anchors.verticalCenter: parent.verticalCenter
+                    horizontalAlignment: Text.AlignLeft
                     color: Theme.color.neutral9
                     text: "Amount"
-                    font.pixelSize: 15
+                    font.pixelSize: 18
                 }
 
                 TextField {
                     id: amountInput
-                    anchors.left: parent.left
-                    anchors.top: amountLabel.bottom
+                    anchors.left: amountLabel.right
+                    anchors.verticalCenter: parent.verticalCenter
                     leftPadding: 0
                     font.family: "Inter"
                     font.styleName: "Regular"
@@ -134,6 +124,18 @@ Page {
                         size: 30
                     }
                 }
+            }
+
+            Separator {
+                Layout.fillWidth: true
+            }
+
+            LabeledTextInput {
+                id: label
+                Layout.fillWidth: true
+                labelText: qsTr("Note to self")
+                placeholderText: qsTr("Enter ...")
+                onTextEdited: root.recipient.label = label.text
             }
 
             Separator {
