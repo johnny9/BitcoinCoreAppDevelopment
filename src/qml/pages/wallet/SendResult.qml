@@ -14,7 +14,6 @@ import "../../components"
 Popup {
     id: root
     modal: true
-    visible: true
     anchors.centerIn: parent
 
     background: Rectangle {
