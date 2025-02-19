@@ -127,12 +127,15 @@ bool WalletQmlModel::prepareTransaction()
     CAmount nFeeRequired = 0;
     const auto& res = m_wallet->createTransaction(vecSend, coinControl, true, nChangePosRet, nFeeRequired);
     if (res) {
+        if (m_current_transaction) {
+            delete m_current_transaction;
+        }
         CTransactionRef newTx = *res;
-        WalletQmlModelTransaction* transaction = new WalletQmlModelTransaction(m_current_recipient, this);
-        m_current_transaction.reset(transaction);
+        m_current_transaction = new WalletQmlModelTransaction(m_current_recipient, this);
         m_current_transaction->setWtx(newTx);
         m_current_transaction->setTransactionFee(nFeeRequired);
         Q_EMIT currentTransactionChanged();
+        return true;
     } else {
         return false;
     }

@@ -39,7 +39,7 @@ public:
                                                      const QString& message);
     ActivityListModel* activityListModel() const { return m_activity_list_model; }
     SendRecipient* sendRecipient() const { return m_current_recipient; }
-    WalletQmlModelTransaction* currentTransaction() const { return m_current_transaction.get(); }
+    WalletQmlModelTransaction* currentTransaction() const { return m_current_transaction; }
     Q_INVOKABLE bool prepareTransaction();
     Q_INVOKABLE void sendTransaction();
 
@@ -63,7 +63,7 @@ private:
     std::vector<PaymentRequest*> m_payment_requests;
     ActivityListModel* m_activity_list_model{nullptr};
     SendRecipient* m_current_recipient{nullptr};
-    std::unique_ptr<WalletQmlModelTransaction> m_current_transaction;
+    WalletQmlModelTransaction* m_current_transaction{nullptr};
 };
 
 #endif // BITCOIN_QML_MODELS_WALLETQMLMODEL_H
