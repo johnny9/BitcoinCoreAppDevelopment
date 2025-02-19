@@ -17,7 +17,7 @@ Page {
     property WalletQmlModel wallet: walletController.selectedWallet
     property SendRecipient recipient: wallet.sendRecipient
 
-    signal sendTransaction()
+    signal transactionPrepared()
 
     ScrollView {
         clip: true
@@ -170,8 +170,9 @@ Page {
                 Layout.topMargin: 30
                 text: qsTr("Review")
                 onClicked: {
-                    root.wallet.prepareTransaction()
-                    root.sendTransaction()
+                    if (root.wallet.prepareTransaction()) {
+                        root.sendTransaction()
+                    }
                 }
             }
         }

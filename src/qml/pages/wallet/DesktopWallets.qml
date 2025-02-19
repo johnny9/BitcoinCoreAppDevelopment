@@ -134,7 +134,7 @@ Page {
         }
         Send {
             id: sendTab
-            onSendTransaction: root.sendTransaction()
+            onTransactionPrepared: root.sendTransaction()
         }
         RequestPayment {
             id: receiveTab
