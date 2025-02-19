@@ -106,10 +106,10 @@ std::unique_ptr<interfaces::Handler> WalletQmlModel::handleTransactionChanged(Tr
     return m_wallet->handleTransactionChanged(fn);
 }
 
-void WalletQmlModel::prepareTransaction()
+bool WalletQmlModel::prepareTransaction()
 {
     if (!m_wallet || !m_current_recipient) {
-        return;
+        return false;
     }
 
     CScript scriptPubKey = GetScriptForDestination(DecodeDestination(m_current_recipient->address().toStdString()));
@@ -119,7 +119,7 @@ void WalletQmlModel::prepareTransaction()
 
     CAmount balance = m_wallet->getBalance();
     if (balance < recipient.nAmount) {
-        return;
+        return false;
     }
 
     std::vector<wallet::CRecipient> vecSend{recipient};
@@ -133,6 +133,8 @@ void WalletQmlModel::prepareTransaction()
         m_current_transaction->setWtx(newTx);
         m_current_transaction->setTransactionFee(nFeeRequired);
         Q_EMIT currentTransactionChanged();
+    } else {
+        return false;
     }
 }
 

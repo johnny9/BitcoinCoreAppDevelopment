@@ -40,7 +40,7 @@ public:
     ActivityListModel* activityListModel() const { return m_activity_list_model; }
     SendRecipient* sendRecipient() const { return m_current_recipient; }
     WalletQmlModelTransaction* currentTransaction() const { return m_current_transaction.get(); }
-    Q_INVOKABLE void prepareTransaction();
+    Q_INVOKABLE bool prepareTransaction();
     Q_INVOKABLE void sendTransaction();
 
 
