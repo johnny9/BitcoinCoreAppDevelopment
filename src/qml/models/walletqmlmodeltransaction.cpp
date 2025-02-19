@@ -10,15 +10,16 @@
 WalletQmlModelTransaction::WalletQmlModelTransaction(const SendRecipient* recipient, QObject* parent)
 : QObject(parent)
 , m_address(recipient->address())
+, m_amount(recipient->cAmount())
+, m_fee(0)
 , m_label(recipient->label())
-, m_amount(recipient->amount())
+, m_wtx(nullptr)
 {
-    m_total_amount = recipient->cAmount();
 }
 
 QString WalletQmlModelTransaction::amount() const
 {
-    return m_amount;
+    return QString::number(m_amount);;
 }
 
 QString WalletQmlModelTransaction::address() const
@@ -29,6 +30,11 @@ QString WalletQmlModelTransaction::address() const
 QString WalletQmlModelTransaction::fee() const
 {
     return QString::number(m_fee);
+}
+
+QString WalletQmlModelTransaction::total() const
+{
+    return QString::number(m_amount + m_fee);
 }
 
 QString WalletQmlModelTransaction::label() const
@@ -62,5 +68,5 @@ void WalletQmlModelTransaction::setTransactionFee(const CAmount& newFee)
 
 CAmount WalletQmlModelTransaction::getTotalTransactionAmount() const
 {
-    return m_total_amount;
+    return m_amount + m_fee;
 }

@@ -152,6 +152,7 @@ PageStack {
                             depth: delegate.depth
                             type: delegate.type
                             status: delegate.status
+                            address: delegate.address
                         }
                     }
                 }

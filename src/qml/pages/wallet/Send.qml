@@ -171,7 +171,7 @@ Page {
                 text: qsTr("Review")
                 onClicked: {
                     if (root.wallet.prepareTransaction()) {
-                        root.sendTransaction()
+                        root.transactionPrepared()
                     }
                 }
             }

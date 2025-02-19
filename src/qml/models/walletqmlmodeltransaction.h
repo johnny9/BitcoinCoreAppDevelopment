@@ -20,6 +20,7 @@ class WalletQmlModelTransaction : public QObject
     Q_PROPERTY(QString amount READ amount NOTIFY amountChanged)
     Q_PROPERTY(QString label READ label CONSTANT)
     Q_PROPERTY(QString fee READ fee NOTIFY feeChanged)
+    Q_PROPERTY(QString total READ total NOTIFY totalChanged)
 public:
     explicit WalletQmlModelTransaction(const SendRecipient* recipient, QObject* parent = nullptr);
 
@@ -27,6 +28,7 @@ public:
     QString amount() const;
     QString fee() const;
     QString label() const;
+    QString total() const;
 
     QList<SendRecipient> getRecipients() const;
 
@@ -47,14 +49,14 @@ Q_SIGNALS:
     void labelChanged();
     void amountChanged();
     void feeChanged();
+    void totalChanged();
 
 private:
-    CTransactionRef m_wtx;
-    CAmount m_fee{0};
-    CAmount m_total_amount{0};
     QString m_address;
+    CAmount m_amount;
+    CAmount m_fee;
     QString m_label;
-    QString m_amount;
+    CTransactionRef m_wtx;
 };
 
 #endif // BITCOIN_QML_MODELS_WALLETQMLMODELTRANSACTION_H

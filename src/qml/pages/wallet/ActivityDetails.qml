@@ -175,7 +175,8 @@ Page {
                     font.pixelSize: 18
                     horizontalAlignment: Text.AlignLeft
                     color: Theme.color.neutral9
-                    text: "bc1q wvlv mha3 cvhy q6qz tjzu mq2d 63ff htzy xxu6 q8"
+                    text: root.address
+                    wrapMode: Text.WrapAnywhere
                 }
 
                 Icon {

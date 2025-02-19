@@ -14,6 +14,7 @@ Page {
     id: root
     background: null
 
+    property WalletQmlModel wallet: walletController.selectedWallet
     property WalletQmlModelTransaction transaction: walletController.selectedWallet.currentTransaction
 
     signal finished()
@@ -42,7 +43,7 @@ Page {
             width: 450
             anchors.horizontalCenter: parent.horizontalCenter
 
-            spacing: 10
+            spacing: 20
 
             CoreText {
                 id: title
@@ -57,7 +58,7 @@ Page {
                 CoreText {
                     text: qsTr("Send to")
                     font.pixelSize: 15
-                    width: 120
+                    Layout.preferredWidth: 110
                     color: Theme.color.neutral7
                 }
                 CoreText {
@@ -71,11 +72,11 @@ Page {
                 CoreText {
                     text: qsTr("Note")
                     font.pixelSize: 15
-                    width: 120
+                    Layout.preferredWidth: 110
                     color: Theme.color.neutral7
                 }
                 CoreText {
-                    text: root.transaction.fee
+                    text: root.transaction.label
                     font.pixelSize: 15
                     color: Theme.color.neutral9
                 }
@@ -85,11 +86,11 @@ Page {
                 CoreText {
                     text: qsTr("Amount")
                     font.pixelSize: 15
-                    width: 120
+                    Layout.preferredWidth: 110
                     color: Theme.color.neutral7
                 }
                 CoreText {
-                    text: root.transaction.fee
+                    text: root.transaction.amount
                     font.pixelSize: 15
                     color: Theme.color.neutral9
                 }
@@ -99,7 +100,7 @@ Page {
                 CoreText {
                     text: qsTr("Fee")
                     font.pixelSize: 15
-                    width: 120
+                    Layout.preferredWidth: 110
                     color: Theme.color.neutral7
                 }
                 CoreText {
@@ -113,11 +114,11 @@ Page {
                 CoreText {
                     text: qsTr("Total")
                     font.pixelSize: 15
-                    width: 120
+                    Layout.preferredWidth: 110
                     color: Theme.color.neutral7
                 }
                 CoreText {
-                    text: root.transaction.fee
+                    text: root.transaction.total
                     font.pixelSize: 15
                     color: Theme.color.neutral9
                 }
@@ -129,6 +130,7 @@ Page {
                 Layout.topMargin: 30
                 text: qsTr("Send")
                 onClicked: {
+                    root.wallet.sendTransaction()
                     root.transactionSent()
                 }
             }
