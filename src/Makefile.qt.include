@@ -353,6 +353,7 @@ QML_RES_ICONS = \
   qml/res/icons/arrow-down.png \
   qml/res/icons/arrow-up.png \
   qml/res/icons/bitcoin-circle.png \
+  qml/res/icons/blockclock-icon.png \
   qml/res/icons/blockclock-size-compact.png \
   qml/res/icons/blockclock-size-showcase.png \
   qml/res/icons/blocktime-dark.png \

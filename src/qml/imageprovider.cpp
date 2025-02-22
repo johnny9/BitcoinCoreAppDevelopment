@@ -216,5 +216,10 @@ QPixmap ImageProvider::requestPixmap(const QString& id, QSize* size, const QSize
         *size = requested_size;
         return QIcon(":/icons/coinbase").pixmap(requested_size);
     }
+
+    if (id == "blockclock-icon") {
+        *size = requested_size;
+        return QIcon(":/icons/blockclock-icon").pixmap(requested_size);
+    }
     return {};
 }
