@@ -12,7 +12,13 @@ ActivityListModel::ActivityListModel(WalletQmlModel *parent)
 {
     if (m_wallet_model != nullptr) {
         refreshWallet();
+        subsctribeToCoreSignals();
     }
+}
+
+ActivityListModel::~ActivityListModel()
+{
+    unsubscribeFromCoreSignals();
 }
 
 int ActivityListModel::rowCount(const QModelIndex &parent) const

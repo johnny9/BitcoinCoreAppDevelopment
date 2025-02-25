@@ -25,6 +25,7 @@ class ActivityListModel : public QAbstractListModel
 
 public:
     explicit ActivityListModel(WalletQmlModel * parent = nullptr);
+    ~ActivityListModel();
 
     enum TransactionRoles {
         AmountRole = Qt::UserRole + 1,
