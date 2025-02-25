@@ -13,6 +13,7 @@
 #include <qml/models/sendrecipient.h>
 #include <qml/models/walletqmlmodeltransaction.h>
 
+#include <memory>
 #include <QObject>
 #include <vector>
 
@@ -45,6 +46,7 @@ public:
 
 
     std::set<interfaces::WalletTx> getWalletTxs() const;
+    interfaces::WalletTx getWalletTx(const uint256& hash) const;
     bool tryGetTxStatus(const uint256& txid,
                         interfaces::WalletTxStatus& tx_status,
                         int& num_blocks,

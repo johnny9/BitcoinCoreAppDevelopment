@@ -101,13 +101,23 @@ void ActivityListModel::refreshWallet()
               });
 }
 
-void ActivityListModel::updateTransaction(const uint256& hash, const interfaces::WalletTxStatus& wtx, int num_blocks, int64_t block_time)
+void ActivityListModel::updateTransaction(const uint256& hash, const interfaces::WalletTxStatus& tx_status, int num_blocks, int64_t block_time)
 {
     int index = findTransactionIndex(hash);
+
     if (index != -1) {
         QSharedPointer<Transaction> tx = m_transactions.at(index);
-        tx->updateStatus(wtx, num_blocks, block_time);
+        tx->updateStatus(tx_status, num_blocks, block_time);
         Q_EMIT dataChanged(this->index(index), this->index(index));
+    } else {
+        // new transaction
+        interfaces::WalletTx wtx = m_wallet_model->getWalletTx(hash);
+        auto transactions = Transaction::fromWalletTx(wtx);
+        for (const auto& tx : transactions) {
+            tx->updateStatus(tx_status, num_blocks, block_time);
+            m_transactions.push_front(tx);
+        }
+        Q_EMIT dataChanged(this->index(0), this->index(m_transactions.size() - 1));
     }
 }
 

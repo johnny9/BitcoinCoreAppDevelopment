@@ -13,7 +13,6 @@
 #include <qml/models/walletqmlmodeltransaction.h>
 
 #include <outputtype.h>
-#include <qobjectdefs.h>
 #include <qt/bitcoinunits.h>
 
 #include <key_io.h>
@@ -21,6 +20,7 @@
 #include <QTimer>
 #include <QList>
 #include <string>
+#include <memory>
 
 WalletQmlModel::WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObject *parent)
     : QObject(parent)
@@ -77,6 +77,14 @@ std::set<interfaces::WalletTx> WalletQmlModel::getWalletTxs() const
         return {};
     }
     return m_wallet->getWalletTxs();
+}
+
+interfaces::WalletTx WalletQmlModel::getWalletTx(const uint256& hash) const
+{
+    if (!m_wallet) {
+        return {};
+    }
+    return m_wallet->getWalletTx(hash);
 }
 
 bool WalletQmlModel::tryGetTxStatus(const uint256& txid,
