@@ -17,6 +17,7 @@ class BitcoinAmount : public QObject
     Q_PROPERTY(Unit unit READ unit WRITE setUnit NOTIFY unitChanged)
     Q_PROPERTY(QString unitLabel READ unitLabel NOTIFY unitChanged)
     Q_PROPERTY(QString amount READ amount WRITE setAmount NOTIFY amountChanged)
+    Q_PROPERTY(QString satoshiAmount READ satoshiAmount NOTIFY amountChanged)
 
 public:
     enum class Unit {
@@ -32,10 +33,12 @@ public:
     QString unitLabel() const;
     QString amount() const;
     void setAmount(const QString& new_amount);
+    QString satoshiAmount() const;
 
 public Q_SLOTS:
     QString sanitize(const QString &text);
-    QString convert(const QString &text, Unit unit);
+    QString convert(const QString &text, Unit unit) const;
+    QString toSatoshis(const QString &text) const;
 
 Q_SIGNALS:
     void unitChanged();
@@ -43,8 +46,8 @@ Q_SIGNALS:
     void amountChanged();
 
 private:
-    long long toSatoshis(QString &amount, const Unit unit);
-    int decimals(Unit unit);
+    long long toSatoshis(QString &amount, const Unit unit) const;
+    int decimals(Unit unit) const;
 
     Unit m_unit;
     QString m_unitLabel;

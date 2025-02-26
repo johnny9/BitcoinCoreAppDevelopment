@@ -86,8 +86,8 @@ Page {
                     placeholderText: "0.00000000"
                     selectByMouse: true
                     onTextEdited: {
-                        amountInput.text = bitcoinAmount.sanitize(amountInput.text)
-                        root.recipient.amount = amountInput.text
+                        amountInput.text = bitcoinAmount.amount = bitcoinAmount.sanitize(amountInput.text)
+                        root.recipient.amount = bitcoinAmount.satoshiAmount
                     }
                 }
                 Item {
