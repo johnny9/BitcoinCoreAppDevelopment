@@ -114,6 +114,8 @@ void WalletQmlController::initialize()
 
     auto wallets = m_node.walletLoader().getWallets();
     for (auto& wallet : wallets) {
-        handleLoadWallet(std::move(wallet));
+        m_wallets.push_back(new WalletQmlModel(std::move(wallet)));
     }
+    m_selected_wallet = m_wallets.front();
+    Q_EMIT selectedWalletChanged();
 }
