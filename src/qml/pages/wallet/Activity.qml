@@ -13,6 +13,13 @@ import "../../components"
 PageStack {
     id: stackView
 
+    Connections {
+        target: walletController
+        function onSelectedWalletChanged() {
+            root.StackView.view.pop()
+        }
+    }
+
     initialItem: Page {
         id: root
         background: null
