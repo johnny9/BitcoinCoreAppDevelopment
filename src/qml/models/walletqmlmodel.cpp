@@ -2,9 +2,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include <consensus/amount.h>
-#include "wallet/coincontrol.h"
-#include "wallet/wallet.h"
 #include <qml/models/walletqmlmodel.h>
 
 #include <qml/models/activitylistmodel.h>
@@ -12,10 +9,12 @@
 #include <qml/models/sendrecipient.h>
 #include <qml/models/walletqmlmodeltransaction.h>
 
+#include <consensus/amount.h>
+#include <key_io.h>
 #include <outputtype.h>
 #include <qt/bitcoinunits.h>
-
-#include <key_io.h>
+#include <wallet/coincontrol.h>
+#include <wallet/wallet.h>
 
 #include <QTimer>
 #include <QList>
