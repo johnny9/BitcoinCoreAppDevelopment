@@ -116,6 +116,8 @@ void WalletQmlController::initialize()
     for (auto& wallet : wallets) {
         m_wallets.push_back(new WalletQmlModel(std::move(wallet)));
     }
-    m_selected_wallet = m_wallets.front();
-    Q_EMIT selectedWalletChanged();
+    if (!m_wallets.empty()) {
+        m_selected_wallet = m_wallets.front();
+        Q_EMIT selectedWalletChanged();
+    }
 }
