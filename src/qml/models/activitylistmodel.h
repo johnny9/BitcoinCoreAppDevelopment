@@ -7,15 +7,13 @@
 
 #include <interfaces/handler.h>
 #include <interfaces/wallet.h>
-#include <qml/models/walletqmlmodel.h>
 #include <qml/models/transaction.h>
 
+#include <memory>
 #include <QAbstractListModel>
 #include <QList>
 #include <QSharedPointer>
 #include <QString>
-
-#include <memory>
 
 class WalletQmlModel;
 
