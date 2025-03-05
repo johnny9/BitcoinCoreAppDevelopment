@@ -5,14 +5,12 @@
 #ifndef BITCOIN_QML_MODELS_TRANSACTION_H
 #define BITCOIN_QML_MODELS_TRANSACTION_H
 
-#include "uint256.h"
 #include <interfaces/wallet.h>
 
 #include <QObject>
 #include <QString>
 #include <QSharedPointer>
-#include <qglobal.h>
-#include <qobject.h>
+#include <uint256.h>
 
 class Transaction : public QObject
 {
