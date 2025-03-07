@@ -8,6 +8,7 @@
 #include <interfaces/wallet.h>
 #include <interfaces/handler.h>
 
+#include <qml/models/activitylistmodel.h>
 #include <qml/models/paymentrequest.h>
 #include <qml/models/sendrecipient.h>
 #include <qml/models/walletqmlmodeltransaction.h>
