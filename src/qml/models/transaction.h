@@ -66,6 +66,7 @@ public:
     Type type;
     QString txid;
     bool countsForBalance;
+    bool involvesWatchAddress;
 
     static QList<QSharedPointer<Transaction>> fromWalletTx(const interfaces::WalletTx& tx);
 };

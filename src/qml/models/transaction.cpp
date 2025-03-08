@@ -11,6 +11,8 @@
 #include <QDateTime>
 
 using wallet::ISMINE_SPENDABLE;
+using wallet::ISMINE_NO;
+using wallet::ISMINE_WATCH_ONLY;
 using wallet::isminetype;
 
 namespace {
@@ -138,20 +140,84 @@ QList<QSharedPointer<Transaction>> Transaction::fromWalletTx(const interfaces::W
     uint256 hash = wtx.tx->GetHash();
     std::map<std::string, std::string> mapValue = wtx.value_map;
 
-    if (nNet > 0 || wtx.is_coinbase)
-    {
-        //
-        // Credit
-        //
+    bool involvesWatchAddress = false;
+    isminetype fAllFromMe = ISMINE_SPENDABLE;
+    bool any_from_me = false;
+    if (wtx.is_coinbase) {
+        fAllFromMe = ISMINE_NO;
+    } else {
+        for (const isminetype mine : wtx.txin_is_mine)
+        {
+            if(mine & ISMINE_WATCH_ONLY) involvesWatchAddress = true;
+            if(fAllFromMe > mine) fAllFromMe = mine;
+            if (mine) any_from_me = true;
+        }
+    }
+
+    if (fAllFromMe || !any_from_me) {
+        for (const isminetype mine : wtx.txout_is_mine)
+        {
+            if(mine & ISMINE_WATCH_ONLY) involvesWatchAddress = true;
+        }
+
+        CAmount nTxFee = nDebit - wtx.tx->GetValueOut();
+
+
         for(unsigned int i = 0; i < wtx.tx->vout.size(); i++)
         {
             const CTxOut& txout = wtx.tx->vout[i];
+
+            if (fAllFromMe) {
+                // Change is only really possible if we're the sender
+                // Otherwise, someone just sent bitcoins to a change address, which should be shown
+                //if (wtx.txout_is_change[i]) {
+                //   continue;
+                //}
+
+                //
+                // Debit
+                //
+
+                QSharedPointer<Transaction> sub = QSharedPointer<Transaction>::create(hash, nTime);
+                sub->idx = i;
+                sub->involvesWatchAddress = involvesWatchAddress;
+
+                if (!std::get_if<CNoDestination>(&wtx.txout_address[i]))
+                {
+                    // Sent to Bitcoin Address
+                    sub->type = Transaction::SendToAddress;
+                    sub->address = QString::fromStdString(EncodeDestination(wtx.txout_address[i]));
+                }
+                else
+                {
+                    // Sent to IP, or other non-address transaction like OP_EVAL
+                    sub->type = Transaction::SendToOther;
+                    sub->address = QString::fromStdString(mapValue["to"]);
+                }
+
+                CAmount nValue = txout.nValue;
+                /* Add fee to first output */
+                if (nTxFee > 0)
+                {
+                    nValue += nTxFee;
+                    nTxFee = 0;
+                }
+                sub->debit = -nValue;
+
+                parts.append(sub);
+            }
+
             isminetype mine = wtx.txout_is_mine[i];
             if(mine)
             {
+                //
+                // Credit
+                //
+
                 QSharedPointer<Transaction> sub = QSharedPointer<Transaction>::create(hash, nTime);
                 sub->idx = i; // vout index
                 sub->credit = txout.nValue;
+                sub->involvesWatchAddress = mine & ISMINE_WATCH_ONLY;
                 if (wtx.txout_address_is_mine[i])
                 {
                     // Received by Bitcoin Address
@@ -173,85 +239,12 @@ QList<QSharedPointer<Transaction>> Transaction::fromWalletTx(const interfaces::W
                 parts.append(sub);
             }
         }
-    }
-    else
-    {
-        isminetype fAllFromMe = ISMINE_SPENDABLE;
-        for (const isminetype mine : wtx.txin_is_mine)
-        {
-            if(fAllFromMe > mine) fAllFromMe = mine;
-        }
-
-        isminetype fAllToMe = ISMINE_SPENDABLE;
-        for (const isminetype mine : wtx.txout_is_mine)
-        {
-            if(fAllToMe > mine) fAllToMe = mine;
-        }
-
-        if (fAllFromMe && fAllToMe)
-        {
-            // Payment to self
-            std::string address;
-            for (auto it = wtx.txout_address.begin(); it != wtx.txout_address.end(); ++it) {
-                if (it != wtx.txout_address.begin()) address += ", ";
-                address += EncodeDestination(*it);
-            }
-
-            CAmount nChange = wtx.change;
-            parts.append(QSharedPointer<Transaction>::create(hash, nTime, Transaction::SendToSelf, QString::fromStdString(address), -(nDebit - nChange), nCredit - nChange));
-        }
-        else if (fAllFromMe)
-        {
-            //
-            // Debit
-            //
-            CAmount nTxFee = nDebit - wtx.tx->GetValueOut();
-
-            for (unsigned int nOut = 0; nOut < wtx.tx->vout.size(); nOut++)
-            {
-                const CTxOut& txout = wtx.tx->vout[nOut];
-                QSharedPointer<Transaction> sub = QSharedPointer<Transaction>::create(hash, nTime);
-                sub->idx = nOut;
-
-                if(wtx.txout_is_mine[nOut])
-                {
-                    // Ignore parts sent to self, as this is usually the change
-                    // from a transaction sent back to our own address.
-                    continue;
-                }
-
-                if (!std::get_if<CNoDestination>(&wtx.txout_address[nOut]))
-                {
-                    // Sent to Bitcoin Address
-                    sub->type = Transaction::SendToAddress;
-                    sub->address = QString::fromStdString(EncodeDestination(wtx.txout_address[nOut]));
-                }
-                else
-                {
-                    // Sent to IP, or other non-address transaction like OP_EVAL
-                    sub->type = Transaction::SendToOther;
-                    sub->address = QString::fromStdString(mapValue["to"]);
-                }
-
-                CAmount nValue = txout.nValue;
-                /* Add fee to first output */
-                if (nTxFee > 0)
-                {
-                    nValue += nTxFee;
-                    nTxFee = 0;
-                }
-                sub->debit = nValue;
-
-                parts.append(sub);
-            }
-        }
-        else
-        {
-            //
-            // Mixed debit transaction, can't break down payees
-            //
-            parts.append(QSharedPointer<Transaction>::create(hash, nTime, Transaction::Other, QString(""), nNet, CAmount(0)));
-        }
+    } else {
+        //
+        // Mixed debit transaction, can't break down payees
+        //
+        parts.append(QSharedPointer<Transaction>::create(hash, nTime, Transaction::Other, "", nNet, 0));
+        parts.last()->involvesWatchAddress = involvesWatchAddress;
     }
 
     return parts;
