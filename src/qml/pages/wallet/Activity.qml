@@ -45,13 +45,13 @@ PageStack {
             model: walletController.selectedWallet.activityListModel
             delegate: ItemDelegate {
                 id: delegate
-                required property string label;
                 required property string address;
-                required property string date;
                 required property string amount;
-                required property int type;
-                required property int status;
+                required property string date;
                 required property int depth;
+                required property string label;
+                required property int status;
+                required property int type;
 
                 width: listView.width
                 height: 51

@@ -26,13 +26,13 @@ public:
     ~ActivityListModel();
 
     enum TransactionRoles {
-        AmountRole = Qt::UserRole + 1,
-        AddressRole,
-        LabelRole,
+        AddressRole = Qt::UserRole + 1,
+        AmountRole,
         DateTimeRole,
+        DepthRole,
+        LabelRole,
         StatusRole,
-        TypeRole,
-        DepthRole
+        TypeRole
     };
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
