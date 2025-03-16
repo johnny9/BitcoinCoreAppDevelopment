@@ -416,6 +416,7 @@ QML_RES_QML = \
   qml/controls/ContinueButton.qml \
   qml/controls/CoreText.qml \
   qml/controls/CoreTextField.qml \
+  qml/controls/EllipsisMenuButton.qml \
   qml/controls/ExternalLink.qml \
   qml/controls/FocusBorder.qml \
   qml/controls/Header.qml \

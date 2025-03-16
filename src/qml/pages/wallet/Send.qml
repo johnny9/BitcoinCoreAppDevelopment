@@ -32,13 +32,27 @@ Page {
 
             spacing: 10
 
-            CoreText {
-                id: title
+            Item {
+                id: titleRow
+                Layout.fillWidth: true
                 Layout.topMargin: 30
                 Layout.bottomMargin: 20
-                text: qsTr("Send bitcoin")
-                font.pixelSize: 21
-                bold: true
+                CoreText {
+                    id: title
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: qsTr("Send bitcoin")
+                    font.pixelSize: 21
+                    bold: true
+                }
+                EllipsisMenuButton {
+                    id: menuButton
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    onClicked: {
+                        console.log("Menu button clicked")
+                    }
+                }
             }
 
             LabeledTextInput {
