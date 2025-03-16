@@ -12,29 +12,9 @@ import "../controls"
 OptionPopup {
     id: root
 
-    implicitWidth: 300
-    implicitHeight: 50
-
-    CoreText {
-        anchors.left: parent.left
-        anchors.verticalCenter: parent.verticalCenter
-        font.pixelSize: 18
-        text: qsTr("Enable coin control")
-    }
-    OptionSwitch {
-        id: optionSwitch
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        checked: true
-        width: 45
-        height: 28
-    }
-    MouseArea {
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        onClicked: {
-            optionSwitch.checked = !optionSwitch.checked
-        }
+    EllipsisMenuToggleItem {
+        id: coinControlToggle
+        anchors.centerIn: parent
+        text: qsTr("Enable Coin control")
     }
 }
