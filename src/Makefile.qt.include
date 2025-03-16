@@ -403,6 +403,7 @@ QML_RES_QML = \
   qml/components/PeersIndicator.qml \
   qml/components/NetworkTrafficGraph.qml \
   qml/components/NetworkIndicator.qml \
+  qml/components/OptionPopup.qml \
   qml/components/ProxySettings.qml \
   qml/components/Separator.qml \
   qml/components/StorageLocations.qml \
@@ -437,6 +438,7 @@ QML_RES_QML = \
   qml/controls/ProgressIndicator.qml \
   qml/controls/qmldir \
   qml/controls/Setting.qml \
+  qml/controls/SendOptionsPopup.qml \
   qml/controls/StackedLabeledTextInput.qml \
   qml/controls/TextButton.qml \
   qml/controls/Theme.qml \

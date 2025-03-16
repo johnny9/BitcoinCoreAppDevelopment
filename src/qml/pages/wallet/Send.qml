@@ -49,9 +49,18 @@ Page {
                     id: menuButton
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
+                    checked: optionPopup.opened
                     onClicked: {
-                        console.log("Menu button clicked")
+                        optionPopup.open()
                     }
+                }
+
+                SendOptionsPopup {
+                    id: optionPopup
+                    x: menuButton.x - width + menuButton.width
+                    y: menuButton.y + menuButton.height
+                    width: 300
+                    height: 50
                 }
             }
 
