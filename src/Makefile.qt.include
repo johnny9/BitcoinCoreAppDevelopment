@@ -472,6 +472,7 @@ QML_RES_QML = \
   qml/pages/settings/SettingsTheme.qml \
   qml/pages/wallet/Activity.qml \
   qml/pages/wallet/ActivityDetails.qml \
+  qml/pages/wallet/CoinSelection.qml \
   qml/pages/wallet/CreateBackup.qml \
   qml/pages/wallet/CreateConfirm.qml \
   qml/pages/wallet/CreateIntro.qml \

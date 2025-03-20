@@ -25,6 +25,10 @@ Page {
         property alias coinControlEnabled: sendOptionsPopup.coinControlEnabled
     }
 
+    CoinSelection {
+        id: coinSelectionPage
+    }
+
     ScrollView {
         clip: true
         width: parent.width
@@ -175,6 +179,7 @@ Page {
                 visible: settings.coinControlEnabled
                 Layout.fillWidth: true
                 coinsSelected: 3
+                onOpenCoinControl: coinSelectionPage.open()
             }
 
             Separator {
