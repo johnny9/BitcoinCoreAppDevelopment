@@ -5,6 +5,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import Qt.labs.settings 1.0
 import org.bitcoincore.qt 1.0
 
 import "../../controls"
@@ -18,6 +19,11 @@ Page {
     property SendRecipient recipient: wallet.sendRecipient
 
     signal transactionPrepared()
+
+    Settings {
+        id: settings
+        property alias coinControlEnabled: sendOptionsPopup.coinControlEnabled
+    }
 
     ScrollView {
         clip: true
@@ -49,14 +55,14 @@ Page {
                     id: menuButton
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
-                    checked: optionPopup.opened
+                    checked: sendOptionsPopup.opened
                     onClicked: {
-                        optionPopup.open()
+                        sendOptionsPopup.open()
                     }
                 }
 
                 SendOptionsPopup {
-                    id: optionPopup
+                    id: sendOptionsPopup
                     x: menuButton.x - width + menuButton.width
                     y: menuButton.y + menuButton.height
                     width: 300
@@ -162,6 +168,17 @@ Page {
             }
 
             Separator {
+                Layout.fillWidth: true
+            }
+
+            LabeledCoinControlButton {
+                visible: settings.coinControlEnabled
+                Layout.fillWidth: true
+                coinsSelected: 3
+            }
+
+            Separator {
+                visible: settings.coinControlEnabled
                 Layout.fillWidth: true
             }
 

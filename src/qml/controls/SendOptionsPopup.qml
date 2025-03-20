@@ -12,6 +12,8 @@ import "../controls"
 OptionPopup {
     id: root
 
+    property alias coinControlEnabled: coinControlToggle.checked
+
     EllipsisMenuToggleItem {
         id: coinControlToggle
         anchors.centerIn: parent

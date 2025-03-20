@@ -17,6 +17,7 @@ Button {
 
     id: root
     checkable: true
+    checked: optionSwitch.checked
     hoverEnabled: AppMode.isDesktop
 
     implicitWidth: 280
@@ -49,7 +50,7 @@ Button {
             Layout.alignment: Qt.AlignVCenter
             Layout.preferredWidth: 40
             Layout.preferredHeight: 24
-            checked: true
+            checked: root.checked
         }
     }
 
