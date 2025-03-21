@@ -19,14 +19,11 @@ Page {
     property SendRecipient recipient: wallet.sendRecipient
 
     signal transactionPrepared()
+    signal openCoinControl()
 
     Settings {
         id: settings
         property alias coinControlEnabled: sendOptionsPopup.coinControlEnabled
-    }
-
-    CoinSelection {
-        id: coinSelectionPage
     }
 
     ScrollView {
@@ -179,7 +176,7 @@ Page {
                 visible: settings.coinControlEnabled
                 Layout.fillWidth: true
                 coinsSelected: 3
-                onOpenCoinControl: coinSelectionPage.open()
+                onOpenCoinControl: root.openCoinControl()
             }
 
             Separator {

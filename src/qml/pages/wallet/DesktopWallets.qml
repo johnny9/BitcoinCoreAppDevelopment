@@ -137,6 +137,7 @@ Page {
         Send {
             id: sendTab
             onTransactionPrepared: root.sendTransaction()
+            onOpenCoinControl: root.StackView.view.push(coinSelectionPage)
         }
         RequestPayment {
             id: receiveTab
@@ -152,6 +153,13 @@ Page {
         }
         NodeSettings {
             showDoneButton: false
+        }
+    }
+
+    Component {
+        id: coinSelectionPage
+        CoinSelection {
+            onDone: root.StackView.view.pop()
         }
     }
 

@@ -11,31 +11,24 @@ import org.bitcoincore.qt 1.0
 import "../../controls"
 import "../../components"
 
-Popup {
-    id: popup
-    modal: true
-    padding: 0
+Page {
+    id: root
 
-    x: 0
-    y: 0
-    width: parent.width
-    height: parent.height
+    signal done()
 
-    contentItem: Page {
-        header: NavigationBar2 {
-            centerItem: Header {
-                headerBold: true
-                headerSize: 18
-                header: qsTr("Coin Selection")
-            }
-            rightItem: NavButton {
-                text: qsTr("Done")
-                onClicked: popup.close()
-            }
+    header: NavigationBar2 {
+        centerItem: Header {
+            headerBold: true
+            headerSize: 18
+            header: qsTr("Coin Selection")
         }
-
-        background: Rectangle {
-            color: Theme.color.neutral0
+        rightItem: NavButton {
+            text: qsTr("Done")
+            onClicked: root.done()
         }
+    }
+
+    background: Rectangle {
+        color: Theme.color.neutral0
     }
 }
