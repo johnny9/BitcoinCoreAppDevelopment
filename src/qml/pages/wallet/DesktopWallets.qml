@@ -40,6 +40,7 @@ Page {
 
             WalletSelect {
                 id: walletSelect
+
                 model: walletListModel
                 closePolicy: Popup.CloseOnPressOutside
                 x: 0

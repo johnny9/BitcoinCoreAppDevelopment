@@ -175,8 +175,11 @@ Page {
             LabeledCoinControlButton {
                 visible: settings.coinControlEnabled
                 Layout.fillWidth: true
-                coinsSelected: 3
-                onOpenCoinControl: root.openCoinControl()
+                coinsSelected: wallet.coinsListModel.lockedCoinsCount
+                onOpenCoinControl: {
+                    root.wallet.coinsListModel.update()
+                    root.openCoinControl()
+                }
             }
 
             Separator {

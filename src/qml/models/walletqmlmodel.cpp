@@ -10,6 +10,7 @@
 #include <qml/models/walletqmlmodeltransaction.h>
 
 #include <consensus/amount.h>
+#include <interfaces/wallet.h>
 #include <key_io.h>
 #include <outputtype.h>
 #include <qt/bitcoinunits.h>
@@ -26,6 +27,7 @@ WalletQmlModel::WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObje
 {
     m_wallet = std::move(wallet);
     m_activity_list_model = new ActivityListModel(this);
+    m_coins_list_model = new CoinsListModel(this);
     m_current_recipient = new SendRecipient(this);
 }
 
@@ -33,6 +35,7 @@ WalletQmlModel::WalletQmlModel(QObject *parent)
     : QObject(parent)
 {
     m_activity_list_model = new ActivityListModel(this);
+    m_coins_list_model = new CoinsListModel(this);
     m_current_recipient = new SendRecipient(this);
 }
 
@@ -162,4 +165,44 @@ void WalletQmlModel::sendTransaction()
     interfaces::WalletValueMap value_map;
     interfaces::WalletOrderForm order_form;
     m_wallet->commitTransaction(newTx, value_map, order_form);
+}
+
+interfaces::Wallet::CoinsList WalletQmlModel::listCoins() const
+{
+    if (!m_wallet) {
+        return {};
+    }
+    return m_wallet->listCoins();
+}
+
+bool WalletQmlModel::lockCoin(const COutPoint& output)
+{
+    if (!m_wallet) {
+        return false;
+    }
+    return m_wallet->lockCoin(output, true);
+}
+
+bool WalletQmlModel::unlockCoin(const COutPoint& output)
+{
+    if (!m_wallet) {
+        return false;
+    }
+    return m_wallet->unlockCoin(output);
+}
+
+bool WalletQmlModel::isLockedCoin(const COutPoint& output)
+{
+    if (!m_wallet) {
+        return false;
+    }
+    return m_wallet->isLockedCoin(output);
+}
+
+void WalletQmlModel::listLockedCoins(std::vector<COutPoint>& outputs)
+{
+    if (!m_wallet) {
+        return;
+    }
+    m_wallet->listLockedCoins(outputs);
 }
