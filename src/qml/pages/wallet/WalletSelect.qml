@@ -15,6 +15,8 @@ Popup {
     implicitHeight: layout.height + arrow.height + 11
     implicitWidth: 250
     clip: true
+    modal: true
+    dim: false
 
     signal addWallet()
 

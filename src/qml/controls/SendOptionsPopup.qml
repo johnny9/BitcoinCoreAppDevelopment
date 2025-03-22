@@ -14,6 +14,10 @@ OptionPopup {
 
     property alias coinControlEnabled: coinControlToggle.checked
 
+    clip: true
+    modal: true
+    dim: false
+
     EllipsisMenuToggleItem {
         id: coinControlToggle
         anchors.centerIn: parent
