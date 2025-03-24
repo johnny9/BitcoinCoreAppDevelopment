@@ -4,9 +4,10 @@
 
 #include <qml/models/coinslistmodel.h>
 
-#include <coins.h>
+#include <consensus/amount.h>
 #include <interfaces/wallet.h>
 #include <key_io.h>
+#include <primitives/transaction.h>
 #include <qml/models/walletqmlmodel.h>
 #include <qt/bitcoinunits.h>
 #include <vector>
@@ -116,4 +117,16 @@ unsigned int CoinsListModel::selectedCoinsCount() const
 QString CoinsListModel::totalSelected() const
 {
     return BitcoinUnits::format(BitcoinUnits::Unit::BTC, m_total_amount);
+}
+
+QString CoinsListModel::changeAmount() const
+{
+    CAmount change = m_total_amount - m_wallet_model->sendRecipient()->cAmount();
+    change = std::abs(change);
+    return BitcoinUnits::format(BitcoinUnits::Unit::BTC, change);
+}
+
+bool CoinsListModel::overRequiredAmount() const
+{
+    return m_total_amount > m_wallet_model->sendRecipient()->cAmount();
 }

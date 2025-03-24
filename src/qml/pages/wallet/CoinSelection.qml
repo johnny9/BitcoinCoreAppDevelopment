@@ -77,13 +77,17 @@ Page {
                     elide: Text.ElideMiddle
                     wrapMode: Text.NoWrap
                     horizontalAlignment: Text.AlignLeft
-                    text: qsTr("Remaining to select")
+                    text: if (root.wallet.coinsListModel.overRequiredAmount) {
+                        qsTr("Over required amount")
+                    } else {
+                        qsTr("Remaining to select")
+                    }
                 }
                 CoreText {
                     Layout.alignment: Qt.AlignRight
                     font.pixelSize: 15
                     color: Theme.color.neutral7
-                    text: "0.00000000"
+                    text: root.wallet.coinsListModel.changeAmount
                 }
             }
         }
