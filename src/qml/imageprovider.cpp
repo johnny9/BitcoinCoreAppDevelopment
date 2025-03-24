@@ -6,6 +6,7 @@
 
 #include <qt/networkstyle.h>
 
+#include <QFile>
 #include <QIcon>
 #include <QPixmap>
 #include <QQuickImageProvider>
