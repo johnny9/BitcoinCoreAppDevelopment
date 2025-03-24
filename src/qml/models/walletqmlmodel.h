@@ -5,9 +5,9 @@
 #ifndef BITCOIN_QML_MODELS_WALLETQMLMODEL_H
 #define BITCOIN_QML_MODELS_WALLETQMLMODEL_H
 
+#include <wallet/coincontrol.h>
 #include <interfaces/wallet.h>
 #include <interfaces/handler.h>
-
 #include <qml/models/activitylistmodel.h>
 #include <qml/models/coinslistmodel.h>
 #include <qml/models/paymentrequest.h>
@@ -57,11 +57,16 @@ public:
 
     using TransactionChangedFn = std::function<void(const uint256& txid, ChangeType status)>;
     virtual std::unique_ptr<interfaces::Handler> handleTransactionChanged(TransactionChangedFn fn);
+
     interfaces::Wallet::CoinsList listCoins() const;
     bool lockCoin(const COutPoint& output);
     bool unlockCoin(const COutPoint& output);
     bool isLockedCoin(const COutPoint& output);
     void listLockedCoins(std::vector<COutPoint>& outputs);
+    void selectCoin(const COutPoint& output);
+    void unselectCoin(const COutPoint& output);
+    bool isSelectedCoin(const COutPoint& output);
+    std::vector<COutPoint> listSelectedCoins() const;
 
 Q_SIGNALS:
     void nameChanged();
@@ -75,6 +80,7 @@ private:
     CoinsListModel* m_coins_list_model{nullptr};
     SendRecipient* m_current_recipient{nullptr};
     WalletQmlModelTransaction* m_current_transaction{nullptr};
+    wallet::CCoinControl m_coin_control;
 };
 
 #endif // BITCOIN_QML_MODELS_WALLETQMLMODEL_H

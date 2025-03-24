@@ -124,8 +124,7 @@ bool WalletQmlModel::prepareTransaction()
 
     CScript scriptPubKey = GetScriptForDestination(DecodeDestination(m_current_recipient->address().toStdString()));
     wallet::CRecipient recipient = {scriptPubKey, m_current_recipient->cAmount(), m_current_recipient->subtractFeeFromAmount()};
-    wallet::CCoinControl coinControl;
-    coinControl.m_feerate = CFeeRate(1000);
+    m_coin_control.m_feerate = CFeeRate(1000);
 
     CAmount balance = m_wallet->getBalance();
     if (balance < recipient.nAmount) {
@@ -135,7 +134,7 @@ bool WalletQmlModel::prepareTransaction()
     std::vector<wallet::CRecipient> vecSend{recipient};
     int nChangePosRet = -1;
     CAmount nFeeRequired = 0;
-    const auto& res = m_wallet->createTransaction(vecSend, coinControl, true, nChangePosRet, nFeeRequired);
+    const auto& res = m_wallet->createTransaction(vecSend, m_coin_control, true, nChangePosRet, nFeeRequired);
     if (res) {
         if (m_current_transaction) {
             delete m_current_transaction;
@@ -205,4 +204,24 @@ void WalletQmlModel::listLockedCoins(std::vector<COutPoint>& outputs)
         return;
     }
     m_wallet->listLockedCoins(outputs);
+}
+
+void WalletQmlModel::selectCoin(const COutPoint& output)
+{
+    m_coin_control.Select(output);
+}
+
+void WalletQmlModel::unselectCoin(const COutPoint& output)
+{
+    m_coin_control.UnSelect(output);
+}
+
+bool WalletQmlModel::isSelectedCoin(const COutPoint& output)
+{
+    return m_coin_control.IsSelected(output);
+}
+
+std::vector<COutPoint> WalletQmlModel::listSelectedCoins() const
+{
+    return m_coin_control.ListSelected();
 }

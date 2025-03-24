@@ -2,14 +2,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "coins.h"
-#include <qchar.h>
 #include <qml/models/coinslistmodel.h>
 
+#include <coins.h>
 #include <interfaces/wallet.h>
 #include <key_io.h>
 #include <qml/models/walletqmlmodel.h>
-#include <qobjectdefs.h>
+#include <qt/bitcoinunits.h>
 #include <vector>
 
 CoinsListModel::CoinsListModel(WalletQmlModel * parent)
@@ -35,11 +34,13 @@ QVariant CoinsListModel::data(const QModelIndex &index, int role) const
         case AddressRole:
             return QString::fromStdString(EncodeDestination(destination));
         case AmountRole:
-            return QString::fromStdString("0.00000000");
+            return BitcoinUnits::format(BitcoinUnits::Unit::BTC, coin.txout.nValue);
         case LabelRole:
             return QString::fromStdString("");
         case LockedRole:
             return m_wallet_model->isLockedCoin(outpoint);
+        case SelectedRole:
+            return m_wallet_model->isSelectedCoin(outpoint);
         default:
             return QVariant();
     }
@@ -53,6 +54,7 @@ QHash<int, QByteArray> CoinsListModel::roleNames() const
     roles[DateTimeRole] = "date";
     roles[LabelRole] = "label";
     roles[LockedRole] = "locked";
+    roles[SelectedRole] = "selected";
     return roles;
 }
 
@@ -82,20 +84,21 @@ void CoinsListModel::setSortBy(const QString &roleName)
     }
 }
 
-bool CoinsListModel::toggleCoinLock(const int index)
+void CoinsListModel::toggleCoinSelection(const int index)
 {
     if (index < 0 || index >= static_cast<int>(m_coins.size())) {
-        return false;
+        return;
     }
     const auto& [destination, outpoint, coin] = m_coins.at(index);
-    bool return_value;
-    if (m_wallet_model->isLockedCoin(outpoint)) {
-        return_value = m_wallet_model->unlockCoin(outpoint);
+
+    if (m_wallet_model->isSelectedCoin(outpoint)) {
+        m_wallet_model->unselectCoin(outpoint);
+        m_total_amount -= coin.txout.nValue;
     } else {
-        return_value = m_wallet_model->lockCoin(outpoint);
+        m_wallet_model->selectCoin(outpoint);
+        m_total_amount += coin.txout.nValue;
     }
-    Q_EMIT lockedCoinsCountChanged();
-    return return_value;
+    Q_EMIT selectedCoinsCountChanged();
 }
 
 unsigned int CoinsListModel::lockedCoinsCount() const
@@ -105,3 +108,12 @@ unsigned int CoinsListModel::lockedCoinsCount() const
     return lockedCoins.size();
 }
 
+unsigned int CoinsListModel::selectedCoinsCount() const
+{
+    return m_wallet_model->listSelectedCoins().size();
+}
+
+QString CoinsListModel::totalSelected() const
+{
+    return BitcoinUnits::format(BitcoinUnits::Unit::BTC, m_total_amount);
+}

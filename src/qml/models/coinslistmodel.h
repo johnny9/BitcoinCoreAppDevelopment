@@ -5,15 +5,13 @@
 #ifndef BITCOIN_QML_MODELS_COINSLISTMODEL_H
 #define BITCOIN_QML_MODELS_COINSLISTMODEL_H
 
+#include <consensus/amount.h>
 #include <interfaces/handler.h>
 #include <interfaces/wallet.h>
 #include <qml/models/transaction.h>
 
 #include <QAbstractListModel>
-#include <QList>
-#include <QSharedPointer>
 #include <QString>
-#include <qobjectdefs.h>
 
 class WalletQmlModel;
 
@@ -21,6 +19,8 @@ class CoinsListModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(int lockedCoinsCount READ lockedCoinsCount NOTIFY lockedCoinsCountChanged)
+    Q_PROPERTY(int selectedCoinsCount READ selectedCoinsCount NOTIFY selectedCoinsCountChanged)
+    Q_PROPERTY(QString totalSelected READ totalSelected NOTIFY selectedCoinsCountChanged)
 
 public:
     explicit CoinsListModel(WalletQmlModel * parent = nullptr);
@@ -31,7 +31,8 @@ public:
         AmountRole,
         DateTimeRole,
         LabelRole,
-        LockedRole
+        LockedRole,
+        SelectedRole
     };
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -41,18 +42,22 @@ public:
 public Q_SLOTS:
     void update();
     void setSortBy(const QString &roleName);
-    bool toggleCoinLock(const int index);
+    void toggleCoinSelection(const int index);
     unsigned int lockedCoinsCount() const;
+    unsigned int selectedCoinsCount() const;
+    QString totalSelected() const;
 
 Q_SIGNALS:
     void sortByChanged(const QString &roleName);
     void lockedCoinsCountChanged();
+    void selectedCoinsCountChanged();
 
 private:
     WalletQmlModel* m_wallet_model;
     std::unique_ptr<interfaces::Handler> m_handler_transaction_changed;
     std::vector<std::tuple<CTxDestination, COutPoint, interfaces::WalletTxOut>> m_coins;
     QString m_sort_by;
+    CAmount m_total_amount;
 };
 
 #endif // BITCOIN_QML_MODELS_ACTIVITYLISTMODEL_H

@@ -132,13 +132,13 @@ Page {
         width: parent.width
         height: parent.height
         currentIndex: navigationTabs.checkedButton.index
+        clip: true
         Activity {
             id: activityTab
         }
         Send {
             id: sendTab
             onTransactionPrepared: root.sendTransaction()
-            onOpenCoinControl: root.StackView.view.push(coinSelectionPage)
         }
         RequestPayment {
             id: receiveTab
@@ -154,13 +154,6 @@ Page {
         }
         NodeSettings {
             showDoneButton: false
-        }
-    }
-
-    Component {
-        id: coinSelectionPage
-        CoinSelection {
-            onDone: root.StackView.view.pop()
         }
     }
 

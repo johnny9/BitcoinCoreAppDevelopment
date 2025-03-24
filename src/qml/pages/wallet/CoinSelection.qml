@@ -44,33 +44,46 @@ Page {
         spacing: 15
 
         header: ColumnLayout {
-            spacing: 20
-            width: parent.width
-
-            Flickable {
-                id: sortSelection
+            width: listView.width
+            RowLayout {
                 Layout.fillWidth: true
+                spacing: 15
+                CoreText {
+                    Layout.alignment: Qt.AlignLeft
+                    Layout.fillWidth: true
+                    Layout.preferredWidth: 0
+                    font.pixelSize: 18
+                    color: Theme.color.neutral9
+                    elide: Text.ElideMiddle
+                    wrapMode: Text.NoWrap
+                    horizontalAlignment: Text.AlignLeft
+                    text: qsTr("Total selected")
+                }
+                CoreText {
+                    Layout.alignment: Qt.AlignRight
+                    color: Theme.color.neutral9
+                    font.pixelSize: 18
+                    text: root.wallet.coinsListModel.totalSelected
+                }
+            }
+            RowLayout {
                 Layout.bottomMargin: 30
-                Layout.alignment: Qt.AlignHCenter
-                height: toggleButtons.height
-                contentWidth: toggleButtons.width
-                boundsMovement: width == toggleButtons.width ?
-                    Flickable.StopAtBound : Flickable.FollowBoundsBehavior
-                RowLayout {
-                    id: toggleButtons
-                    spacing: 10
-                    ToggleButton {
-                        text: qsTr("date")
-                        autoExclusive: true
-                    }
-                    ToggleButton {
-                        text: qsTr("amount")
-                        autoExclusive: true
-                    }
-                    ToggleButton {
-                        text: qsTr("label")
-                        autoExclusive: true
-                    }
+                CoreText {
+                    Layout.alignment: Qt.AlignLeft
+                    Layout.fillWidth: true
+                    Layout.preferredWidth: 0
+                    font.pixelSize: 15
+                    color: Theme.color.neutral7
+                    elide: Text.ElideMiddle
+                    wrapMode: Text.NoWrap
+                    horizontalAlignment: Text.AlignLeft
+                    text: qsTr("Remaining to select")
+                }
+                CoreText {
+                    Layout.alignment: Qt.AlignRight
+                    font.pixelSize: 15
+                    color: Theme.color.neutral7
+                    text: "0.00000000"
                 }
             }
         }
@@ -81,6 +94,7 @@ Page {
             required property string amount;
             required property string label;
             required property bool locked;
+            required property bool selected;
 
             required property int index;
 
@@ -95,13 +109,13 @@ Page {
 
             leftPadding: 0
             rightPadding: 0
-            topPadding: 0
+            topPadding: 14
             bottomPadding: 14
             width: listView.width
 
             background: Item {
                 Separator {
-                    anchors.bottom: parent.bottom
+                    anchors.top: parent.top
                     width: parent.width
                 }
             }
@@ -111,7 +125,9 @@ Page {
                 CoreCheckBox {
                     id: checkBox
                     Layout.minimumWidth: 20
-                    checked: locked
+                    enabled: !locked
+                    checked: selected
+                    visible: !locked
                     MouseArea {
                         anchors.fill: parent
                         enabled: false
@@ -119,10 +135,13 @@ Page {
                         cursorShape: Qt.PointingHandCursor
                     }
 
-                    onToggled: {
-                        // TODO: Figure out how to error check this
-                        listView.model.toggleCoinLock(index)
-                    }
+                    onToggled: listView.model.toggleCoinSelection(index)
+                }
+                Icon {
+                    source: "qrc:/icons/lock"
+                    color: Theme.color.neutral9
+                    visible: locked
+                    size: 20
                 }
                 CoreText {
                     text: amount
