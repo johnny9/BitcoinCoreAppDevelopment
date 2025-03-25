@@ -17,6 +17,7 @@ EXPECTED_CIRCULAR_DEPENDENCIES = (
     "node/utxo_snapshot -> validation -> node/utxo_snapshot",
     "qt/addresstablemodel -> qt/walletmodel -> qt/addresstablemodel",
     "qml/models/activitylistmodel -> qml/models/walletqmlmodel -> qml/models/activitylistmodel",
+    "qml/models/coinslistmodel -> qml/models/walletqmlmodel -> qml/models/coinslistmodel",
     "qt/recentrequeststablemodel -> qt/walletmodel -> qt/recentrequeststablemodel",
     "qt/sendcoinsdialog -> qt/walletmodel -> qt/sendcoinsdialog",
     "qt/transactiontablemodel -> qt/walletmodel -> qt/transactiontablemodel",
