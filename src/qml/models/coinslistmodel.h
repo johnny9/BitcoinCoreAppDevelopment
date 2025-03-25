@@ -24,8 +24,6 @@ class CoinsListModel : public QAbstractListModel
     Q_PROPERTY(QString changeAmount READ changeAmount NOTIFY selectedCoinsCountChanged)
     Q_PROPERTY(bool overRequiredAmount READ overRequiredAmount NOTIFY selectedCoinsCountChanged)
 
-
-
 public:
     explicit CoinsListModel(WalletQmlModel * parent = nullptr);
     ~CoinsListModel();
@@ -66,4 +64,4 @@ private:
     CAmount m_total_amount;
 };
 
-#endif // BITCOIN_QML_MODELS_ACTIVITYLISTMODEL_H
+#endif // BITCOIN_QML_MODELS_COINSLISTMODEL_H
