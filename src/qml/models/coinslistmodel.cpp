@@ -18,6 +18,7 @@ CoinsListModel::CoinsListModel(WalletQmlModel * parent)
     , m_sort_by("amount")
     , m_total_amount(0)
 {
+    update();
 }
 
 CoinsListModel::~CoinsListModel() = default;
@@ -76,6 +77,7 @@ void CoinsListModel::update()
         }
     }
     endResetModel();
+    Q_EMIT coinCountChanged();
 }
 
 void CoinsListModel::setSortBy(const QString &roleName)
@@ -131,4 +133,9 @@ QString CoinsListModel::changeAmount() const
 bool CoinsListModel::overRequiredAmount() const
 {
     return m_total_amount > m_wallet_model->sendRecipient()->cAmount();
+}
+
+int CoinsListModel::coinCount() const
+{
+    return m_coins.size();
 }
