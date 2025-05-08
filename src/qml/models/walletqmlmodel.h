@@ -28,6 +28,7 @@ class WalletQmlModel : public QObject
     Q_PROPERTY(ActivityListModel* activityListModel READ activityListModel CONSTANT)
     Q_PROPERTY(CoinsListModel* coinsListModel READ coinsListModel CONSTANT)
     Q_PROPERTY(SendRecipient* sendRecipient READ sendRecipient CONSTANT)
+    Q_PROPERTY(SendRecipientsListModel* sendRecipientList READ sendRecipientList CONSTANT)
     Q_PROPERTY(WalletQmlModelTransaction* currentTransaction READ currentTransaction NOTIFY currentTransactionChanged)
     Q_PROPERTY(int recipientIndex READ recipientIndex NOTIFY recipientIndexChanged)
     Q_PROPERTY(int recipientsCount READ recipientsCount NOTIFY recipientsCountChanged)
@@ -45,6 +46,7 @@ public:
     ActivityListModel* activityListModel() const { return m_activity_list_model; }
     CoinsListModel* coinsListModel() const { return m_coins_list_model; }
     SendRecipient* sendRecipient() const { return m_current_recipient; }
+    SendRecipientList* sendRecipientList() const { return m_current_recipient; }
     WalletQmlModelTransaction* currentTransaction() const { return m_current_transaction; }
     Q_INVOKABLE bool prepareTransaction();
     Q_INVOKABLE void sendTransaction();
