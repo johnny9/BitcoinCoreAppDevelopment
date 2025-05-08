@@ -7,6 +7,7 @@
 #include <qml/models/activitylistmodel.h>
 #include <qml/models/paymentrequest.h>
 #include <qml/models/sendrecipient.h>
+#include <qml/models/sendrecipientslistmodel.h>
 #include <qml/models/walletqmlmodeltransaction.h>
 
 #include <consensus/amount.h>
@@ -29,6 +30,7 @@ WalletQmlModel::WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObje
     m_activity_list_model = new ActivityListModel(this);
     m_coins_list_model = new CoinsListModel(this);
     m_current_recipient = new SendRecipient(this);
+    m_send_recipients = new SendRecipientsListModel(this);
 }
 
 WalletQmlModel::WalletQmlModel(QObject *parent)
@@ -37,6 +39,7 @@ WalletQmlModel::WalletQmlModel(QObject *parent)
     m_activity_list_model = new ActivityListModel(this);
     m_coins_list_model = new CoinsListModel(this);
     m_current_recipient = new SendRecipient(this);
+    m_send_recipients = new SendRecipientsListModel(this);
 }
 
 QString WalletQmlModel::balance() const
@@ -224,14 +227,4 @@ bool WalletQmlModel::isSelectedCoin(const COutPoint& output)
 std::vector<COutPoint> WalletQmlModel::listSelectedCoins() const
 {
     return m_coin_control.ListSelected();
-}
-
-int WalletQmlModel::recipientIndex() const
-{
-    return 1;
-}
-
-int WalletQmlModel::recipientsCount() const
-{
-    return 1;
 }

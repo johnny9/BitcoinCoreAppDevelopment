@@ -12,6 +12,7 @@
 #include <qml/models/coinslistmodel.h>
 #include <qml/models/paymentrequest.h>
 #include <qml/models/sendrecipient.h>
+#include <qml/models/sendrecipientslistmodel.h>
 #include <qml/models/walletqmlmodeltransaction.h>
 
 #include <memory>
@@ -28,10 +29,8 @@ class WalletQmlModel : public QObject
     Q_PROPERTY(ActivityListModel* activityListModel READ activityListModel CONSTANT)
     Q_PROPERTY(CoinsListModel* coinsListModel READ coinsListModel CONSTANT)
     Q_PROPERTY(SendRecipient* sendRecipient READ sendRecipient CONSTANT)
-    Q_PROPERTY(SendRecipientsListModel* sendRecipientList READ sendRecipientList CONSTANT)
+    Q_PROPERTY(SendRecipientsListModel* recipients READ sendRecipientList CONSTANT)
     Q_PROPERTY(WalletQmlModelTransaction* currentTransaction READ currentTransaction NOTIFY currentTransactionChanged)
-    Q_PROPERTY(int recipientIndex READ recipientIndex NOTIFY recipientIndexChanged)
-    Q_PROPERTY(int recipientsCount READ recipientsCount NOTIFY recipientsCountChanged)
 
 public:
     WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObject *parent = nullptr);
@@ -45,8 +44,8 @@ public:
                                                      const QString& message);
     ActivityListModel* activityListModel() const { return m_activity_list_model; }
     CoinsListModel* coinsListModel() const { return m_coins_list_model; }
-    SendRecipient* sendRecipient() const { return m_current_recipient; }
-    SendRecipientList* sendRecipientList() const { return m_current_recipient; }
+    SendRecipient* sendRecipient() const { return m_send_recipients->currentRecipient(); }
+    SendRecipientsListModel* sendRecipientList() const { return m_send_recipients; }
     WalletQmlModelTransaction* currentTransaction() const { return m_current_transaction; }
     Q_INVOKABLE bool prepareTransaction();
     Q_INVOKABLE void sendTransaction();
@@ -72,21 +71,17 @@ public:
     bool isSelectedCoin(const COutPoint& output);
     std::vector<COutPoint> listSelectedCoins() const;
 
-    int recipientIndex() const;
-    int recipientsCount() const;
-
 Q_SIGNALS:
     void nameChanged();
     void balanceChanged();
     void currentTransactionChanged();
-    void recipientIndexChanged();
-    void recipientsCountChanged();
 
 private:
     std::unique_ptr<interfaces::Wallet> m_wallet;
     std::vector<PaymentRequest*> m_payment_requests;
     ActivityListModel* m_activity_list_model{nullptr};
     CoinsListModel* m_coins_list_model{nullptr};
+    SendRecipientsListModel* m_send_recipients{nullptr};
     SendRecipient* m_current_recipient{nullptr};
     WalletQmlModelTransaction* m_current_transaction{nullptr};
     wallet::CCoinControl m_coin_control;
