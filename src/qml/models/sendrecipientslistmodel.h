@@ -41,6 +41,7 @@ public:
     void setCurrentIndex(int row);
     SendRecipient* currentRecipient() const;
     int count() const { return m_recipients.size(); }
+    QList<SendRecipient*> recipients() const { return m_recipients; }
 
 Q_SIGNALS:
     void currentIndexChanged();
