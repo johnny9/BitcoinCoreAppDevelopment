@@ -14,11 +14,13 @@
 #include <QObject>
 #include <QThread>
 #include <memory>
+#include <qobjectdefs.h>
 
 class WalletQmlController : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(WalletQmlModel* selectedWallet READ selectedWallet NOTIFY selectedWalletChanged)
+    Q_PROPERTY(bool initialized READ initialized NOTIFY initializedChanged)
 
 public:
     explicit WalletQmlController(interfaces::Node& node, QObject *parent = nullptr);
@@ -29,9 +31,11 @@ public:
 
     WalletQmlModel* selectedWallet() const;
     void unloadWallets();
+    bool initialized() const { return m_initialized; }
 
 Q_SIGNALS:
     void selectedWalletChanged();
+    void initializedChanged();
 
 public Q_SLOTS:
     void initialize();
@@ -39,6 +43,7 @@ public Q_SLOTS:
 private:
     void handleLoadWallet(std::unique_ptr<interfaces::Wallet> wallet);
 
+    bool m_initialized{false};
     interfaces::Node& m_node;
     WalletQmlModel* m_selected_wallet;
     QObject* m_worker;
