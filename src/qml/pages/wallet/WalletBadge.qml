@@ -22,8 +22,7 @@ Button {
     property bool showBalance: true
     property bool showIcon: true
     property string balance: "0.0 000 000"
-    property bool loading: true
-    property color skeletonBaseColor: Theme.color.neutral9
+    property bool loading: false
 
     checkable: true
     hoverEnabled: AppMode.isDesktop
@@ -33,64 +32,49 @@ Button {
     topPadding: 0
     clip: true
 
-    Item {
-        id: skeletonWrapper
+    contentItem: Item {
         anchors.fill: parent
-        visible: root.loading
 
         RowLayout {
+            visible: root.loading
             anchors.leftMargin: 5
             anchors.rightMargin: 5
-            anchors.fill: parent
+            anchors.centerIn: parent
             spacing: 5
 
-            SequentialAnimation on opacity {
-                loops: Animation.Infinite
-                running: parent.visible
-                NumberAnimation { from: 0.4; to: 0.6; duration: 1000; easing.type: Easing.InOutQuad }
-                NumberAnimation { from: 0.6; to: 0.4; duration: 1000; easing.type: Easing.InOutQuad }
-            }
-
-            Rectangle {
-                width: 30; height: 30; radius: 5
-                color: root.skeletonBaseColor
+            Skeleton {
+                Layout.preferredHeight: 30
+                Layout.preferredWidth: 30
             }
             ColumnLayout {
                 spacing: 2
                 Layout.preferredHeight: 30
                 Layout.fillWidth: true
 
-                Rectangle {
-                    Layout.preferredHeight: 13
+                Skeleton {
+                    Layout.preferredHeight: 15
                     Layout.preferredWidth: 50
-                    radius: 3
-                    color: root.skeletonBaseColor
                 }
 
-                Rectangle {
-                    Layout.preferredHeight: 13
-                    Layout.preferredWidth: 100
-                    radius: 3
-                    color: root.skeletonBaseColor
+                Skeleton {
+                    Layout.preferredHeight: 15
+                    Layout.preferredWidth: 114
                 }
             }
         }
-    }
-
-    Item {
-        id: contentWrapper
-        anchors.fill: parent
-        visible: !root.loading
-
-        opacity: visible ? 1 : 0
-
-        Behavior on opacity {
-            NumberAnimation { duration: 400 }
-        }
 
         RowLayout {
+            visible: !root.loading
+
+            opacity: visible ? 1 : 0
+
+            Behavior on opacity {
+                NumberAnimation { duration: 400 }
+            }
+
             anchors.leftMargin: 5
             anchors.rightMargin: 5
+            anchors.centerIn: parent
             clip: true
             spacing: 5
             Icon {
@@ -114,11 +98,11 @@ Button {
                     text: root.text
                     color: root.textColor
                     bold: true
-                    visible: root.text !== "" && root.loading === false
+                    visible: root.text !== ""
                 }
                 CoreText {
                     id: balanceText
-                    visible: root.showBalance && root.loading === false
+                    visible: root.showBalance
                     text: "₿ " + root.balance
                     color: Theme.color.neutral7
                 }
