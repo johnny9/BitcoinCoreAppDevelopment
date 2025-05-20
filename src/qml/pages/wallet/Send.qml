@@ -18,6 +18,10 @@ PageStack {
     property WalletQmlModel wallet: walletController.selectedWallet
     property SendRecipient recipient: wallet.recipients.current
 
+    property bool loading: false
+    property color skeletonBaseColor: "#e0e0e0"
+    property color skeletonHighlightColor: "#f5f5f5"
+
     signal transactionPrepared()
 
     Connections {
@@ -49,6 +53,26 @@ PageStack {
 
                 spacing: 10
 
+
+                Rectangle {
+                    width: parent.width * 0.9
+                    height: 60
+                    radius: 6
+                    visible: !walletController.initialized
+
+                    SequentialAnimation on opacity {
+                        running: true
+                        loops: Animation.Infinite
+                        NumberAnimation {
+                            from: 0.2; to: 0.8
+                            duration: 1000
+                        }
+                        NumberAnimation {
+                            from: 0.8; to: 0.2
+                            duration: 1000
+                        }
+                    }
+                }
                 Item {
                     id: titleRow
                     Layout.fillWidth: true

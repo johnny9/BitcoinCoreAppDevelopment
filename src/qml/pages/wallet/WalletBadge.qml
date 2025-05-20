@@ -22,6 +22,8 @@ Button {
     property bool showBalance: true
     property bool showIcon: true
     property string balance: "0.0 000 000"
+    property bool loading: true
+    property color skeletonBaseColor: Theme.color.neutral9
 
     checkable: true
     hoverEnabled: AppMode.isDesktop
@@ -31,39 +33,95 @@ Button {
     topPadding: 0
     clip: true
 
-    contentItem: RowLayout {
-        anchors.leftMargin: 5
-        anchors.rightMargin: 5
-        clip: true
-        spacing: 5
-        Icon {
-            id: icon
-            visible: root.showIcon
-            source: "image://images/singlesig-wallet"
-            color: Theme.color.neutral8
-            size: 30
-            Layout.minimumWidth: 30
-            Layout.preferredWidth: 30
-            Layout.maximumWidth: 30
-        }
-        ColumnLayout {
-            spacing: 2
-            CoreText {
-                horizontalAlignment: Text.AlignLeft
-                Layout.fillWidth: true
-                wrap: false
-                id: buttonText
-                font.pixelSize: 13
-                text: root.text
-                color: root.textColor
-                bold: true
-                visible: root.text !== ""
+    Item {
+        id: skeletonWrapper
+        anchors.fill: parent
+        visible: root.loading
+
+        RowLayout {
+            anchors.leftMargin: 5
+            anchors.rightMargin: 5
+            anchors.fill: parent
+            spacing: 5
+
+            SequentialAnimation on opacity {
+                loops: Animation.Infinite
+                running: parent.visible
+                NumberAnimation { from: 0.4; to: 0.6; duration: 1000; easing.type: Easing.InOutQuad }
+                NumberAnimation { from: 0.6; to: 0.4; duration: 1000; easing.type: Easing.InOutQuad }
             }
-            CoreText {
-                id: balanceText
-                visible: root.showBalance
-                text: "₿ " + root.balance
-                color: Theme.color.neutral7
+
+            Rectangle {
+                width: 30; height: 30; radius: 5
+                color: root.skeletonBaseColor
+            }
+            ColumnLayout {
+                spacing: 2
+                Layout.preferredHeight: 30
+                Layout.fillWidth: true
+
+                Rectangle {
+                    Layout.preferredHeight: 13
+                    Layout.preferredWidth: 50
+                    radius: 3
+                    color: root.skeletonBaseColor
+                }
+
+                Rectangle {
+                    Layout.preferredHeight: 13
+                    Layout.preferredWidth: 100
+                    radius: 3
+                    color: root.skeletonBaseColor
+                }
+            }
+        }
+    }
+
+    Item {
+        id: contentWrapper
+        anchors.fill: parent
+        visible: !root.loading
+
+        opacity: visible ? 1 : 0
+
+        Behavior on opacity {
+            NumberAnimation { duration: 400 }
+        }
+
+        RowLayout {
+            anchors.leftMargin: 5
+            anchors.rightMargin: 5
+            clip: true
+            spacing: 5
+            Icon {
+                id: icon
+                visible: root.showIcon
+                source: "image://images/singlesig-wallet"
+                color: Theme.color.neutral8
+                size: 30
+                Layout.minimumWidth: 30
+                Layout.preferredWidth: 30
+                Layout.maximumWidth: 30
+            }
+            ColumnLayout {
+                spacing: 2
+                CoreText {
+                    horizontalAlignment: Text.AlignLeft
+                    Layout.fillWidth: true
+                    wrap: false
+                    id: buttonText
+                    font.pixelSize: 13
+                    text: root.text
+                    color: root.textColor
+                    bold: true
+                    visible: root.text !== "" && root.loading === false
+                }
+                CoreText {
+                    id: balanceText
+                    visible: root.showBalance && root.loading === false
+                    text: "₿ " + root.balance
+                    color: Theme.color.neutral7
+                }
             }
         }
     }
