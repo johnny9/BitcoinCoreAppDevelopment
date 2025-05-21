@@ -6,13 +6,57 @@ import QtQuick 2.15
 
 Rectangle {
     id: root
-    color: Theme.color.neutral9
-    radius: 5
+    property color baseColor: Theme.color.neutral1
+    property color highlightColor: Theme.color.neutral2
+    property int shimmerDuration: 2500
 
-    SequentialAnimation on opacity {
+    radius: 3
+
+    gradient: Gradient {
+        orientation: Gradient.Horizontal
+        GradientStop {
+            id: stop1;
+            position: 0.0;
+            color: root.baseColor
+        }
+        GradientStop {
+            id: stop2;
+            position: 0.5;
+            color: root.highlightColor
+        }
+        GradientStop {
+            id: stop3;
+            position: 1;
+            color: root.baseColor
+        }
+    }
+
+    ParallelAnimation  {
+        running: true
         loops: Animation.Infinite
-        running: root.visible
-        NumberAnimation { from: 0.4; to: 0.6; duration: 1000; easing.type: Easing.InOutQuad }
-        NumberAnimation { from: 0.6; to: 0.4; duration: 1000; easing.type: Easing.InOutQuad }
+        NumberAnimation {
+            target: stop1
+            property: "position"
+            from: -1.0;
+            to: 1.0;
+            duration: root.shimmerDuration;
+            easing.type: Easing.Linear
+        }
+        NumberAnimation {
+            target: stop2
+            property: "position"
+            from: -0.5;
+            to: 1.5;
+            duration: root.shimmerDuration;
+            easing.type: Easing.Linear
+        }
+        NumberAnimation {
+            target: stop3
+            property: "position"
+            from: 0.0;
+            to: 2.0;
+            duration: root.shimmerDuration;
+            easing.type: Easing.Linear
+        }
     }
 }
