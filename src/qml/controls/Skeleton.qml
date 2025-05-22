@@ -3,60 +3,69 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 import QtQuick 2.15
+import QtQuick.Controls 2.15
 
-Rectangle {
+Pane {
     id: root
+
     property color baseColor: Theme.color.neutral1
     property color highlightColor: Theme.color.neutral2
     property int shimmerDuration: 2500
+    property bool loading: false
 
-    radius: 3
+    contentItem.opacity: !root.loading ? 1 : 0
 
-    gradient: Gradient {
-        orientation: Gradient.Horizontal
-        GradientStop {
-            id: stop1;
-            position: 0.0;
-            color: root.baseColor
-        }
-        GradientStop {
-            id: stop2;
-            position: 0.5;
-            color: root.highlightColor
-        }
-        GradientStop {
-            id: stop3;
-            position: 1;
-            color: root.baseColor
-        }
-    }
+    background: Rectangle {
+        visible: root.loading
+        anchors.fill: parent
+        radius: 3
 
-    ParallelAnimation  {
-        running: true
-        loops: Animation.Infinite
-        NumberAnimation {
-            target: stop1
-            property: "position"
-            from: -1.0;
-            to: 1.0;
-            duration: root.shimmerDuration;
-            easing.type: Easing.Linear
+        gradient: Gradient {
+            orientation: Gradient.Horizontal
+            GradientStop {
+                id: stop1
+                position: 0.0
+                color: root.baseColor
+            }
+            GradientStop {
+                id: stop2
+                position: 0.5
+                color: root.highlightColor
+            }
+            GradientStop {
+                id: stop3
+                position: 1
+                color: root.baseColor
+            }
         }
-        NumberAnimation {
-            target: stop2
-            property: "position"
-            from: -0.5;
-            to: 1.5;
-            duration: root.shimmerDuration;
-            easing.type: Easing.Linear
-        }
-        NumberAnimation {
-            target: stop3
-            property: "position"
-            from: 0.0;
-            to: 2.0;
-            duration: root.shimmerDuration;
-            easing.type: Easing.Linear
+
+        ParallelAnimation  {
+            running: root.loading
+            loops: Animation.Infinite
+            NumberAnimation {
+                target: stop1
+                property: "position"
+                from: -1.0
+                to: 1.0
+                duration: root.shimmerDuration
+                easing.type: Easing.Linear
+            }
+            NumberAnimation {
+                target: stop2
+                property: "position"
+                from: -0.5
+                to: 1.5
+                duration: root.shimmerDuration
+                easing.type: Easing.Linear
+            }
+            NumberAnimation {
+                target: stop3
+                property: "position"
+                from: 0.0
+                to: 2.0
+                duration: root.shimmerDuration
+                easing.type: Easing.Linear
+            }
         }
     }
 }
