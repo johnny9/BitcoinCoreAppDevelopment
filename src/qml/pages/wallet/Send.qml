@@ -49,6 +49,8 @@ PageStack {
 
                 spacing: 10
 
+                enabled: walletController.initialized
+
                 Item {
                     id: titleRow
                     Layout.fillWidth: true
@@ -61,6 +63,7 @@ PageStack {
                         anchors.verticalCenter: parent.verticalCenter
                         text: qsTr("Send bitcoin")
                         font.pixelSize: 21
+                        color: Theme.color.neutral9
                         bold: true
                     }
 
@@ -116,7 +119,6 @@ PageStack {
                         id: selectAndAddRecipientsLabel
                         text: qsTr("Recipient %1 of %2").arg(wallet.recipients.currentIndex).arg(wallet.recipients.count)
                         font.pixelSize: 18
-                        color: Theme.color.neutral9
                     }
 
                     NavButton {
@@ -173,7 +175,6 @@ PageStack {
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
                         horizontalAlignment: Text.AlignLeft
-                        color: Theme.color.neutral9
                         text: qsTr("Amount")
                         font.pixelSize: 18
                     }
@@ -186,8 +187,7 @@ PageStack {
                         font.family: "Inter"
                         font.styleName: "Regular"
                         font.pixelSize: 18
-                        color: Theme.color.neutral9
-                        placeholderTextColor: Theme.color.neutral7
+                        placeholderTextColor: enabled ? Theme.color.neutral7 : Theme.color.neutral2
                         background: Item {}
                         placeholderText: "0.00000000"
                         selectByMouse: true
@@ -219,14 +219,14 @@ PageStack {
                             anchors.verticalCenter: parent.verticalCenter
                             text: bitcoinAmount.unitLabel
                             font.pixelSize: 18
-                            color: Theme.color.neutral7
+                            color: enabled ? Theme.color.neutral7 : Theme.color.neutral2
                         }
                         Icon {
                             id: flipIcon
                             anchors.right: parent.right
                             anchors.verticalCenter: parent.verticalCenter
                             source: "image://images/flip-vertical"
-                            color: Theme.color.neutral8
+                            color: enabled ? Theme.color.neutral8 : Theme.color.neutral2
                             size: 30
                         }
                     }
@@ -271,7 +271,6 @@ PageStack {
                         id: feeLabel
                         anchors.left: parent.left
                         anchors.top: parent.top
-                        color: Theme.color.neutral9
                         text: "Fee"
                         font.pixelSize: 15
                     }
@@ -280,7 +279,6 @@ PageStack {
                         id: feeValue
                         anchors.right: parent.right
                         anchors.top: parent.top
-                        color: Theme.color.neutral9
                         text: qsTr("Default (~2,000 sats)")
                         font.pixelSize: 15
                     }

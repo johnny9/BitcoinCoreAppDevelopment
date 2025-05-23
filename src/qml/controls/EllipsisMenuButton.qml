@@ -31,7 +31,7 @@ Button {
         id: ellipsisIcon
         anchors.fill: parent
         source: "image://images/ellipsis"
-        color: Theme.color.neutral9
+        color: enabled ? Theme.color.neutral9 : Theme.color.neutral2
         size: 35
     }
 
