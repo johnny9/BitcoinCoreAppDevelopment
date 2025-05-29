@@ -13,6 +13,7 @@ import "../../components"
 
 PageStack {
     id: root
+
     vertical: true
 
     property WalletQmlModel wallet: walletController.selectedWallet
@@ -32,6 +33,7 @@ PageStack {
 
         Settings {
             id: settings
+
             property alias coinControlEnabled: sendOptionsPopup.coinControlEnabled
             property alias multipleRecipientsEnabled: sendOptionsPopup.multipleRecipientsEnabled
         }
@@ -40,27 +42,30 @@ PageStack {
             clip: true
             width: parent.width
             height: parent.height
-            contentWidth: width
+            contentWidth: width // Typically same as width for vertical scroll
 
             ColumnLayout {
                 id: columnLayout
-                width: 450
+
+                width: 450 // Consider Layout.preferredWidth if parent was a Layout
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 spacing: 10
-
                 enabled: walletController.initialized
 
-                Item {
+                Item { // Title Section
                     id: titleRow
+
                     Layout.fillWidth: true
                     Layout.topMargin: 30
                     Layout.bottomMargin: 20
 
                     CoreText {
                         id: title
+
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
+
                         text: qsTr("Send bitcoin")
                         font.pixelSize: 21
                         color: Theme.color.neutral9
@@ -69,54 +74,57 @@ PageStack {
 
                     EllipsisMenuButton {
                         id: menuButton
+
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
+
                         checked: sendOptionsPopup.opened
-                        onClicked: {
-                            sendOptionsPopup.open()
-                        }
+                        onClicked: sendOptionsPopup.open()
                     }
 
                     SendOptionsPopup {
                         id: sendOptionsPopup
+
                         x: menuButton.x - width + menuButton.width
                         y: menuButton.y + menuButton.height
                     }
-                }
+                } // End Title Section
 
-                RowLayout {
+                RowLayout { // Recipient Navigation (Multiple Recipients)
                     id: selectAndAddRecipients
+
                     Layout.fillWidth: true
                     Layout.topMargin: 10
                     Layout.bottomMargin: 10
+
                     visible: settings.multipleRecipientsEnabled
 
                     NavButton {
                         Layout.preferredWidth: 30
                         Layout.preferredHeight: 30
+
                         iconWidth: 30
                         iconHeight: 30
                         iconSource: "image://images/caret-left"
-                        onClicked: {
-                            wallet.recipients.prev()
-                        }
+                        onClicked: wallet.recipients.prev()
                     }
 
                     NavButton {
                         Layout.preferredWidth: 30
                         Layout.preferredHeight: 30
+
                         iconWidth: 30
                         iconHeight: 30
                         iconSource: "image://images/caret-right"
-                        onClicked: {
-                            wallet.recipients.next()
-                        }
+                        onClicked: wallet.recipients.next()
                     }
 
                     CoreText {
-                        Layout.fillWidth: true
-                        Layout.alignment: Qt.AlignLeft
                         id: selectAndAddRecipientsLabel
+
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignLeft // For CoreText in a RowLayout, AlignVCenter might also be desired depending on other items
+
                         text: qsTr("Recipient %1 of %2").arg(wallet.recipients.currentIndex).arg(wallet.recipients.count)
                         font.pixelSize: 18
                     }
@@ -124,34 +132,35 @@ PageStack {
                     NavButton {
                         Layout.preferredWidth: 30
                         Layout.preferredHeight: 30
+
                         iconWidth: 20
                         iconHeight: 20
                         iconSource: "image://images/plus"
-                        onClicked: {
-                            wallet.recipients.add()
-                        }
+                        onClicked: wallet.recipients.add()
                     }
+
                     NavButton {
                         Layout.preferredWidth: 30
                         Layout.preferredHeight: 30
+
                         iconWidth: 20
                         iconHeight: 20
                         iconSource: "image://images/minus"
                         visible: wallet.recipients.count > 1
-                        onClicked: {
-                            wallet.recipients.remove()
-                        }
+                        onClicked: wallet.recipients.remove()
                     }
-                }
+                } // End Recipient Navigation
 
                 Separator {
-                    visible: settings.multipleRecipientsEnabled
                     Layout.fillWidth: true
+                    visible: settings.multipleRecipientsEnabled
                 }
 
-                LabeledTextInput {
+                LabeledTextInput { // Address Input
                     id: address
+
                     Layout.fillWidth: true
+
                     labelText: qsTr("Send to")
                     placeholderText: qsTr("Enter address...")
                     text: root.recipient.address
@@ -162,18 +171,18 @@ PageStack {
                     Layout.fillWidth: true
                 }
 
-                Item {
-                    BitcoinAmount {
+                RowLayout { // Amount Input Section
+                    Layout.fillWidth: true
+
+                    BitcoinAmount { // Non-visual component, order less critical but often at top
                         id: bitcoinAmount
                     }
 
-                    height: amountInput.height
-                    Layout.fillWidth: true
                     CoreText {
                         id: amountLabel
-                        width: 110
-                        anchors.left: parent.left
-                        anchors.verticalCenter: parent.verticalCenter
+
+                        Layout.alignment: Qt.AlignVCenter
+
                         horizontalAlignment: Text.AlignLeft
                         text: qsTr("Amount")
                         font.pixelSize: 18
@@ -181,14 +190,16 @@ PageStack {
 
                     TextField {
                         id: amountInput
-                        anchors.left: amountLabel.right
-                        anchors.verticalCenter: parent.verticalCenter
+
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignVCenter
+
                         leftPadding: 0
                         font.family: "Inter"
                         font.styleName: "Regular"
                         font.pixelSize: 18
                         placeholderTextColor: enabled ? Theme.color.neutral7 : Theme.color.neutral2
-                        background: Item {}
+                        background: Item {} // Empty background, standard for custom text fields
                         placeholderText: "0.00000000"
                         selectByMouse: true
                         onTextEdited: {
@@ -196,11 +207,10 @@ PageStack {
                             root.recipient.amount = bitcoinAmount.satoshiAmount
                         }
                     }
-                    Item {
-                        width: unitLabel.width + flipIcon.width
-                        height: Math.max(unitLabel.height, flipIcon.height)
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
+
+                    Item { // Unit Switcher
+                        Layout.alignment: Qt.AlignVCenter
+
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
@@ -213,32 +223,40 @@ PageStack {
                                 }
                             }
                         }
+
                         CoreText {
                             id: unitLabel
+
                             anchors.right: flipIcon.left
                             anchors.verticalCenter: parent.verticalCenter
+
                             text: bitcoinAmount.unitLabel
                             font.pixelSize: 18
                             color: enabled ? Theme.color.neutral7 : Theme.color.neutral2
                         }
+
                         Icon {
                             id: flipIcon
+
                             anchors.right: parent.right
                             anchors.verticalCenter: parent.verticalCenter
+
                             source: "image://images/flip-vertical"
                             color: enabled ? Theme.color.neutral8 : Theme.color.neutral2
                             size: 30
                         }
                     }
-                }
+                } // End Amount Input Section
 
                 Separator {
                     Layout.fillWidth: true
                 }
 
-                LabeledTextInput {
+                LabeledTextInput { // Label Input
                     id: label
+
                     Layout.fillWidth: true
+
                     labelText: qsTr("Note to self")
                     placeholderText: qsTr("Enter ...")
                     onTextEdited: root.recipient.label = label.text
@@ -248,9 +266,11 @@ PageStack {
                     Layout.fillWidth: true
                 }
 
-                LabeledCoinControlButton {
-                    visible: settings.coinControlEnabled
+                LabeledCoinControlButton { // Coin Control
+                    id: coinControlButton // Added id for consistency, though not strictly necessary if not referenced
                     Layout.fillWidth: true
+
+                    visible: settings.coinControlEnabled
                     coinsSelected: wallet.coinsListModel.selectedCoinsCount
                     coinCount: wallet.coinsListModel.coinCount
                     onOpenCoinControl: {
@@ -260,23 +280,27 @@ PageStack {
                 }
 
                 Separator {
-                    visible: settings.coinControlEnabled
                     Layout.fillWidth: true
+                    visible: settings.coinControlEnabled
                 }
 
-                FeeSelection {
+                FeeSelection { // Fee Selection
                     id: feeSelection
+
                     Layout.fillWidth: true
                     Layout.preferredHeight: 50
+
                     onSelectedLabelChanged: {
-                        //root.recipient.fee = feeSelection.selectedLabel
+                        // Original logic was commented out, preserving that state.
                     }
                 }
 
-                ContinueButton {
+                ContinueButton { // Continue Button
                     id: continueButton
+
                     Layout.fillWidth: true
                     Layout.topMargin: 30
+
                     text: qsTr("Review")
                     onClicked: {
                         if (root.wallet.prepareTransaction()) {
@@ -284,14 +308,16 @@ PageStack {
                         }
                     }
                 }
-            }
-        }
-    }
+            } // End ColumnLayout
+        } // End ScrollView
+    } // End initialItem Page
 
-    Component {
+    Component { // Coin Selection Page Component
         id: coinSelectionPage
+
         CoinSelection {
+            // Properties of CoinSelection would go here if needed
             onDone: root.pop()
         }
     }
-}
+} // End PageStack
