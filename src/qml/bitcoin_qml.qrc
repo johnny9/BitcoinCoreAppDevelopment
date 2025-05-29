@@ -6,6 +6,7 @@
         <file>components/BlockCounter.qml</file>
         <file>components/ConnectionOptions.qml</file>
         <file>components/ConnectionSettings.qml</file>
+        <file>components/FeeSelection.qml</file>
         <file>components/PeersIndicator.qml</file>
         <file>components/DeveloperOptions.qml</file>
         <file>components/ExternalPopup.qml</file>
