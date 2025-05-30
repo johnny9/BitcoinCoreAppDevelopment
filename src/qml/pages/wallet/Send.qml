@@ -57,6 +57,7 @@ PageStack {
                     Layout.topMargin: 30
                     Layout.bottomMargin: 20
 
+
                     CoreText {
                         id: title
                         anchors.left: parent.left
@@ -66,6 +67,7 @@ PageStack {
                         color: Theme.color.neutral9
                         bold: true
                     }
+
 
                     EllipsisMenuButton {
                         id: menuButton
@@ -187,7 +189,8 @@ PageStack {
                         font.family: "Inter"
                         font.styleName: "Regular"
                         font.pixelSize: 18
-                        placeholderTextColor: enabled ? Theme.color.neutral7 : Theme.color.neutral2
+                        color: Theme.color.neutral9
+                        placeholderTextColor: enabled ? Theme.color.neutral7 : Theme.color.neutral4
                         background: Item {}
                         placeholderText: "0.00000000"
                         selectByMouse: true
@@ -219,14 +222,14 @@ PageStack {
                             anchors.verticalCenter: parent.verticalCenter
                             text: bitcoinAmount.unitLabel
                             font.pixelSize: 18
-                            color: enabled ? Theme.color.neutral7 : Theme.color.neutral2
+                            color: enabled ? Theme.color.neutral7 : Theme.color.neutral4
                         }
                         Icon {
                             id: flipIcon
                             anchors.right: parent.right
                             anchors.verticalCenter: parent.verticalCenter
                             source: "image://images/flip-vertical"
-                            color: enabled ? Theme.color.neutral8 : Theme.color.neutral2
+                            icon.color: unitLabel.enabled ? Theme.color.neutral8 : Theme.color.neutral4
                             size: 30
                         }
                     }

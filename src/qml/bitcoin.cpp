@@ -23,6 +23,8 @@
 #include <qml/components/blockclockdial.h>
 #include <qml/controls/linegraph.h>
 #include <qml/guiconstants.h>
+#include <qml/imageprovider.h>
+#include <qml/models/activitylistmodel.h>
 #include <qml/models/chainmodel.h>
 #include <qml/models/networktraffictower.h>
 #include <qml/models/nodemodel.h>
@@ -34,7 +36,7 @@
 #include <qml/models/walletlistmodel.h>
 #include <qml/models/walletqmlmodel.h>
 #include <qml/models/walletqmlmodeltransaction.h>
-#include <qml/imageprovider.h>
+#include <qml/qrimageprovider.h>
 #include <qml/util.h>
 #include <qml/walletqmlcontroller.h>
 #include <qt/guiutil.h>
@@ -313,6 +315,7 @@ int QmlGuiMain(int argc, char* argv[])
     QScopedPointer<const NetworkStyle> network_style{NetworkStyle::instantiate(Params().GetChainType())};
     assert(!network_style.isNull());
     engine.addImageProvider(QStringLiteral("images"), new ImageProvider{network_style.data()});
+    engine.addImageProvider(QStringLiteral("qr"), new QRImageProvider);
 
     engine.rootContext()->setContextProperty("networkTrafficTower", &network_traffic_tower);
     engine.rootContext()->setContextProperty("nodeModel", &node_model);
@@ -346,7 +349,7 @@ int QmlGuiMain(int argc, char* argv[])
     qmlRegisterUncreatableType<WalletQmlModel>("org.bitcoincore.qt", 1, 0, "WalletQmlModel",
                                                "WalletQmlModel cannot be instantiated from QML");
     qmlRegisterUncreatableType<WalletQmlModelTransaction>("org.bitcoincore.qt", 1, 0, "WalletQmlModelTransaction",
-                                               "WalletQmlModelTransaction cannot be instantiated from QML");
+                                                          "WalletQmlModelTransaction cannot be instantiated from QML");
 #endif
 
     engine.load(QUrl(QStringLiteral("qrc:///qml/pages/main.qml")));

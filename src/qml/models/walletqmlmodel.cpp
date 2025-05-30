@@ -33,13 +33,26 @@ WalletQmlModel::WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObje
     m_send_recipients = new SendRecipientsListModel(this);
 }
 
-WalletQmlModel::WalletQmlModel(QObject *parent)
+WalletQmlModel::WalletQmlModel(QObject* parent)
     : QObject(parent)
 {
     m_activity_list_model = new ActivityListModel(this);
     m_coins_list_model = new CoinsListModel(this);
     m_current_recipient = new SendRecipient(this);
     m_send_recipients = new SendRecipientsListModel(this);
+}
+
+WalletQmlModel::~WalletQmlModel()
+{
+    delete m_activity_list_model;
+    delete m_coins_list_model;
+    delete m_current_recipient;
+    if (m_current_transaction) {
+        delete m_current_transaction;
+    }
+    for (PaymentRequest* request : m_payment_requests) {
+        delete request;
+    }
 }
 
 QString WalletQmlModel::balance() const
@@ -101,14 +114,6 @@ bool WalletQmlModel::tryGetTxStatus(const uint256& txid,
         return false;
     }
     return m_wallet->tryGetTxStatus(txid, tx_status, num_blocks, block_time);
-}
-
-WalletQmlModel::~WalletQmlModel()
-{
-    for (PaymentRequest* request : m_payment_requests) {
-        delete request;
-    }
-    delete m_activity_list_model;
 }
 
 std::unique_ptr<interfaces::Handler> WalletQmlModel::handleTransactionChanged(TransactionChangedFn fn)

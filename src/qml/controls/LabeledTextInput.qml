@@ -39,7 +39,7 @@ Item {
         font.styleName: "Regular"
         font.pixelSize: 18
         color: Theme.color.neutral9
-        placeholderTextColor: enabled ? Theme.color.neutral7 : Theme.color.neutral2
+        placeholderTextColor: enabled ? Theme.color.neutral7 : Theme.color.neutral4
         background: Item {}
         selectByMouse: true
         onTextEdited: root.textEdited()
@@ -53,7 +53,7 @@ Item {
         Icon {
             id: icon
             source: ""
-            color: enabled ? Theme.color.neutral8 : Theme.color.neutral2
+            color: enabled ? Theme.color.neutral8 : Theme.color.neutral4
             size: 30
             enabled: source != ""
             onClicked: root.iconClicked()

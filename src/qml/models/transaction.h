@@ -10,6 +10,7 @@
 #include <QObject>
 #include <QString>
 #include <QSharedPointer>
+
 #include <uint256.h>
 
 class Transaction : public QObject

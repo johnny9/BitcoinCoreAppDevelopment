@@ -16,8 +16,9 @@
 #include <qml/models/walletqmlmodeltransaction.h>
 
 #include <memory>
-#include <QObject>
 #include <vector>
+
+#include <QObject>
 
 class ActivityListModel;
 

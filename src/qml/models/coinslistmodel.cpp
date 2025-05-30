@@ -12,41 +12,39 @@
 #include <qt/bitcoinunits.h>
 #include <vector>
 
-CoinsListModel::CoinsListModel(WalletQmlModel * parent)
-    : QAbstractListModel(parent)
-    , m_wallet_model(parent)
-    , m_sort_by("amount")
-    , m_total_amount(0)
+
+CoinsListModel::CoinsListModel(WalletQmlModel* parent)
+    : QAbstractListModel(parent), m_wallet_model(parent), m_sort_by("amount"), m_total_amount(0)
 {
     update();
 }
 
 CoinsListModel::~CoinsListModel() = default;
 
-int CoinsListModel::rowCount(const QModelIndex &parent) const
+int CoinsListModel::rowCount(const QModelIndex& parent) const
 {
     return m_coins.size();
 }
 
-QVariant CoinsListModel::data(const QModelIndex &index, int role) const
+QVariant CoinsListModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid() || index.row() < 0 || index.row() >= static_cast<int>(m_coins.size()))
         return QVariant();
 
     const auto& [destination, outpoint, coin] = m_coins.at(index.row());
     switch (role) {
-        case AddressRole:
-            return QString::fromStdString(EncodeDestination(destination));
-        case AmountRole:
-            return BitcoinUnits::format(BitcoinUnits::Unit::BTC, coin.txout.nValue);
-        case LabelRole:
-            return QString::fromStdString("");
-        case LockedRole:
-            return m_wallet_model->isLockedCoin(outpoint);
-        case SelectedRole:
-            return m_wallet_model->isSelectedCoin(outpoint);
-        default:
-            return QVariant();
+    case AddressRole:
+        return QString::fromStdString(EncodeDestination(destination));
+    case AmountRole:
+        return BitcoinUnits::format(BitcoinUnits::Unit::BTC, coin.txout.nValue);
+    case LabelRole:
+        return QString::fromStdString("");
+    case LockedRole:
+        return m_wallet_model->isLockedCoin(outpoint);
+    case SelectedRole:
+        return m_wallet_model->isSelectedCoin(outpoint);
+    default:
+        return QVariant();
     }
 }
 
@@ -80,7 +78,7 @@ void CoinsListModel::update()
     Q_EMIT coinCountChanged();
 }
 
-void CoinsListModel::setSortBy(const QString &roleName)
+void CoinsListModel::setSortBy(const QString& roleName)
 {
     if (m_sort_by != roleName) {
         m_sort_by = roleName;

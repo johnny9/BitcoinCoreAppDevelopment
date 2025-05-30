@@ -31,7 +31,7 @@ Button {
         id: ellipsisIcon
         anchors.fill: parent
         source: "image://images/ellipsis"
-        color: enabled ? Theme.color.neutral9 : Theme.color.neutral2
+        color: Theme.color.neutral9
         size: 35
     }
 
@@ -43,6 +43,10 @@ Button {
         State {
             name: "HOVER"; when: root.hovered
             PropertyChanges { target: ellipsisIcon; color: hoverColor }
+        },
+        State {
+            name: "DISABLED"; when: !root.enabled
+            PropertyChanges { target: ellipsisIcon; color: Theme.color.neutral4 }
         }
     ]
 }

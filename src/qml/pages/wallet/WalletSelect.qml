@@ -95,6 +95,7 @@ Popup {
 
         AddWalletButton {
             id: addWallet
+
             Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: 220
             Layout.preferredHeight: 30

@@ -33,6 +33,7 @@ Transaction::Transaction(
     , status(Unconfirmed)
     , time(time)
     , type(type)
+    , involvesWatchAddress(false)
 {
 }
 
@@ -41,6 +42,7 @@ Transaction::Transaction(uint256 hash, qint64 time)
     , hash(hash)
     , time(time)
     , type(Type::Other)
+    , involvesWatchAddress(false)
 {
 }
 

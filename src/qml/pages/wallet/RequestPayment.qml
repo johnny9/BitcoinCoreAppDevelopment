@@ -74,8 +74,8 @@ Page {
                         font.family: "Inter"
                         font.styleName: "Regular"
                         font.pixelSize: 18
-                        color: enabled ? Theme.color.neutral9 : Theme.color.neutral2
-                        placeholderTextColor: enabled ? Theme.color.neutral7 : Theme.color.neutral2
+                        color: Theme.color.neutral9
+                        placeholderTextColor: enabled ? Theme.color.neutral7 : Theme.color.neutral4
                         background: Item {}
                         placeholderText: "0.00000000"
                         selectByMouse: true
@@ -106,14 +106,14 @@ Page {
                             anchors.verticalCenter: parent.verticalCenter
                             text: bitcoinAmount.unitLabel
                             font.pixelSize: 18
-                            color: enabled ? Theme.color.neutral7 : Theme.color.neutral2
+                            color: enabled ? Theme.color.neutral7 : Theme.color.neutral4
                         }
                         Icon {
                             id: flipIcon
                             anchors.right: parent.right
                             anchors.verticalCenter: parent.verticalCenter
                             source: "image://images/flip-vertical"
-                            color: enabled ? Theme.color.neutral8 : Theme.color.neutral2
+                            color: unitLabel.enabled ? Theme.color.neutral8 : Theme.color.neutral4
                             size: 30
                         }
                     }
@@ -167,7 +167,7 @@ Page {
                         width: 110
                         text: qsTr("copy")
                         font.pixelSize: 18
-                        color: enabled ? Theme.color.neutral7 : Theme.color.neutral2
+                        color: enabled ? Theme.color.neutral7 : Theme.color.neutral4
                     }
 
                     Rectangle {
@@ -199,6 +199,7 @@ Page {
                             clearRequest.visible = true
                             title.text = qsTr("Payment request #" + requestCounter)
                             address.text = "bc1q f5xe y2tf 89k9 zy6k gnru wszy 5fsa truy 9te1 bu"
+                            qrImage.code = "bc1qf5xey2tf89k9zy6kgnruwszy5fsatruy9te1bu"
                             continueButton.text = qsTr("Copy payment request")
                         }
                     }
@@ -220,19 +221,26 @@ Page {
                         clearRequest.visible = false
                         title.text = qsTr("Request a payment")
                         address.text = ""
+                        qrImage.code = ""
                         continueButton.text = qsTr("Create bitcoin address")
                     }
                 }
             }
 
-            Rectangle {
-                id: qrPlaceholder
+            Pane {
                 Layout.alignment: Qt.AlignTop
                 Layout.minimumWidth: 150
-                Layout.maximumWidth: 150
-                color: Theme.color.neutral2
-                width: 150
-                height: 150
+                Layout.minimumHeight: 150
+                padding: 0
+                background: Rectangle {
+                    color: Theme.color.neutral2
+                    visible: qrImage.code === ""
+                }
+                contentItem: QRImage {
+                    id: qrImage
+                    backgroundColor: "transparent"
+                    foregroundColor: Theme.color.neutral9
+                }
             }
         }
     }

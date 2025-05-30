@@ -6,15 +6,16 @@
 #define BITCOIN_QML_WALLETQMLCONTROLLER_H
 
 #include <qml/models/walletqmlmodel.h>
+
 #include <interfaces/handler.h>
 #include <interfaces/node.h>
 #include <interfaces/wallet.h>
 
+#include <memory>
+
 #include <QMutex>
 #include <QObject>
 #include <QThread>
-#include <memory>
-#include <qobjectdefs.h>
 
 class WalletQmlController : public QObject
 {

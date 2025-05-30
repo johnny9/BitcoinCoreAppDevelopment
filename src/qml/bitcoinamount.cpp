@@ -18,7 +18,7 @@ int BitcoinAmount::decimals(Unit unit) const
     switch (unit) {
     case Unit::BTC: return 8;
     case Unit::SAT: return 0;
-    } // no default case, so the compiler can warn about missing cases
+    }
     assert(false);
 }
 
@@ -79,9 +79,17 @@ void BitcoinAmount::setAmount(const QString& new_amount)
     Q_EMIT amountChanged();
 }
 
+QString BitcoinAmount::toSatoshis(const QString& text) const
+{
+    if (m_unit == Unit::SAT) {
+        return text;
+    } else {
+        return convert(text, m_unit);
+    }
+}
+
 long long BitcoinAmount::toSatoshis(QString& amount, const Unit unit) const
 {
-
     int num_decimals = decimals(unit);
 
     QStringList parts = amount.remove(' ').split(".");
@@ -98,7 +106,7 @@ long long BitcoinAmount::toSatoshis(QString& amount, const Unit unit) const
     return str.toLongLong();
 }
 
-QString BitcoinAmount::convert(const QString &amount, Unit unit) const
+QString BitcoinAmount::convert(const QString& amount, Unit unit) const
 {
     if (amount == "") {
         return amount;
@@ -143,13 +151,4 @@ QString BitcoinAmount::convert(const QString &amount, Unit unit) const
     }
 
     return result;
-}
-
-QString BitcoinAmount::toSatoshis(const QString &text) const
-{
-    if (m_unit == Unit::SAT) {
-        return text;
-    } else {
-        return convert(text, m_unit);
-    }
 }

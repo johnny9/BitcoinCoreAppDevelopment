@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Bitcoin Core developers
+// Copyright (c) 2024-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -51,20 +51,20 @@ QVariant ActivityListModel::data(const QModelIndex &index, int role) const
     updateTransactionStatus(tx);
 
     switch (role) {
-    case AmountRole:
-        return tx->prettyAmount();
     case AddressRole:
         return tx->address;
-    case LabelRole:
-        return tx->label;
+    case AmountRole:
+        return tx->prettyAmount();
     case DateTimeRole:
         return tx->dateTimeString();
+    case DepthRole:
+        return tx->depth;
+    case LabelRole:
+        return tx->label;
     case StatusRole:
         return tx->status;
     case TypeRole:
         return tx->type;
-    case DepthRole:
-        return tx->depth;
     default:
         return QVariant();
     }
@@ -73,13 +73,13 @@ QVariant ActivityListModel::data(const QModelIndex &index, int role) const
 QHash<int, QByteArray> ActivityListModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    roles[AmountRole] = "amount";
     roles[AddressRole] = "address";
-    roles[LabelRole] = "label";
+    roles[AmountRole] = "amount";
     roles[DateTimeRole] = "date";
+    roles[DepthRole] = "depth";
+    roles[LabelRole] = "label";
     roles[StatusRole] = "status";
     roles[TypeRole] = "type";
-    roles[DepthRole] = "depth";
     return roles;
 }
 

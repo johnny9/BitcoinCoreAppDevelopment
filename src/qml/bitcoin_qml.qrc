@@ -6,13 +6,13 @@
         <file>components/BlockCounter.qml</file>
         <file>components/ConnectionOptions.qml</file>
         <file>components/ConnectionSettings.qml</file>
-        <file>components/FeeSelection.qml</file>
-        <file>components/PeersIndicator.qml</file>
         <file>components/DeveloperOptions.qml</file>
         <file>components/ExternalPopup.qml</file>
+        <file>components/FeeSelection.qml</file>
         <file>components/NetworkTrafficGraph.qml</file>
         <file>components/NetworkIndicator.qml</file>
         <file>components/OptionPopup.qml</file>
+        <file>components/PeersIndicator.qml</file>
         <file>components/ProxySettings.qml</file>
         <file>components/StorageLocations.qml</file>
         <file>components/Separator.qml</file>
@@ -27,8 +27,6 @@
         <file>controls/CoreCheckBox.qml</file>
         <file>controls/CoreText.qml</file>
         <file>controls/CoreTextField.qml</file>
-        <file>controls/LabeledTextInput.qml</file>
-        <file>controls/LabeledCoinControlButton.qml</file>
         <file>controls/EllipsisMenuButton.qml</file>
         <file>controls/EllipsisMenuToggleItem.qml</file>
         <file>controls/ExternalLink.qml</file>
@@ -38,21 +36,23 @@
         <file>controls/InformationPage.qml</file>
         <file>controls/IPAddressValueInput.qml</file>
         <file>controls/KeyValueRow.qml</file>
+        <file>controls/LabeledTextInput.qml</file>
+        <file>controls/LabeledCoinControlButton.qml</file>
         <file>controls/NavButton.qml</file>
-        <file>controls/PageIndicator.qml</file>
         <file>controls/NavigationBar.qml</file>
         <file>controls/NavigationBar2.qml</file>
         <file>controls/NavigationTab.qml</file>
         <file>controls/OptionButton.qml</file>
         <file>controls/OptionSwitch.qml</file>
         <file>controls/OutlineButton.qml</file>
+        <file>controls/PageIndicator.qml</file>
         <file>controls/PageStack.qml</file>
         <file>controls/ProgressIndicator.qml</file>
+        <file>controls/QRImage.qml</file>
         <file>controls/qmldir</file>
         <file>controls/SendOptionsPopup.qml</file>
         <file>controls/Setting.qml</file>
         <file>controls/Skeleton.qml</file>
-        <file>controls/StackedLabeledTextInput.qml</file>
         <file>controls/TextButton.qml</file>
         <file>controls/Theme.qml</file>
         <file>controls/ToggleButton.qml</file>
@@ -131,6 +131,7 @@
         <file alias="pending-dark">res/icons/pending-dark.png</file>
         <file alias="pending-light">res/icons/pending-light.png</file>
         <file alias="plus">res/icons/plus.png</file>
+        <file alias="pending">res/icons/pending.png</file>
         <file alias="shutdown">res/icons/shutdown.png</file>
         <file alias="singlesig-wallet">res/icons/singlesig-wallet.png</file>
         <file alias="storage-dark">res/icons/storage-dark.png</file>

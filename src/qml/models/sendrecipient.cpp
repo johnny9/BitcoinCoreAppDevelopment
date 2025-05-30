@@ -6,11 +6,7 @@
 #include <qobjectdefs.h>
 
 SendRecipient::SendRecipient(QObject* parent)
-    : QObject(parent)
-    , m_address("")
-    , m_label("")
-    , m_amount("")
-    , m_message("")
+    : QObject(parent), m_address(""), m_label(""), m_amount(""), m_message("")
 {
 }
 

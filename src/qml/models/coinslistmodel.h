@@ -26,7 +26,7 @@ class CoinsListModel : public QAbstractListModel
     Q_PROPERTY(bool overRequiredAmount READ overRequiredAmount NOTIFY selectedCoinsCountChanged)
 
 public:
-    explicit CoinsListModel(WalletQmlModel * parent = nullptr);
+    explicit CoinsListModel(WalletQmlModel* parent = nullptr);
     ~CoinsListModel();
 
     enum CoinsRoles {
@@ -38,13 +38,14 @@ public:
         SelectedRole
     };
 
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+
+    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
 public Q_SLOTS:
     void update();
-    void setSortBy(const QString &roleName);
+    void setSortBy(const QString& roleName);
     void toggleCoinSelection(const int index);
     unsigned int lockedCoinsCount() const;
     unsigned int selectedCoinsCount() const;
@@ -54,7 +55,7 @@ public Q_SLOTS:
     int coinCount() const;
 
 Q_SIGNALS:
-    void sortByChanged(const QString &roleName);
+    void sortByChanged(const QString& roleName);
     void lockedCoinsCountChanged();
     void selectedCoinsCountChanged();
     void coinCountChanged();

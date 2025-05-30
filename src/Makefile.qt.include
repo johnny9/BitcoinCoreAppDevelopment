@@ -145,11 +145,13 @@ BITCOIN_QT_H = \
   qml/models/walletqmlmodel.h \
   qml/models/walletqmlmodeltransaction.h \
   qml/appmode.h \
+  qml/clipboard.h \
   qml/bitcoin.h \
   qml/bitcoinamount.h \
   qml/clipboard.h \
   qml/guiconstants.h \
   qml/imageprovider.h \
+  qml/qrimageprovider.h \
   qml/util.h \
   qml/walletqmlcontroller.h \
   qt/addressbookpage.h \
@@ -347,6 +349,7 @@ BITCOIN_QML_BASE_CPP = \
   qml/models/walletqmlmodel.cpp \
   qml/models/walletqmlmodeltransaction.cpp \
   qml/imageprovider.cpp \
+  qml/qrimageprovider.cpp \
   qml/util.cpp \
   qml/walletqmlcontroller.cpp
 
@@ -385,10 +388,13 @@ QML_RES_ICONS = \
   qml/res/icons/pending-dark.png \
   qml/res/icons/pending-light.png \
   qml/res/icons/plus.png \
+  qml/res/icons/pending.png \
   qml/res/icons/shutdown.png \
   qml/res/icons/singlesig-wallet.png \
   qml/res/icons/storage-dark.png \
   qml/res/icons/storage-light.png \
+  qml/res/icons/triangle-up.png \
+  qml/res/icons/triangle-down.png \
   qml/res/icons/tooltip-arrow-dark.png \
   qml/res/icons/tooltip-arrow-light.png \
   qml/res/icons/triangle-down.png \
@@ -408,10 +414,10 @@ QML_RES_QML = \
   qml/components/DeveloperOptions.qml \
   qml/components/ExternalPopup.qml \
   qml/components/FeeSelection.qml \
-  qml/components/PeersIndicator.qml \
   qml/components/NetworkTrafficGraph.qml \
   qml/components/NetworkIndicator.qml \
   qml/components/OptionPopup.qml \
+  qml/components/PeersIndicator.qml \
   qml/components/ProxySettings.qml \
   qml/components/Separator.qml \
   qml/components/StorageLocations.qml \
@@ -438,20 +444,20 @@ QML_RES_QML = \
   qml/controls/LabeledTextInput.qml \
   qml/controls/LabeledCoinControlButton.qml \
   qml/controls/NavButton.qml \
-  qml/controls/PageIndicator.qml \
   qml/controls/NavigationBar.qml \
   qml/controls/NavigationBar2.qml \
   qml/controls/NavigationTab.qml \
   qml/controls/OptionButton.qml \
   qml/controls/OptionSwitch.qml \
   qml/controls/OutlineButton.qml \
+  qml/controls/QRImage.qml \
+  qml/controls/PageIndicator.qml \
   qml/controls/PageStack.qml \
   qml/controls/ProgressIndicator.qml \
   qml/controls/qmldir \
-  qml/controls/Setting.qml \
   qml/controls/SendOptionsPopup.qml \
+  qml/controls/Setting.qml \
   qml/controls/Skeleton.qml \
-  qml/controls/StackedLabeledTextInput.qml \
   qml/controls/TextButton.qml \
   qml/controls/Theme.qml \
   qml/controls/ToggleButton.qml \

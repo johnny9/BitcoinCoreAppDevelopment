@@ -9,7 +9,6 @@
 
 #include <QObject>
 #include <QString>
-#include <qobjectdefs.h>
 
 class BitcoinAmount : public QObject
 {
@@ -36,9 +35,9 @@ public:
     QString satoshiAmount() const;
 
 public Q_SLOTS:
-    QString sanitize(const QString &text);
-    QString convert(const QString &text, Unit unit) const;
-    QString toSatoshis(const QString &text) const;
+    QString sanitize(const QString& text);
+    QString convert(const QString& text, Unit unit) const;
+    QString toSatoshis(const QString& text) const;
 
 Q_SIGNALS:
     void unitChanged();
@@ -46,7 +45,7 @@ Q_SIGNALS:
     void amountChanged();
 
 private:
-    long long toSatoshis(QString &amount, const Unit unit) const;
+    long long toSatoshis(QString& amount, const Unit unit) const;
     int decimals(Unit unit) const;
 
     Unit m_unit;
