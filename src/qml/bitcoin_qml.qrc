@@ -27,12 +27,12 @@
         <file>controls/CoreCheckBox.qml</file>
         <file>controls/CoreText.qml</file>
         <file>controls/CoreTextField.qml</file>
-        <file>controls/EllipsisMenuButton.qml</file>
         <file>controls/EllipsisMenuToggleItem.qml</file>
         <file>controls/ExternalLink.qml</file>
         <file>controls/FocusBorder.qml</file>
         <file>controls/Header.qml</file>
         <file>controls/Icon.qml</file>
+        <file>controls/IconButton.qml</file>
         <file>controls/InformationPage.qml</file>
         <file>controls/IPAddressValueInput.qml</file>
         <file>controls/KeyValueRow.qml</file>
