@@ -202,7 +202,10 @@ PageStack {
                         anchors.verticalCenter: parent.verticalCenter
                         MouseArea {
                             anchors.fill: parent
-                            onClicked: root.recipient.amount.flipUnit()
+                            onClicked: {
+                                root.recipient.amount.display = amountInput.text
+                                root.recipient.amount.flipUnit()
+                            }
                         }
                         CoreText {
                             id: unitLabel
