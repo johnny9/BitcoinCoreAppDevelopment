@@ -14,16 +14,11 @@ Item {
 
     property int selectedIndex: 1
     property string selectedLabel: feeModel.get(selectedIndex).feeLabel
-    signal feeChanged(int index)
+
+    signal feeChanged(int target)
 
     width: parent ? parent.width : 300
     height: 40
-
-    MouseArea {
-        anchors.fill: parent
-        hoverEnabled: true
-        onClicked: feePopup.open()
-    }
 
     CoreText {
         id: label
@@ -33,30 +28,80 @@ Item {
         font.pixelSize: 15
     }
 
-    CoreText {
-        id: value
-        anchors.right: caret.left
+    Button {
+        id: dropDownButton
+        anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
         text: root.selectedLabel
         font.pixelSize: 15
-    }
 
-    Icon {
-        id: caret
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        source: "image://images/caret-right"
-        size: 30
-        color: enabled ? Theme.color.accent : Theme.color.neutral2
+        hoverEnabled: true
+
+        HoverHandler {
+            cursorShape: Qt.PointingHandCursor
+        }
+
+        onPressed: feePopup.open()
+
+        contentItem: RowLayout {
+            spacing: 5
+            anchors.centerIn: parent
+
+            CoreText {
+                id: value
+                text: root.selectedLabel
+                font.pixelSize: 15
+
+                Behavior on color {
+                    ColorAnimation { duration: 150 }
+                }
+            }
+
+            Icon {
+                id: caret
+                source: "image://images/caret-down-medium-filled"
+                Layout.preferredWidth: 30
+                size: 30
+                color: dropDownButton.enabled ? Theme.color.orange : Theme.color.neutral4
+
+                Behavior on color {
+                    ColorAnimation { duration: 150 }
+                }
+            }
+        }
+
+        background: Rectangle {
+            id: dropDownButtonBg
+            color: Theme.color.background
+            radius: 6
+            Behavior on color {
+                ColorAnimation { duration: 150 }
+            }
+        }
+
+        states: [
+            State {
+                name: "CHECKED"; when: dropDownButton.checked
+                PropertyChanges { target: icon; color: activeColor }
+            },
+            State {
+                name: "HOVER"; when: dropDownButton.hovered
+                PropertyChanges { target: dropDownButtonBg; color: Theme.color.neutral2 }
+            },
+            State {
+                name: "DISABLED"; when: !dropDownButton.enabled
+                PropertyChanges { target: dropDownButtonBg; color: Theme.color.background }
+            }
+        ]
     }
 
     Popup {
         id: feePopup
         modal: true
-        focus: true
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+        dim: false
+
         background: Rectangle {
-            color: Theme.color.neutral1
+            color: Theme.color.background
             radius: 6
             border.color: Theme.color.neutral3
         }
@@ -72,37 +117,51 @@ Item {
             interactive: false
             width: 260
             height: contentHeight
-            delegate: Item {
+            delegate: ItemDelegate {
                 required property string feeLabel
                 required property int index
+                required property int target
 
                 width: ListView.view.width
                 height: 40
+
+                background: Rectangle {
+                    width: parent.width - 4
+                    height: parent.height - 4
+                    radius: 6
+                    color: Theme.color.neutral3
+                    visible: mouseArea.containsMouse
+                }
 
                 RowLayout {
                     anchors.fill: parent
                     anchors.margins: 12
                     spacing: 10
 
-                    CoreText { text: feeLabel; font.pixelSize: 15 }
+                    CoreText {
+                        text: feeLabel
+                        font.pixelSize: 15
+                    }
 
                     Item { Layout.fillWidth: true }
 
                     Icon {
                         visible: index === root.selectedIndex
                         source: "image://images/check"
-                        color: Theme.color.neutral9
+                        color: Theme.color.orange
                         size: 20
                     }
                 }
 
                 MouseArea {
+                    id: mouseArea
                     anchors.fill: parent
                     hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
                     onClicked: {
                         root.selectedIndex = index
                         root.selectedLabel = feeLabel
-                        root.feeChanged(index, sats)
+                        root.feeChanged(target)
                         feePopup.close()
                     }
                 }
@@ -121,8 +180,8 @@ Item {
 
     ListModel {
         id: feeModel
-        ListElement { feeLabel: qsTr("High (~10 mins)") }
-        ListElement { feeLabel: qsTr("Default (~20 mins)") }
-        ListElement { feeLabel: qsTr("Low (~60 mins)") }
+        ListElement { feeLabel: qsTr("High (~10 mins)"); target: 1 }
+        ListElement { feeLabel: qsTr("Default (~60 mins)"); target: 6 }
+        ListElement { feeLabel: qsTr("Low (~24 hrs)"); target: 144 }
     }
 }

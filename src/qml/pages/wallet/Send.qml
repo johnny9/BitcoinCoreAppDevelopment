@@ -264,8 +264,8 @@ PageStack {
                     id: feeSelection
                     Layout.fillWidth: true
                     Layout.preferredHeight: 50
-                    onSelectedLabelChanged: {
-                        //root.recipient.fee = feeSelection.selectedLabel
+                    onFeeChanged: {
+                        root.wallet.targetBlocks = target
                     }
                 }
 

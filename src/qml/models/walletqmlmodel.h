@@ -32,6 +32,7 @@ class WalletQmlModel : public QObject
     Q_PROPERTY(SendRecipient* sendRecipient READ sendRecipient CONSTANT)
     Q_PROPERTY(SendRecipientsListModel* recipients READ sendRecipientList CONSTANT)
     Q_PROPERTY(WalletQmlModelTransaction* currentTransaction READ currentTransaction NOTIFY currentTransactionChanged)
+    Q_PROPERTY(unsigned int targetBlocks READ feeTargetBlocks WRITE setFeeTargetBlocks NOTIFY feeTargetBlocksChanged)
 
 public:
     WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObject *parent = nullptr);
@@ -43,6 +44,7 @@ public:
     Q_INVOKABLE PaymentRequest* createPaymentRequest(const QString& amount,
                                                      const QString& label,
                                                      const QString& message);
+
     ActivityListModel* activityListModel() const { return m_activity_list_model; }
     CoinsListModel* coinsListModel() const { return m_coins_list_model; }
     SendRecipient* sendRecipient() const { return m_send_recipients->currentRecipient(); }
@@ -50,7 +52,6 @@ public:
     WalletQmlModelTransaction* currentTransaction() const { return m_current_transaction; }
     Q_INVOKABLE bool prepareTransaction();
     Q_INVOKABLE void sendTransaction();
-
 
     std::set<interfaces::WalletTx> getWalletTxs() const;
     interfaces::WalletTx getWalletTx(const uint256& hash) const;
@@ -71,11 +72,14 @@ public:
     void unselectCoin(const COutPoint& output);
     bool isSelectedCoin(const COutPoint& output);
     std::vector<COutPoint> listSelectedCoins() const;
+    unsigned int feeTargetBlocks() const;
+    void setFeeTargetBlocks(unsigned int target_blocks);
 
 Q_SIGNALS:
     void nameChanged();
     void balanceChanged();
     void currentTransactionChanged();
+    void feeTargetBlocksChanged();
 
 private:
     std::unique_ptr<interfaces::Wallet> m_wallet;
