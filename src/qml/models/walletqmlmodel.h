@@ -5,9 +5,6 @@
 #ifndef BITCOIN_QML_MODELS_WALLETQMLMODEL_H
 #define BITCOIN_QML_MODELS_WALLETQMLMODEL_H
 
-#include <wallet/coincontrol.h>
-#include <interfaces/wallet.h>
-#include <interfaces/handler.h>
 #include <qml/models/activitylistmodel.h>
 #include <qml/models/coinslistmodel.h>
 #include <qml/models/paymentrequest.h>
@@ -15,12 +12,15 @@
 #include <qml/models/sendrecipientslistmodel.h>
 #include <qml/models/walletqmlmodeltransaction.h>
 
+#include <consensus/amount.h>
+#include <interfaces/handler.h>
+#include <interfaces/wallet.h>
+#include <wallet/coincontrol.h>
+
 #include <memory>
 #include <vector>
 
 #include <QObject>
-
-class ActivityListModel;
 
 class WalletQmlModel : public QObject
 {
@@ -40,6 +40,7 @@ public:
 
     QString name() const;
     QString balance() const;
+    CAmount balanceSatoshi() const;
     Q_INVOKABLE PaymentRequest* createPaymentRequest(const QString& amount,
                                                      const QString& label,
                                                      const QString& message);
