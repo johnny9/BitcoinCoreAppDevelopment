@@ -63,6 +63,7 @@ QString PaymentRequest::id() const
 void PaymentRequest::setId(const unsigned int id)
 {
     m_id = QString::number(id);
+    Q_EMIT idChanged();
 }
 
 void PaymentRequest::setDestination(const CTxDestination& destination)
