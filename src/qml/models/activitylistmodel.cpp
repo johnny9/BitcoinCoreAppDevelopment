@@ -48,7 +48,7 @@ QVariant ActivityListModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     QSharedPointer<Transaction> tx = m_transactions.at(index.row());
-    updateTransactionStatus(tx);
+    //updateTransactionStatus(tx);
 
     switch (role) {
     case AddressRole:
