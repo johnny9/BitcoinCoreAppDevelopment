@@ -165,6 +165,7 @@ PageStack {
                         validator: RegExpValidator {
                             regExp: /^[1-9A-HJ-NP-Za-km-zac-hj-np-z02-9]+$/
                         }
+                        maximumLength: 62
                     }
 
                     RowLayout {
