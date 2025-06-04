@@ -162,6 +162,9 @@ PageStack {
                         placeholderText: qsTr("Enter address...")
                         text: root.recipient.address
                         onTextEdited: root.recipient.address = address.text
+                        validator: RegExpValidator {
+                            regExp: /^[1-9A-HJ-NP-Za-km-zac-hj-np-z02-9]+$/
+                        }
                     }
 
                     RowLayout {
@@ -227,6 +230,10 @@ PageStack {
                                     root.recipient.amount.format()
                                 }
                             }
+                            validator: RegExpValidator {
+                                regExp: /^(0|[1-9]\d*)(\.\d{0,8})?$/
+                            }
+                            maximumLength: 17
                         }
                         Item {
                             width: unitLabel.width + flipIcon.width
