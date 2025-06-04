@@ -15,7 +15,7 @@ class BitcoinAmount : public QObject
     Q_OBJECT
     Q_PROPERTY(Unit unit READ unit WRITE setUnit NOTIFY unitChanged)
     Q_PROPERTY(QString unitLabel READ unitLabel NOTIFY unitChanged)
-    Q_PROPERTY(QString display READ toDisplay WRITE fromDisplay NOTIFY amountChanged)
+    Q_PROPERTY(QString display READ toDisplay WRITE fromDisplay NOTIFY displayChanged)
     Q_PROPERTY(qint64 satoshi READ satoshi WRITE setSatoshi NOTIFY amountChanged)
 
 public:
@@ -38,6 +38,8 @@ public:
 
     bool isSet() const { return m_isSet; }
 
+    Q_INVOKABLE void format();
+
     static QString satsToBtcString(qint64 sat);
 
 public Q_SLOTS:
@@ -47,6 +49,7 @@ public Q_SLOTS:
 Q_SIGNALS:
     void unitChanged();
     void amountChanged();
+    void displayChanged();
 
 private:
     QString sanitize(const QString& text);
