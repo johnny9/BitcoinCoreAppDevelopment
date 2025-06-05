@@ -23,7 +23,8 @@ Button {
     property bool showIcon: true
     property string balance: "0.0 000 000"
     property bool loading: false
-    property bool noWalletAvailable: false
+    property bool noWalletLoaded: false
+    property bool noWalletsFound: false
 
     checkable: true
     hoverEnabled: AppMode.isDesktop
@@ -70,7 +71,7 @@ Button {
         }
 
         RowLayout {
-            visible: !root.loading && root.noWalletAvailable
+            visible: !root.loading && root.noWalletLoaded
 
             opacity: visible ? 1 : 0
 
@@ -85,7 +86,7 @@ Button {
             spacing: 5
             Icon {
                 visible: root.showIcon
-                source: "image://images/caret-down-medium-filled"
+                source: root.noWalletsFound ? "image://images/plus-big-filled" : "image://images/caret-down-medium-filled"
                 color: Theme.color.neutral8
                 size: 30
                 Layout.minimumWidth: 30
@@ -97,13 +98,13 @@ Button {
                 Layout.fillWidth: true
                 wrap: false
                 font.pixelSize: 15
-                text: qsTr("Select Wallet")
+                text: root.noWalletsFound ? qsTr("Add Wallet") : qsTr("Select Wallet")
                 color: root.textColor
             }
         }
 
         RowLayout {
-            visible: !root.loading && !root.noWalletAvailable
+            visible: !root.loading && !root.noWalletLoaded
 
             opacity: visible ? 1 : 0
 
