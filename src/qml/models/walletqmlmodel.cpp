@@ -1,3 +1,4 @@
+
 // Copyright (c) 2024 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -144,7 +145,7 @@ bool WalletQmlModel::prepareTransaction()
 
     std::vector<wallet::CRecipient> vecSend;
     CAmount total = 0;
-    for (auto * recipient : m_send_recipients->recipients()) {
+    for (auto* recipient : m_send_recipients->recipients()) {
         CScript scriptPubKey = GetScriptForDestination(DecodeDestination(recipient->address().toStdString()));
         wallet::CRecipient c_recipient = {scriptPubKey, recipient->cAmount(), recipient->subtractFeeFromAmount()};
         m_coin_control.m_feerate = CFeeRate(1000);

@@ -2,8 +2,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include <qml/models/sendrecipient.h>
 #include <qml/models/sendrecipientslistmodel.h>
+
+#include <qml/models/sendrecipient.h>
 #include <qml/models/walletqmlmodel.h>
 
 SendRecipientsListModel::SendRecipientsListModel(QObject* parent)
@@ -54,9 +55,13 @@ void SendRecipientsListModel::add()
     auto* recipient = new SendRecipient(m_wallet, this);
     connect(recipient->amount(), &BitcoinAmount::amountChanged,
             this, &SendRecipientsListModel::updateTotalAmount);
+    if (m_recipients.size() > 0) {
+        recipient->amount()->setUnit(m_recipients[m_current]->amount()->unit());
+    }
     m_recipients.append(recipient);
+
     endInsertRows();
-    Q_EMIT  countChanged();
+    Q_EMIT countChanged();
     setCurrentIndex(row);
 }
 
@@ -94,7 +99,7 @@ void SendRecipientsListModel::remove()
     endRemoveRows();
     Q_EMIT countChanged();
 
-    if (m_current > 1) {
+    if (m_current > 0) {
         setCurrentIndex(m_current - 1);
     } else {
         Q_EMIT currentRecipientChanged();
@@ -144,4 +149,30 @@ void SendRecipientsListModel::clear()
     Q_EMIT totalAmountChanged();
     Q_EMIT currentRecipientChanged();
     Q_EMIT currentIndexChanged();
+    Q_EMIT listCleared();
+}
+
+void SendRecipientsListModel::clearToFront()
+{
+    bool count_changed = false;
+    while (m_recipients.size() > 1) {
+        delete m_recipients.at(1);
+        m_recipients.removeAt(1);
+        count_changed = true;
+    }
+
+    if (count_changed) {
+        Q_EMIT countChanged();
+    }
+
+    if (m_totalAmount != m_recipients[0]->amount()->satoshi()) {
+        m_totalAmount = m_recipients[0]->amount()->satoshi();
+        Q_EMIT totalAmountChanged();
+    }
+
+    if (m_current != 0) {
+        m_current = 0;
+        Q_EMIT currentRecipientChanged();
+        Q_EMIT currentIndexChanged();
+    }
 }

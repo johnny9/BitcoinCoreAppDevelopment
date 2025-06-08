@@ -27,6 +27,14 @@ PageStack {
         }
     }
 
+    Connections {
+        target: root.wallet.recipients
+        function onListCleared() {
+            settings.multipleRecipientsEnabled = false
+        }
+    }
+
+
     initialItem: Page {
         background: null
 
@@ -34,6 +42,14 @@ PageStack {
             id: settings
             property alias coinControlEnabled: sendOptionsPopup.coinControlEnabled
             property alias multipleRecipientsEnabled: sendOptionsPopup.multipleRecipientsEnabled
+
+            onMultipleRecipientsEnabledChanged: {
+                if (!multipleRecipientsEnabled) {
+                    root.wallet.recipients.clearToFront()
+                } else {
+                    root.wallet.recipients.add()
+                }
+            }
         }
 
         ScrollView {
@@ -96,10 +112,10 @@ PageStack {
                     CoreText {
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignLeft
-                        id: selectAndAddRecipientsLabel
                         text: qsTr("Recipient %1 of %2").arg(wallet.recipients.currentIndex).arg(wallet.recipients.count)
                         horizontalAlignment: Text.AlignLeft
                         font.pixelSize: 18
+                        color: Theme.color.neutral9
                     }
 
                     IconButton {
@@ -110,6 +126,7 @@ PageStack {
                         enabled: wallet.recipients.currentIndex - 1 > 0
                         onClicked: {
                             wallet.recipients.prev()
+
                         }
                     }
 
@@ -206,6 +223,7 @@ PageStack {
                     Layout.fillWidth: true
                     labelText: qsTr("Note to self")
                     placeholderText: qsTr("Enter ...")
+                    text: root.recipient.label
                     onTextEdited: root.recipient.label = label.text
                 }
 

@@ -38,6 +38,7 @@ public:
     BitcoinAmount* amount() const;
     QString amountError() const;
     void setAmountError(const QString& error);
+    void setAmount(const QString& amount);
 
     QString message() const;
     void setMessage(const QString& message);

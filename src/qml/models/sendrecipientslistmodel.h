@@ -5,10 +5,10 @@
 #ifndef BITCOIN_QML_MODELS_SENDRECIPIENTSLISTMODEL_H
 #define BITCOIN_QML_MODELS_SENDRECIPIENTSLISTMODEL_H
 
-#include <QAbstractListModel>
+#include <qml/models/sendrecipient.h>
 
-class SendRecipient;
-class WalletQmlModel;
+#include <QAbstractListModel>
+#include <QList>
 
 class SendRecipientsListModel : public QAbstractListModel
 {
@@ -37,8 +37,9 @@ public:
     Q_INVOKABLE void prev();
     Q_INVOKABLE void remove();
     Q_INVOKABLE void clear();
+    Q_INVOKABLE void clearToFront();
 
-    int currentIndex() const { return m_current+1; }
+    int currentIndex() const { return m_current + 1; }
     void setCurrentIndex(int row);
     SendRecipient* currentRecipient() const;
     int count() const { return m_recipients.size(); }
@@ -51,6 +52,7 @@ Q_SIGNALS:
     void currentRecipientChanged();
     void countChanged();
     void totalAmountChanged();
+    void listCleared();
 
 private:
     void updateTotalAmount();
