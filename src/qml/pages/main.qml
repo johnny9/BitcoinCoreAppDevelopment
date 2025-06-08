@@ -68,7 +68,7 @@ ApplicationWindow {
         OnboardingWizard {
             onFinished: {
                 optionsModel.onboard()
-                if (AppMode.walletEnabled && AppMode.isDesktop) {
+                if (AppMode.walletEnabled) {
                     main.push(desktopWallets)
                     main.push(createWalletWizard)
                 } else {
