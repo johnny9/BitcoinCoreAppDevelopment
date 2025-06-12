@@ -38,6 +38,7 @@ QT_MOC_CPP = \
   qml/components/moc_blockclockdial.cpp \
   qml/controls/moc_linegraph.cpp \
   qml/models/moc_activitylistmodel.cpp \
+  qml/models/moc_bitcoinaddress.cpp \
   qml/models/moc_chainmodel.cpp \
   qml/models/moc_coinslistmodel.cpp \
   qml/models/moc_networktraffictower.cpp \
@@ -130,6 +131,7 @@ BITCOIN_QT_H = \
   qml/components/blockclockdial.h \
   qml/controls/linegraph.h \
   qml/models/activitylistmodel.h \
+  qml/models/bitcoinaddress.h \
   qml/models/chainmodel.h \
   qml/models/coinslistmodel.h \
   qml/models/networktraffictower.h \
@@ -334,6 +336,7 @@ BITCOIN_QML_BASE_CPP = \
   qml/components/blockclockdial.cpp \
   qml/controls/linegraph.cpp \
   qml/models/activitylistmodel.cpp \
+  qml/models/bitcoinaddress.cpp \
   qml/models/chainmodel.cpp \
   qml/models/coinslistmodel.cpp \
   qml/models/networktraffictower.cpp \

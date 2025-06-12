@@ -6,6 +6,7 @@
 #define BITCOIN_QML_MODELS_SENDRECIPIENT_H
 
 #include <qml/bitcoinamount.h>
+#include <qml/models/bitcoinaddress.h>
 
 #include <QObject>
 #include <QString>
@@ -15,7 +16,7 @@ class WalletQmlModel;
 class SendRecipient : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString address READ address WRITE setAddress NOTIFY addressChanged)
+    Q_PROPERTY(BitcoinAddress* address READ address CONSTANT)
     Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY labelChanged)
     Q_PROPERTY(QString message READ message WRITE setMessage NOTIFY messageChanged)
     Q_PROPERTY(BitcoinAmount* amount READ amount CONSTANT)
@@ -27,7 +28,7 @@ class SendRecipient : public QObject
 public:
     explicit SendRecipient(WalletQmlModel* wallet, QObject* parent = nullptr);
 
-    QString address() const;
+    BitcoinAddress* address() const;
     void setAddress(const QString& address);
     QString addressError() const;
     void setAddressError(const QString& error);
@@ -64,7 +65,7 @@ private:
     void validateAmount();
 
     WalletQmlModel* m_wallet;
-    QString m_address{""};
+    BitcoinAddress* m_address;
     QString m_addressError{""};
     QString m_label{""};
     QString m_message{""};

@@ -13,9 +13,12 @@ Item {
     property alias iconSource: icon.source
     property alias customIcon: iconContainer.data
     property alias enabled: input.enabled
+    property alias cursorPosition: input.cursorPosition
 
     signal iconClicked
     signal textEdited
+    signal editingFinished
+    signal activeFocusChanged
 
     id: root
     implicitHeight: input.height
@@ -29,11 +32,14 @@ Item {
         font.pixelSize: 18
     }
 
-    TextField {
+    TextArea {
         id: input
         anchors.left: label.right
         anchors.right: iconContainer.left
         anchors.verticalCenter: parent.verticalCenter
+        wrapMode: Text.Wrap
+
+        height: Math.max(implicitHeight, contentHeight)
         leftPadding: 0
         font.family: "Inter"
         font.styleName: "Regular"
@@ -42,7 +48,9 @@ Item {
         placeholderTextColor: enabled ? Theme.color.neutral7 : Theme.color.neutral4
         background: Item {}
         selectByMouse: true
-        onTextEdited: root.textEdited()
+        onTextChanged: root.textEdited()
+        onEditingFinished: root.editingFinished()
+        onActiveFocusChanged: root.activeFocusChanged()
     }
 
     Item {

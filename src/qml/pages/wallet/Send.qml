@@ -177,8 +177,20 @@ PageStack {
                         Layout.fillWidth: true
                         labelText: qsTr("Send to")
                         placeholderText: qsTr("Enter address...")
-                        text: root.recipient.address
-                        onTextEdited: root.recipient.address = address.text
+                        text: root.recipient.address.formattedAddress
+
+                        onTextEdited: {
+                            address.cursorPosition = root.recipient.address.setAddress(address.text, address.cursorPosition)
+                        }
+                        onEditingFinished: {
+                            root.recipient.address.setAddress(address.text, address.cursorPosition)
+                        }
+
+                        onActiveFocusChanged: {
+                            if (!activeFocus) {
+                                root.recipient.address.setAddress(address.text)
+                            }
+                        }
                     }
 
                     RowLayout {

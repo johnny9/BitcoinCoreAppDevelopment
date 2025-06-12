@@ -6,24 +6,26 @@
 
 #include <qml/bitcoinamount.h>
 #include <qml/models/walletqmlmodel.h>
+#include <qml/models/bitcoinaddress.h>
 
 #include <key_io.h>
 
 SendRecipient::SendRecipient(WalletQmlModel* wallet, QObject* parent)
-    : QObject(parent), m_wallet(wallet), m_amount(new BitcoinAmount(this))
+    : QObject(parent), m_wallet(wallet), m_amount(new BitcoinAmount(this)), m_address(new BitcoinAddress())
 {
     connect(m_amount, &BitcoinAmount::amountChanged, this, &SendRecipient::validateAmount);
+    connect(m_address, &BitcoinAddress::formattedAddressChanged, this, &SendRecipient::addressChanged);
 }
 
-QString SendRecipient::address() const
+BitcoinAddress* SendRecipient::address() const
 {
     return m_address;
 }
 
 void SendRecipient::setAddress(const QString& address)
 {
-    if (m_address != address) {
-        m_address = address;
+    if (m_address->address() != address) {
+        m_address->setAddress(address, 0);
         Q_EMIT addressChanged();
         validateAddress();
     }
@@ -98,7 +100,7 @@ CAmount SendRecipient::cAmount() const
 
 void SendRecipient::clear()
 {
-    m_address = "";
+    m_address->setAddress("", 0);
     m_label = "";
     m_amount->setSatoshi(0);
     m_message = "";
@@ -113,7 +115,7 @@ void SendRecipient::validateAddress()
 {
     setAddressError("");
 
-    if (!m_address.isEmpty() && !IsValidDestinationString(m_address.toStdString())) {
+    if (!m_address->address().isEmpty() && !IsValidDestinationString(m_address->address().toStdString())) {
         setAddressError(tr("Invalid address"));
     }
 
@@ -139,5 +141,5 @@ void SendRecipient::validateAmount()
 
 bool SendRecipient::isValid() const
 {
-    return m_addressError.isEmpty() && m_amountError.isEmpty() && m_amount->satoshi() > 0 && !m_address.isEmpty();
+    return m_addressError.isEmpty() && m_amountError.isEmpty() && m_amount->satoshi() > 0 && !m_address->isEmpty();
 }
