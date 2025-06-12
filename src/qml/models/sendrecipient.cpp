@@ -11,7 +11,7 @@
 #include <key_io.h>
 
 SendRecipient::SendRecipient(WalletQmlModel* wallet, QObject* parent)
-    : QObject(parent), m_wallet(wallet), m_address(new BitcoinAddress()), m_amount(new BitcoinAmount(this))
+    : QObject(parent), m_wallet(wallet), m_address(new BitcoinAddress(this)), m_amount(new BitcoinAmount(this))
 {
     connect(m_amount, &BitcoinAmount::amountChanged, this, &SendRecipient::validateAmount);
     connect(m_address, &BitcoinAddress::formattedAddressChanged, this, &SendRecipient::validateAddress);
