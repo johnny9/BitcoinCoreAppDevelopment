@@ -11,10 +11,10 @@
 #include <key_io.h>
 
 SendRecipient::SendRecipient(WalletQmlModel* wallet, QObject* parent)
-    : QObject(parent), m_wallet(wallet), m_amount(new BitcoinAmount(this)), m_address(new BitcoinAddress())
+    : QObject(parent), m_wallet(wallet), m_address(new BitcoinAddress()), m_amount(new BitcoinAmount(this))
 {
     connect(m_amount, &BitcoinAmount::amountChanged, this, &SendRecipient::validateAmount);
-    connect(m_address, &BitcoinAddress::formattedAddressChanged, this, &SendRecipient::addressChanged);
+    connect(m_address, &BitcoinAddress::formattedAddressChanged, this, &SendRecipient::validateAddress);
 }
 
 BitcoinAddress* SendRecipient::address() const
@@ -113,10 +113,16 @@ void SendRecipient::clear()
 
 void SendRecipient::validateAddress()
 {
-    setAddressError("");
-
-    if (!m_address->address().isEmpty() && !IsValidDestinationString(m_address->address().toStdString())) {
-        setAddressError(tr("Invalid address"));
+    if (!m_address->isEmpty() && !IsValidDestinationString(m_address->address().toStdString())) {
+        if (IsValidDestinationString(m_address->address().toStdString(), *CChainParams::Main())) {
+            setAddressError(tr("Address is valid for mainnet, not the current network"));
+        } else if (IsValidDestinationString(m_address->address().toStdString(), *CChainParams::TestNet())) {
+            setAddressError(tr("Address is valid for testnet, not the current network"));
+        } else {
+            setAddressError(tr("Invalid address format"));
+        }
+    } else {
+        setAddressError("");
     }
 
     Q_EMIT isValidChanged();
@@ -124,15 +130,15 @@ void SendRecipient::validateAddress()
 
 void SendRecipient::validateAmount()
 {
-    setAmountError("");
-
     if (m_amount->isSet()) {
         if (m_amount->satoshi() <= 0) {
             setAmountError(tr("Amount must be greater than zero"));
         } else if (m_amount->satoshi() > MAX_MONEY) {
-            setAmountError(tr("Amount exceeds maximum limit"));
+            setAmountError(tr("Amount exceeds maximum limit of 21,000,000 BTC"));
         } else if (m_amount->satoshi() > m_wallet->balanceSatoshi()) {
             setAmountError(tr("Amount exceeds available balance"));
+        } else {
+            setAmountError("");
         }
     }
 

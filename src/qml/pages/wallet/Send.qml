@@ -126,7 +126,6 @@ PageStack {
                         enabled: wallet.recipients.currentIndex - 1 > 0
                         onClicked: {
                             wallet.recipients.prev()
-
                         }
                     }
 

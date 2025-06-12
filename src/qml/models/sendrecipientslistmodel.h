@@ -10,6 +10,8 @@
 #include <QAbstractListModel>
 #include <QList>
 
+class WalletQmlModel;
+
 class SendRecipientsListModel : public QAbstractListModel
 {
     Q_OBJECT

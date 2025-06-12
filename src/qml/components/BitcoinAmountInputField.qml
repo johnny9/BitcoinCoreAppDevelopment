@@ -63,6 +63,11 @@ ColumnLayout {
                     root.editingFinished(text)
                 }
             }
+
+            validator: RegExpValidator {
+                regExp: /^(0|[1-9]\d*)(\.\d{0,8})?$/
+            }
+            maximumLength: 17
         }
 
         Item {
@@ -77,7 +82,10 @@ ColumnLayout {
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 enabled: root.enabled && root.amount
-                onClicked: root.amount.flipUnit()
+                onClicked: {
+                    root.amount.display = amountInput.text
+                    root.amount.flipUnit()
+                }
             }
 
             CoreText {

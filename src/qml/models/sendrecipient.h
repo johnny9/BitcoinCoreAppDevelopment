@@ -37,9 +37,9 @@ public:
     void setLabel(const QString& label);
 
     BitcoinAmount* amount() const;
+    void setAmount(const QString& amount);
     QString amountError() const;
     void setAmountError(const QString& error);
-    void setAmount(const QString& amount);
 
     QString message() const;
     void setMessage(const QString& message);
@@ -64,7 +64,7 @@ private:
     void validateAddress();
     void validateAmount();
 
-    WalletQmlModel* m_wallet;
+    const WalletQmlModel* m_wallet;
     BitcoinAddress* m_address;
     QString m_addressError{""};
     QString m_label{""};
