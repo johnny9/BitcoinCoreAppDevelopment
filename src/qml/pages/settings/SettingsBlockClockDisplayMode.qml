@@ -30,6 +30,7 @@ Page {
             header: qsTr("Block clock display mode")
         }
     }
+
     BlockClockDisplayMode {
         width: Math.min(parent.width, 450)
         anchors.horizontalCenter: parent.horizontalCenter
