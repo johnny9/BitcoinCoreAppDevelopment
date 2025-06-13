@@ -168,50 +168,11 @@ PageStack {
                     Layout.fillWidth: true
                 }
 
-                ColumnLayout {
+                BitcoinAddressInputField {
                     Layout.fillWidth: true
-
-                    LabeledTextInput {
-                        id: address
-                        Layout.fillWidth: true
-                        labelText: qsTr("Send to")
-                        placeholderText: qsTr("Enter address...")
-                        text: root.recipient.address.formattedAddress
-
-                        onTextEdited: {
-                            address.cursorPosition = root.recipient.address.setAddress(address.text, address.cursorPosition)
-                        }
-                        onEditingFinished: {
-                            root.recipient.address.setAddress(address.text, address.cursorPosition)
-                        }
-
-                        onActiveFocusChanged: {
-                            if (!activeFocus) {
-                                root.recipient.address.setAddress(address.text)
-                            }
-                        }
-                    }
-
-                    RowLayout {
-                        id: addressIssue
-                        Layout.fillWidth: true
-                        visible: root.recipient.addressError.length > 0
-
-                        Icon {
-                            source: "image://images/alert-filled"
-                            size: 22
-                            color: Theme.color.red
-                        }
-
-                        CoreText {
-                            id: warningText
-                            text: root.recipient.addressError
-                            font.pixelSize: 15
-                            color: Theme.color.red
-                            horizontalAlignment: Text.AlignLeft
-                            Layout.fillWidth: true
-                        }
-                    }
+                    enabled: walletController.initialized
+                    address: root.recipient.address
+                    errorText: root.recipient.addressError
                 }
 
                 Separator {
