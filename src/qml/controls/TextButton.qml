@@ -16,6 +16,11 @@ Button {
     property bool rightalign: false
     padding: 15
     hoverEnabled: AppMode.isDesktop
+
+    HoverHandler {
+        cursorShape: Qt.PointingHandCursor
+    }
+
     contentItem: CoreText {
         text: root.text
         bold: root.bold

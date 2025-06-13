@@ -59,6 +59,7 @@ AbstractButton {
         id: mouseArea
         anchors.fill: root
         hoverEnabled: AppMode.isDesktop
+        cursorShape: Qt.PointingHandCursor
         onEntered: {
             root.state = "HOVER"
         }

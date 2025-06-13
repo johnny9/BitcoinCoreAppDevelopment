@@ -22,10 +22,7 @@ Button {
     width: root.size
     padding: 0
 
-    MouseArea {
-        anchors.fill: parent
-        enabled: false
-        hoverEnabled: true
+    HoverHandler {
         cursorShape: Qt.PointingHandCursor
     }
 

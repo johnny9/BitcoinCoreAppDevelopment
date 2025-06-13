@@ -4,6 +4,7 @@
 
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import org.bitcoincore.qt 1.0
 
 Button {
     id: root
@@ -20,6 +21,12 @@ Button {
     icon.width: root.size
     enabled: false
     background: null
+
+    hoverEnabled: AppMode.isDesktop
+
+    HoverHandler {
+        cursorShape: Qt.PointingHandCursor
+    }
 
     Behavior on icon.color {
         ColorAnimation {

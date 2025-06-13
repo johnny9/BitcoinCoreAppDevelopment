@@ -10,6 +10,10 @@ Button {
     id: root
     hoverEnabled: AppMode.isDesktop
 
+    HoverHandler {
+        cursorShape: Qt.PointingHandCursor
+    }
+
     property color textColor: Theme.color.white
     property color backgroundColor: Theme.color.orange
     property color backgroundHoverColor: Theme.color.orangeLight1

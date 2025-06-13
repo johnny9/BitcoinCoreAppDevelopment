@@ -35,6 +35,7 @@ Page {
 
             MouseArea {
                 anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
                 onClicked: {
                     if (walletController.initialized) {
                         walletListModel.listWalletDir()

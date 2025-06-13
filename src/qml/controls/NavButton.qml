@@ -10,17 +10,20 @@ import org.bitcoincore.qt 1.0
 
 AbstractButton {
     id: root
+
     property int iconHeight: 30
     property int iconWidth: 30
     property int textSize: 18
     property url iconSource: ""
     property Rectangle iconBackground: null
     property color iconColor: enabled ? Theme.color.neutral9 : Theme.color.neutral2
+
     hoverEnabled: AppMode.isDesktop
     topPadding: text_background.active ? 7 : 14
     bottomPadding: text_background.active ? 7 : 14
     rightPadding: text_background.active ? 22 : 14
     leftPadding: text_background.active ? 2 : 14
+
     background: Rectangle {
         id: bg
         height: root.height
@@ -51,9 +54,11 @@ AbstractButton {
             ColorAnimation { duration: 150 }
         }
     }
+
     contentItem: RowLayout {
         spacing: 0
         anchors.fill: parent
+
         Loader {
            id: button_background
            active: root.iconSource.toString().length > 0
@@ -75,6 +80,7 @@ AbstractButton {
                }
            }
         }
+
         Loader {
             id: text_background
             active: root.text.length > 0
@@ -94,9 +100,11 @@ AbstractButton {
             }
         }
     }
+
     MouseArea {
         anchors.fill: parent
         hoverEnabled: AppMode.isDesktop
+        cursorShape: Qt.PointingHandCursor
         onEntered: {
             root.background.state = "HOVER"
         }

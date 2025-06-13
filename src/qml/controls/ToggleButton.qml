@@ -18,6 +18,11 @@ Button {
     id: root
     checkable: true
     hoverEnabled: AppMode.isDesktop
+
+    HoverHandler {
+        cursorShape: Qt.PointingHandCursor
+    }
+
     leftPadding: 12
     rightPadding: 12
     topPadding: 5

@@ -9,6 +9,11 @@ import org.bitcoincore.qt 1.0
 Button {
     id: root
     hoverEnabled: AppMode.isDesktop
+
+    HoverHandler {
+        cursorShape: Qt.PointingHandCursor
+    }
+
     contentItem: CoreText {
         text: parent.text
         bold: true

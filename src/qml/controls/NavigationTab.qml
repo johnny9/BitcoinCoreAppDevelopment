@@ -22,6 +22,10 @@ Button {
     bottomPadding: 0
     topPadding: 0
 
+    HoverHandler {
+        cursorShape: Qt.PointingHandCursor
+    }
+
     contentItem: Item {
         width: parent.width
         height: parent.height
