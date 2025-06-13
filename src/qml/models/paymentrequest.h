@@ -5,12 +5,11 @@
 #ifndef BITCOIN_QML_MODELS_PAYMENTREQUEST_H
 #define BITCOIN_QML_MODELS_PAYMENTREQUEST_H
 
-#include "addresstype.h"
-#include <qchar.h>
 #include <qml/bitcoinamount.h>
 
+#include <addresstype.h>
+
 #include <QObject>
-#include <qobjectdefs.h>
 
 class PaymentRequest : public QObject
 {
