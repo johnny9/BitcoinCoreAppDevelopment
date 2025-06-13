@@ -102,25 +102,56 @@ Page {
                                 text: qsTr("Address")
                                 font.pixelSize: 18
                             }
-                            CoreText {
-                                id: copyLabel
-                                text: qsTr("copy")
-                                font.pixelSize: 18
-                                color: enabled ? Theme.color.neutral7 : Theme.color.neutral4
+                            MouseArea {
+                                id: copyLabelArea
+                                width: copyLabel.implicitWidth
+                                height: copyLabel.implicitHeight
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                enabled: address.text !== ""
+
+                                CoreText {
+                                    id: copyLabel
+                                    text: qsTr("copy")
+                                    font.pixelSize: 18
+                                    color: enabled ? Theme.color.orange : Theme.color.neutral4
+                                }
+
+                                onClicked: {
+                                    Clipboard.setText(root.request.address)
+                                }
                             }
                         }
 
-                        CoreText {
-                            id: address
+                        Item {
                             Layout.fillWidth: true
-                            Layout.minimumHeight: 50
-                            text: root.request.address
-                            horizontalAlignment: Text.AlignLeft
-                            font.pixelSize: 18
-                            wrapMode: Text.WrapAnywhere
-                            background: Rectangle {
-                                color: Theme.color.neutral2
-                                radius: 5
+                            Layout.minimumHeight: 100
+
+                            MouseArea {
+                                id: mouseArea
+                                anchors.fill: parent
+                                hoverEnabled: address.text !== ""
+                                cursorShape: address.text !== "" ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                enabled: address.text !== ""
+
+                                CoreText {
+                                    id: address
+                                    width: parent.width
+                                    height: parent.height
+                                    text: root.request.addressFormatted
+                                    horizontalAlignment: Text.AlignLeft
+                                    font.pixelSize: 18
+                                    wrapMode: Text.WordWrap
+                                    padding: 10
+                                    background: Rectangle {
+                                        color: mouseArea.containsMouse ? Theme.color.neutral3 : Theme.color.neutral2
+                                        radius: 5
+                                    }
+                                }
+
+                                onClicked: {
+                                    Clipboard.setText(root.request.address)
+                                }
                             }
                         }
                     }
@@ -132,10 +163,10 @@ Page {
                         text: qsTr("Create bitcoin address")
                         onClicked: {
                             if (!clearRequest.visible) {
+                                continueButton.text = qsTr("Share")
                                 clearRequest.visible = true
                                 root.wallet.commitPaymentRequest()
                                 title.text = qsTr("Payment request #" + root.wallet.request.id)
-                                continueButton.text = qsTr("Copy payment request")
                             }
                         }
                     }

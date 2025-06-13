@@ -2,8 +2,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+
 #include <qml/bitcoinamount.h>
 #include <qml/models/paymentrequest.h>
+#include <qml/models/bitcoinaddress.h>
 
 #include <addresstype.h>
 #include <key_io.h>
@@ -20,6 +22,13 @@ PaymentRequest::PaymentRequest(QObject *parent)
 QString PaymentRequest::address() const
 {
     return QString::fromStdString(EncodeDestination(m_destination));
+}
+
+QString PaymentRequest::addressFormatted() const
+{
+    BitcoinAddress bitcoinAddress;
+    bitcoinAddress.setAddress(address());
+    return bitcoinAddress.formattedAddress();
 }
 
 QString PaymentRequest::label() const

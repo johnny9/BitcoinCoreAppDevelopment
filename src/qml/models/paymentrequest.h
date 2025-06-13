@@ -15,6 +15,7 @@ class PaymentRequest : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString address READ address NOTIFY addressChanged)
+    Q_PROPERTY(QString addressFormatted READ addressFormatted NOTIFY addressChanged)
     Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY labelChanged)
     Q_PROPERTY(QString message READ message WRITE setMessage NOTIFY messageChanged)
     Q_PROPERTY(BitcoinAmount* amount READ amount CONSTANT)
@@ -25,6 +26,7 @@ public:
     explicit PaymentRequest(QObject *parent = nullptr);
 
     QString address() const;
+    QString addressFormatted() const;
 
     QString label() const;
     void setLabel(const QString &label);
