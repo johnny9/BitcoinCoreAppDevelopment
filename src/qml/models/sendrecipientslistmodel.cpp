@@ -126,7 +126,7 @@ void SendRecipientsListModel::updateTotalAmount()
 
 QString SendRecipientsListModel::totalAmount() const
 {
-    return BitcoinAmount::satsToBtcString(m_totalAmount);
+    return BitcoinAmount::satsToRichBtcString(m_totalAmount + m_fee);
 }
 
 void SendRecipientsListModel::clear()
