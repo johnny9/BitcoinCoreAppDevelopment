@@ -26,7 +26,8 @@ Item {
     CoreText {
         id: label
         anchors.left: parent.left
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.top: parent.top
+        anchors.topMargin: 6
         horizontalAlignment: Text.AlignLeft
         width: 110
         font.pixelSize: 18
@@ -36,7 +37,7 @@ Item {
         id: input
         anchors.left: label.right
         anchors.right: iconContainer.left
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.top: parent.top
         wrapMode: Text.Wrap
 
         height: Math.max(implicitHeight, contentHeight)
@@ -56,7 +57,7 @@ Item {
     Item {
         id: iconContainer
         anchors.right: parent.right
-        anchors.verticalCenter: input.verticalCenter
+        anchors.top: parent.top
 
         Icon {
             id: icon

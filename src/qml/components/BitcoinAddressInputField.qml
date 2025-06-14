@@ -25,6 +25,7 @@ ColumnLayout {
     LabeledTextInput {
         id: addressInput
         Layout.fillWidth: true
+        Layout.alignment: Qt.AlignTop
         enabled: root.enabled
         labelText: root.labelText
         placeholderText: qsTr("Enter address...")
@@ -51,6 +52,7 @@ ColumnLayout {
             }
         }
     }
+
 
     RowLayout {
         id: addressIssue
