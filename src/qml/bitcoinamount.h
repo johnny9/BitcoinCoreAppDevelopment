@@ -16,6 +16,7 @@ class BitcoinAmount : public QObject
     Q_PROPERTY(Unit unit READ unit WRITE setUnit NOTIFY unitChanged)
     Q_PROPERTY(QString unitLabel READ unitLabel NOTIFY unitChanged)
     Q_PROPERTY(QString display READ toDisplay WRITE fromDisplay NOTIFY displayChanged)
+    Q_PROPERTY(QString richDisplay READ toRichDisplay NOTIFY displayChanged)
     Q_PROPERTY(qint64 satoshi READ satoshi WRITE setSatoshi NOTIFY amountChanged)
 
 public:
@@ -32,6 +33,7 @@ public:
     QString unitLabel() const;
 
     QString toDisplay() const;
+    QString toRichDisplay() const;
     void fromDisplay(const QString& new_amount);
     qint64 satoshi() const;
     void setSatoshi(qint64 new_amount);
@@ -41,6 +43,7 @@ public:
     Q_INVOKABLE void format();
 
     static QString satsToBtcString(qint64 sat);
+    static QString satsToRichBtcString(qint64 sat);
 
 public Q_SLOTS:
     void flipUnit();

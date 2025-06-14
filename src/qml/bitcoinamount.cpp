@@ -102,7 +102,65 @@ QString BitcoinAmount::satsToBtcString(qint64 sat)
     if (negative) {
         result.prepend('-');
     }
+
+    result += " ₿";
     return result;
+}
+
+QString BitcoinAmount::satsToRichBtcString(qint64 sat)
+{
+    const bool negative = sat < 0;
+    qint64 absSat = negative ? -sat : sat;
+
+    // split into whole and 8-digit fraction
+    const qint64 wholePart = absSat / COIN;
+    const qint64 fracInt   = absSat % COIN;
+    QString frac = QString("%1").arg(fracInt, 8, 10, QLatin1Char('0'));
+
+    QString fadedColor = "\"#787878\""; // neutral5
+    QString normalColor = "\"#FFFFFF\""; // neutral9
+
+    // flag amounts < 1 BTC so we can recolor leading zeros
+    const bool isSubBtc = absSat < COIN;
+
+    QString out;
+    if (negative) {
+        out += QString("<font color=%1>-</font>").arg(normalColor);
+    }
+
+    if (isSubBtc) {
+        out += QString("<font color=%1>%2</font>").arg(fadedColor).arg(wholePart);
+        out += QString("<font color=%1>.</font>").arg(fadedColor);
+    } else {
+        out += QString("<font color=%1>%2</font>").arg(normalColor).arg(wholePart);
+        out += QString("<font color=%1>.</font>").arg(normalColor);
+    }
+
+    bool seenNonZero = false;
+    for (int i = 0; i < 8; i++) {
+        QChar digit = frac.at(i);
+
+        if (digit != QLatin1Char('0')) {
+            seenNonZero = true;
+        }
+
+        bool isPlaceholderZero = isSubBtc && !seenNonZero && digit == QLatin1Char('0');
+        QString color = isPlaceholderZero ? fadedColor
+                                          : normalColor;
+
+        out += QString("<font color=%1>%2</font>")
+                   .arg(color)
+                   .arg(digit);
+        if (i == 1 || i == 4) {
+            out += " ";
+        }
+    }
+
+    // — BTC symbol —
+    out += " ";
+    out += QString("<font color=%1>₿</font>").arg(normalColor);
+
+    return out;
 }
 
 QString BitcoinAmount::toDisplay() const
@@ -115,6 +173,14 @@ QString BitcoinAmount::toDisplay() const
     } else {
         return satsToBtcString(m_satoshi);
     }
+}
+
+QString BitcoinAmount::toRichDisplay() const
+{
+    if (!m_isSet) {
+        return "";
+    }
+    return satsToRichBtcString(m_satoshi);
 }
 
 qint64 BitcoinAmount::btcToSats(const QString& btcSanitized)
