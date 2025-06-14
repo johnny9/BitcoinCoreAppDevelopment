@@ -9,7 +9,6 @@
 #include <qml/models/paymentrequest.h>
 #include <qml/models/sendrecipient.h>
 #include <qml/models/sendrecipientslistmodel.h>
-#include <qml/models/walletqmlmodeltransaction.h>
 
 #include <consensus/amount.h>
 #include <interfaces/wallet.h>
@@ -51,9 +50,6 @@ WalletQmlModel::~WalletQmlModel()
     delete m_coins_list_model;
     delete m_send_recipients;
     delete m_current_payment_request;
-    if (m_current_transaction) {
-        delete m_current_transaction;
-    }
 }
 
 QString WalletQmlModel::balance() const
@@ -162,14 +158,8 @@ bool WalletQmlModel::prepareTransaction()
     CAmount nFeeRequired = 0;
     const auto& res = m_wallet->createTransaction(vecSend, m_coin_control, true, nChangePosRet, nFeeRequired);
     if (res) {
-        if (m_current_transaction) {
-            delete m_current_transaction;
-        }
-        CTransactionRef newTx = *res;
-        m_current_transaction = new WalletQmlModelTransaction(m_send_recipients, this);
-        m_current_transaction->setWtx(newTx);
-        m_current_transaction->setTransactionFee(nFeeRequired);
-        Q_EMIT currentTransactionChanged();
+        m_current_transaction = *res;
+        m_send_recipients->setFee(nFeeRequired);
         return true;
     } else {
         return false;
@@ -182,7 +172,7 @@ void WalletQmlModel::sendTransaction()
         return;
     }
 
-    CTransactionRef newTx = m_current_transaction->getWtx();
+    CTransactionRef newTx = m_current_transaction;
     if (!newTx) {
         return;
     }

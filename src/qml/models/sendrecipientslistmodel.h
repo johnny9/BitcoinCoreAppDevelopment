@@ -18,7 +18,9 @@ class SendRecipientsListModel : public QAbstractListModel
     Q_PROPERTY(int currentIndex READ currentIndex NOTIFY currentIndexChanged)
     Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_PROPERTY(SendRecipient* current READ currentRecipient NOTIFY currentRecipientChanged)
+    Q_PROPERTY(SendRecipient* first READ firstRecipient NOTIFY firstRecipientChanged)
     Q_PROPERTY(QString totalAmount READ totalAmount NOTIFY totalAmountChanged)
+    Q_PROPERTY(QString fee READ fee NOTIFY feeChanged)
 
 public:
     enum Roles {
@@ -44,16 +46,21 @@ public:
     int currentIndex() const { return m_current + 1; }
     void setCurrentIndex(int row);
     SendRecipient* currentRecipient() const;
+    SendRecipient* firstRecipient() const;
     int count() const { return m_recipients.size(); }
     QList<SendRecipient*> recipients() const { return m_recipients; }
     QString totalAmount() const;
     qint64 totalAmountSatoshi() const { return m_totalAmount; }
+    QString fee() const;
+    void setFee(qint64 fee);
 
 Q_SIGNALS:
     void currentIndexChanged();
     void currentRecipientChanged();
+    void firstRecipientChanged();
     void countChanged();
     void totalAmountChanged();
+    void feeChanged();
     void listCleared();
 
 private:
@@ -63,6 +70,7 @@ private:
     QList<SendRecipient*> m_recipients;
     int m_current{0};
     qint64 m_totalAmount{0};
+    qint64 m_fee{0};
 };
 
 #endif // BITCOIN_QML_MODELS_SENDRECIPIENTSLISTMODEL_H

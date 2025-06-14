@@ -148,6 +148,7 @@ void SendRecipientsListModel::clear()
     Q_EMIT countChanged();
     Q_EMIT totalAmountChanged();
     Q_EMIT currentRecipientChanged();
+    Q_EMIT firstRecipientChanged();
     Q_EMIT currentIndexChanged();
     Q_EMIT listCleared();
 }
@@ -175,4 +176,26 @@ void SendRecipientsListModel::clearToFront()
         Q_EMIT currentRecipientChanged();
         Q_EMIT currentIndexChanged();
     }
+}
+
+void SendRecipientsListModel::setFee(qint64 fee)
+{
+    if (m_fee != fee) {
+        m_fee = fee;
+        Q_EMIT totalAmountChanged();
+        Q_EMIT feeChanged();
+    }
+}
+
+QString SendRecipientsListModel::fee() const
+{
+    return BitcoinAmount::satsToRichBtcString(m_fee);
+}
+
+SendRecipient* SendRecipientsListModel::firstRecipient() const
+{
+    if (m_recipients.size() == 0) {
+        return nullptr;
+    }
+    return m_recipients[0];
 }

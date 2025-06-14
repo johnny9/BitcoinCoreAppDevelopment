@@ -10,12 +10,12 @@
 #include <qml/models/paymentrequest.h>
 #include <qml/models/sendrecipient.h>
 #include <qml/models/sendrecipientslistmodel.h>
-#include <qml/models/walletqmlmodeltransaction.h>
 
 #include <consensus/amount.h>
 #include <interfaces/handler.h>
 #include <interfaces/wallet.h>
 #include <wallet/coincontrol.h>
+#include <wallet/wallet.h>
 
 #include <memory>
 #include <vector>
@@ -30,7 +30,6 @@ class WalletQmlModel : public QObject
     Q_PROPERTY(ActivityListModel* activityListModel READ activityListModel CONSTANT)
     Q_PROPERTY(CoinsListModel* coinsListModel READ coinsListModel CONSTANT)
     Q_PROPERTY(SendRecipientsListModel* recipients READ sendRecipientList CONSTANT)
-    Q_PROPERTY(WalletQmlModelTransaction* currentTransaction READ currentTransaction NOTIFY currentTransactionChanged)
     Q_PROPERTY(unsigned int targetBlocks READ feeTargetBlocks WRITE setFeeTargetBlocks NOTIFY feeTargetBlocksChanged)
     Q_PROPERTY(PaymentRequest* currentPaymentRequest READ currentPaymentRequest CONSTANT)
     Q_PROPERTY(bool isWalletLoaded READ isWalletLoaded NOTIFY walletIsLoadedChanged)
@@ -49,7 +48,6 @@ public:
     ActivityListModel* activityListModel() const { return m_activity_list_model; }
     CoinsListModel* coinsListModel() const { return m_coins_list_model; }
     SendRecipientsListModel* sendRecipientList() const { return m_send_recipients; }
-    WalletQmlModelTransaction* currentTransaction() const { return m_current_transaction; }
     Q_INVOKABLE bool prepareTransaction();
     Q_INVOKABLE void sendTransaction();
 
@@ -81,7 +79,6 @@ public:
 Q_SIGNALS:
     void nameChanged();
     void balanceChanged();
-    void currentTransactionChanged();
     void feeTargetBlocksChanged();
     void walletIsLoadedChanged();
 
@@ -93,7 +90,7 @@ private:
     ActivityListModel* m_activity_list_model{nullptr};
     CoinsListModel* m_coins_list_model{nullptr};
     SendRecipientsListModel* m_send_recipients{nullptr};
-    WalletQmlModelTransaction* m_current_transaction{nullptr};
+    CTransactionRef m_current_transaction{nullptr};
     wallet::CCoinControl m_coin_control;
     bool m_is_wallet_loaded{false};
 };

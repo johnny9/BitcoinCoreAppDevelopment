@@ -15,7 +15,6 @@ Page {
     background: null
 
     property WalletQmlModel wallet: walletController.selectedWallet
-    property WalletQmlModelTransaction transaction: walletController.selectedWallet.currentTransaction
 
     signal finished()
     signal back()
@@ -108,7 +107,7 @@ Page {
                     Layout.fillWidth: true
                 }
                 CoreText {
-                    text: root.transaction.total
+                    text: root.wallet.recipients.totalAmount
                     font.pixelSize: 20
                     color: Theme.color.neutral9
                 }
@@ -130,7 +129,7 @@ Page {
                     Layout.fillWidth: true
                 }
                 CoreText {
-                    text: root.transaction.fee
+                    text: root.wallet.recipients.fee
                     font.pixelSize: 15
                 }
             }

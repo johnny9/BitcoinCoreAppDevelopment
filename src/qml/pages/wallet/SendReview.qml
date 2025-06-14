@@ -15,7 +15,7 @@ Page {
     background: null
 
     property WalletQmlModel wallet: walletController.selectedWallet
-    property WalletQmlModelTransaction transaction: walletController.selectedWallet.currentTransaction
+    property SendRecipient recipient: walletController.selectedWallet.recipients.first
 
     signal finished()
     signal back()
@@ -50,34 +50,42 @@ Page {
                 Layout.topMargin: 30
                 Layout.bottomMargin: 20
                 text: qsTr("Transaction details")
-                font.pixelSize: 21
+                font.pixelSize: 25
                 bold: true
             }
 
             RowLayout {
                 CoreText {
                     text: qsTr("Send to")
-                    font.pixelSize: 15
+                    font.pixelSize: 18
                     Layout.preferredWidth: 110
+                    Layout.alignment: Qt.AlignTop
                     color: Theme.color.neutral7
+                    horizontalAlignment: Text.AlignLeft
                 }
                 CoreText {
-                    text: root.transaction.address
-                    font.pixelSize: 15
+                    Layout.fillWidth: true
+                    text: root.recipient.address.formattedAddress
+                    font.pixelSize: 18
                     color: Theme.color.neutral9
+                    wrapMode: Text.WordWrap
+                    horizontalAlignment: Text.AlignLeft
                 }
             }
 
             RowLayout {
+                visible: root.recipient.label.length > 0
                 CoreText {
                     text: qsTr("Note")
-                    font.pixelSize: 15
+                    font.pixelSize: 18
                     Layout.preferredWidth: 110
+                    Layout.alignment: Qt.AlignTop
                     color: Theme.color.neutral7
+                    horizontalAlignment: Text.AlignLeft
                 }
                 CoreText {
-                    text: root.transaction.label
-                    font.pixelSize: 15
+                    text: root.recipient.label
+                    font.pixelSize: 18
                     color: Theme.color.neutral9
                 }
             }
@@ -85,42 +93,58 @@ Page {
             RowLayout {
                 CoreText {
                     text: qsTr("Amount")
-                    font.pixelSize: 15
+                    font.pixelSize: 18
                     Layout.preferredWidth: 110
+                    Layout.alignment: Qt.AlignTop
                     color: Theme.color.neutral7
+                    horizontalAlignment: Text.AlignLeft
                 }
                 CoreText {
-                    text: root.transaction.amount
-                    font.pixelSize: 15
+                    Layout.preferredWidth: totalAmount.width
+                    horizontalAlignment: Text.AlignRight
+                    text: root.recipient.amount.richDisplay
+                    font.pixelSize: 18
+                    font.kerning: false
                     color: Theme.color.neutral9
+                    wrap: false
                 }
             }
 
             RowLayout {
                 CoreText {
                     text: qsTr("Fee")
-                    font.pixelSize: 15
+                    font.pixelSize: 18
                     Layout.preferredWidth: 110
                     color: Theme.color.neutral7
+                    horizontalAlignment: Text.AlignLeft
                 }
                 CoreText {
-                    text: root.transaction.fee
-                    font.pixelSize: 15
+                    Layout.preferredWidth: totalAmount.width
+                    horizontalAlignment: Text.AlignRight
+                    text: root.wallet.recipients.fee
+                    font.pixelSize: 18
+                    font.kerning: false
                     color: Theme.color.neutral9
+                    wrap: false
                 }
             }
 
             RowLayout {
                 CoreText {
                     text: qsTr("Total")
-                    font.pixelSize: 15
+                    font.pixelSize: 18
                     Layout.preferredWidth: 110
                     color: Theme.color.neutral7
+                    horizontalAlignment: Text.AlignLeft
                 }
                 CoreText {
-                    text: root.transaction.total
-                    font.pixelSize: 15
+                    id: totalAmount
+                    text: root.wallet.recipients.totalAmount
+                    horizontalAlignment: Text.AlignRight
+                    font.pixelSize: 18
+                    font.kerning: false
                     color: Theme.color.neutral9
+                    wrap: false
                 }
             }
 

@@ -35,7 +35,6 @@
 #include <qml/models/sendrecipient.h>
 #include <qml/models/walletlistmodel.h>
 #include <qml/models/walletqmlmodel.h>
-#include <qml/models/walletqmlmodeltransaction.h>
 #include <qml/qrimageprovider.h>
 #include <qml/util.h>
 #include <qml/walletqmlcontroller.h>
@@ -348,8 +347,6 @@ int QmlGuiMain(int argc, char* argv[])
 #ifdef ENABLE_WALLET
     qmlRegisterUncreatableType<WalletQmlModel>("org.bitcoincore.qt", 1, 0, "WalletQmlModel",
                                                "WalletQmlModel cannot be instantiated from QML");
-    qmlRegisterUncreatableType<WalletQmlModelTransaction>("org.bitcoincore.qt", 1, 0, "WalletQmlModelTransaction",
-                                                          "WalletQmlModelTransaction cannot be instantiated from QML");
 #endif
 
     engine.load(QUrl(QStringLiteral("qrc:///qml/pages/main.qml")));
