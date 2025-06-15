@@ -51,6 +51,9 @@ public:
     Q_INVOKABLE bool prepareTransaction();
     Q_INVOKABLE void sendTransaction();
 
+    // Returns wallet label for an address if present in address book, otherwise empty.
+    Q_INVOKABLE QString addressLabel(const QString& address) const;
+
     std::set<interfaces::WalletTx> getWalletTxs() const;
     interfaces::WalletTx getWalletTx(const uint256& hash) const;
     bool tryGetTxStatus(const uint256& txid,

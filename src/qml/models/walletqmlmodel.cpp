@@ -166,20 +166,63 @@ bool WalletQmlModel::prepareTransaction()
     }
 }
 
+QString WalletQmlModel::addressLabel(const QString& address) const
+{
+    if (!m_wallet) return QString();
+    CTxDestination dest = DecodeDestination(address.toStdString());
+    std::string name;
+    wallet::isminetype mine;
+    wallet::AddressPurpose purpose;
+    if (m_wallet->getAddress(dest, &name, &mine, &purpose)) {
+        return QString::fromStdString(name);
+    }
+    return QString();
+}
+
 void WalletQmlModel::sendTransaction()
 {
-    if (!m_wallet || !m_current_transaction) {
+    if (!m_wallet || !m_current_transaction || !m_send_recipients) {
         return;
     }
 
-    CTransactionRef newTx = m_current_transaction;
-    if (!newTx) {
-        return;
-    }
-
-    interfaces::WalletValueMap value_map;
+    // Build order form (e.g. URI message parameters)
     interfaces::WalletOrderForm order_form;
-    m_wallet->commitTransaction(newTx, value_map, order_form);
+    for (auto* rcp : m_send_recipients->recipients()) {
+        if (!rcp->message().isEmpty()) {
+            order_form.emplace_back("Message", rcp->message().toStdString());
+        }
+    }
+
+    // Commit the transaction to the wallet
+    interfaces::WalletValueMap value_map; // currently unused
+    m_wallet->commitTransaction(m_current_transaction, value_map, std::move(order_form));
+
+    // Synchronise address book labels with recipients
+    for (auto* rcp : m_send_recipients->recipients()) {
+        const QString addr_str = rcp->address()->address();
+        if (addr_str.isEmpty()) {
+            continue;
+        }
+        CTxDestination dest = DecodeDestination(addr_str.toStdString());
+        std::string strLabel = rcp->label().toStdString();
+        if (strLabel.empty()) {
+            continue; // nothing to store
+        }
+
+        std::string name;
+        wallet::isminetype is_mine;
+        wallet::AddressPurpose purpose;
+        if (!m_wallet->getAddress(dest, &name, &is_mine, &purpose)) {
+            // New entry – store with purpose SEND
+            m_wallet->setAddressBook(dest, strLabel, wallet::AddressPurpose::SEND);
+        } else if (name != strLabel) {
+            // Update existing label, keep existing purpose
+            m_wallet->setAddressBook(dest, strLabel, {});
+        }
+    }
+
+    // Trigger an immediate balance refresh so UI updates quickly
+    m_force_check_balance_changed = true;
 }
 
 interfaces::Wallet::CoinsList WalletQmlModel::listCoins() const

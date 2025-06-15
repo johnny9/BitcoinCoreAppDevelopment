@@ -66,7 +66,10 @@ QVariant ActivityListModel::data(const QModelIndex &index, int role) const
     case DepthRole:
         return tx->depth;
     case LabelRole:
-        return tx->label;
+        if (!tx->label.isEmpty()) {
+            return tx->label;
+        }
+        return m_wallet_model ? m_wallet_model->addressLabel(tx->address) : QVariant();
     case StatusRole:
         return tx->status;
     case TypeRole:
