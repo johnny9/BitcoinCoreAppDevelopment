@@ -92,6 +92,8 @@ PageStack {
                     delegate: ItemDelegate {
                         id: delegate
                         required property string address;
+                        required property string addressFormatted;
+                        required property string addressShort;
                         required property string amount;
                         required property string date;
                         required property int depth;
@@ -154,7 +156,7 @@ PageStack {
                                     if (delegate.label != "") {
                                         delegate.label
                                     } else {
-                                        delegate.address
+                                        delegate.addressShort
                                     }
                                 }
                                 font.pixelSize: 15
@@ -195,7 +197,7 @@ PageStack {
                                     depth: delegate.depth
                                     type: delegate.type
                                     status: delegate.status
-                                    address: delegate.address
+                                    address: delegate.addressFormatted
                                 }
                             }
                         }

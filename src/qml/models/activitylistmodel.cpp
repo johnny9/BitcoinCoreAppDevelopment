@@ -2,8 +2,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+
 #include <qml/models/activitylistmodel.h>
 
+#include <qml/models/bitcoinaddress.h>
 #include <qml/models/walletqmlmodel.h>
 
 ActivityListModel::ActivityListModel(WalletQmlModel *parent)
@@ -53,6 +55,10 @@ QVariant ActivityListModel::data(const QModelIndex &index, int role) const
     switch (role) {
     case AddressRole:
         return tx->address;
+    case AddressFormattedRole:
+        return BitcoinAddress::formattedAddress(tx->address);
+    case AddressShortRole:
+        return BitcoinAddress::ellipsesAddress(tx->address);
     case AmountRole:
         return tx->prettyAmount();
     case DateTimeRole:
@@ -70,10 +76,26 @@ QVariant ActivityListModel::data(const QModelIndex &index, int role) const
     }
 }
 
+void ActivityListModel::updateConfirmations()
+{
+    if (m_wallet_model == nullptr) {
+        return;
+    }
+
+    for (int i = 0; i < m_transactions.size(); ++i) {
+        updateTransactionStatus(m_transactions.at(i));
+    }
+    if (!m_transactions.empty()) {
+        Q_EMIT dataChanged(index(0), index(m_transactions.size() - 1));
+    }
+}
+
 QHash<int, QByteArray> ActivityListModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[AddressRole] = "address";
+    roles[AddressFormattedRole] = "addressFormatted";
+    roles[AddressShortRole] = "addressShort";
     roles[AmountRole] = "amount";
     roles[DateTimeRole] = "date";
     roles[DepthRole] = "depth";
@@ -97,7 +119,10 @@ void ActivityListModel::refreshWallet()
     }
     std::sort(m_transactions.begin(), m_transactions.end(),
               [](const QSharedPointer<Transaction> &a, const QSharedPointer<Transaction> &b) {
-                  return a->depth < b->depth;
+                  if (a->time == b->time) {
+                      return a->idx < b->idx;
+                  }
+                  return a->time > b->time;
               });
 }
 

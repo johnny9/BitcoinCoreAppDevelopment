@@ -27,6 +27,8 @@ public:
 
     enum TransactionRoles {
         AddressRole = Qt::UserRole + 1,
+        AddressFormattedRole,
+        AddressShortRole,
         AmountRole,
         DateTimeRole,
         DepthRole,

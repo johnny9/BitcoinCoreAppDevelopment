@@ -176,7 +176,7 @@ Page {
                     horizontalAlignment: Text.AlignLeft
                     color: Theme.color.neutral9
                     text: root.address
-                    wrapMode: Text.WrapAnywhere
+                    wrap: true
                 }
 
                 Icon {

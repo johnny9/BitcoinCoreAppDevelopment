@@ -4,8 +4,6 @@
 
 #include <qml/models/bitcoinaddress.h>
 
-#include <qchar.h>
-
 BitcoinAddress::BitcoinAddress(QObject *parent)
     : QObject(parent)
 {
@@ -36,11 +34,7 @@ QString BitcoinAddress::formattedAddress() const
 
 QString BitcoinAddress::ellipsesAddress() const
 {
-    if (m_address.length() > 8) {
-        return m_address.left(8) + "..." + m_address.right(8);
-    } else {
-        return m_address;
-    }
+    return ellipsesAddress(m_address);
 }
 
 int BitcoinAddress::setAddress(const QString &input, int cursorPosition)
@@ -72,13 +66,7 @@ int BitcoinAddress::setAddress(const QString &input, int cursorPosition)
     m_address = raw;
 
     // 4) Format into groups of 4 chars separated by spaces
-    QString fmt;
-    fmt.reserve(raw.length() + raw.length() / 4);
-    for (int i = 0; i < raw.length(); ++i) {
-        if (i > 0 && (i % 4) == 0)
-            fmt += QChar(' ');
-        fmt += raw[i];
-    }
+    QString fmt = BitcoinAddress::formattedAddress(raw);
     m_formattedAddress = fmt;
 
     // 5) Fire your QML signals
@@ -94,4 +82,34 @@ int BitcoinAddress::setAddress(const QString &input, int cursorPosition)
         ++newCursor;
     }
     return newCursor;
+}
+
+QString BitcoinAddress::formattedAddress(const QString &address)
+{
+    QString fmt;
+    fmt.reserve(address.length() + address.length() / 4);
+    for (int i = 0; i < address.length(); ++i) {
+        if (i > 0 && (i % 4) == 0) {
+            fmt += QChar(' ');
+        }
+        fmt += address[i];
+    }
+    return fmt;
+}
+
+QString BitcoinAddress::ellipsesAddress(const QString &address)
+{
+    if (address.length() > 8) {
+        QString left = address.left(4)
+                      + ' '
+                      + address.mid(4, 4);
+
+        QString right = address.mid(address.length() - 8, 4)
+                       + ' '
+                       + address.right(4);
+
+        return left + " ... " + right;
+    } else {
+        return address;
+    }
 }

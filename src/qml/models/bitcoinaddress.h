@@ -18,6 +18,9 @@ public:
     explicit BitcoinAddress(QObject *parent = nullptr);
     BitcoinAddress(const QString &address, QObject *parent = nullptr);
 
+    static QString ellipsesAddress(const QString &address);
+    static QString formattedAddress(const QString &address);
+
     QString address() const;
     bool isEmpty() const;
     QString formattedAddress() const;
