@@ -3,8 +3,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+
 #include <qml/models/walletqmlmodel.h>
 
+#include <qml/bitcoinamount.h>
 #include <qml/models/activitylistmodel.h>
 #include <qml/models/paymentrequest.h>
 #include <qml/models/sendrecipient.h>
@@ -17,6 +19,8 @@
 #include <qt/bitcoinunits.h>
 #include <wallet/coincontrol.h>
 #include <wallet/wallet.h>
+#include <wallet/types.h>
+#include <uint256.h>
 
 #include <QTimer>
 #include <QList>
@@ -33,6 +37,17 @@ WalletQmlModel::WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObje
     m_coins_list_model = new CoinsListModel(this);
     m_send_recipients = new SendRecipientsListModel(this);
     m_current_payment_request = new PaymentRequest(this);
+
+    // Initialize cached tip to current best block if possible
+    if (m_wallet) {
+        m_cached_last_update_tip = uint256(); // Removed getBestBlockHash
+        m_wallet->tryGetBalances(m_cached_balances, m_cached_last_update_tip);
+    }
+
+    // Setup polling timer
+    m_poll_timer = new QTimer(this);
+    connect(m_poll_timer, &QTimer::timeout, this, &WalletQmlModel::pollBalanceChanged);
+    m_poll_timer->start(1000);
 }
 
 WalletQmlModel::WalletQmlModel(QObject* parent)
@@ -42,10 +57,18 @@ WalletQmlModel::WalletQmlModel(QObject* parent)
     m_coins_list_model = new CoinsListModel(this);
     m_send_recipients = new SendRecipientsListModel(this);
     m_current_payment_request = new PaymentRequest(this);
+
+    // Setup polling timer even if wallet is nullptr for now
+    m_poll_timer = new QTimer(this);
+    connect(m_poll_timer, &QTimer::timeout, this, &WalletQmlModel::pollBalanceChanged);
+    m_poll_timer->start(1000); // 1 second similar to MODEL_UPDATE_DELAY
 }
 
 WalletQmlModel::~WalletQmlModel()
 {
+    if (m_poll_timer) {
+        m_poll_timer->stop();
+    }
     delete m_activity_list_model;
     delete m_coins_list_model;
     delete m_send_recipients;
@@ -283,6 +306,40 @@ bool WalletQmlModel::isSelectedCoin(const COutPoint& output)
 std::vector<COutPoint> WalletQmlModel::listSelectedCoins() const
 {
     return m_coin_control.ListSelected();
+}
+
+void WalletQmlModel::pollBalanceChanged()
+{
+    if (!m_wallet) {
+        return;
+    }
+
+    // Try to get balances and block tip; return early if wallet is busy
+    interfaces::WalletBalances new_balances;
+    uint256 block_hash;
+    if (!m_wallet->tryGetBalances(new_balances, block_hash)) {
+        return;
+    }
+
+    // Return early if nothing should be updated
+    if (!m_force_check_balance_changed && block_hash == m_cached_last_update_tip) {
+        return;
+    }
+
+    // Either forced or new block detected – reset flag and update cached tip
+    m_force_check_balance_changed = false;
+    m_cached_last_update_tip = block_hash;
+
+    // Check if any of the balance components changed
+    if (new_balances.balanceChanged(m_cached_balances)) {
+        m_cached_balances = new_balances;
+        Q_EMIT balanceChanged();
+    }
+
+    // Refresh confirmation counts in the activity model so UI stays in sync
+    if (m_activity_list_model) {
+        m_activity_list_model->updateConfirmations();
+    }
 }
 
 unsigned int WalletQmlModel::feeTargetBlocks() const

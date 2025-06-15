@@ -16,6 +16,8 @@
 #include <interfaces/wallet.h>
 #include <wallet/coincontrol.h>
 #include <wallet/wallet.h>
+#include <QtCore/QTimer>
+#include <uint256.h>
 
 #include <memory>
 #include <vector>
@@ -85,6 +87,10 @@ Q_SIGNALS:
     void feeTargetBlocksChanged();
     void walletIsLoadedChanged();
 
+public:
+    // Periodically called to update balance and transaction confirmations
+    void pollBalanceChanged();
+
 private:
     static unsigned int m_next_payment_request_id;
 
@@ -96,6 +102,12 @@ private:
     CTransactionRef m_current_transaction{nullptr};
     wallet::CCoinControl m_coin_control;
     bool m_is_wallet_loaded{false};
+
+    // Balance polling members
+    interfaces::WalletBalances m_cached_balances;
+    uint256 m_cached_last_update_tip;
+    bool m_force_check_balance_changed{true};
+    QTimer* m_poll_timer{nullptr};
 };
 
 #endif // BITCOIN_QML_MODELS_WALLETQMLMODEL_H

@@ -41,6 +41,9 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
+    // Update confirmations (depth and status) for all transactions
+    void updateConfirmations();
+
 private:
     void refreshWallet();
     void updateTransactionStatus(QSharedPointer<Transaction> tx) const;
