@@ -143,7 +143,7 @@ Button {
                 CoreText {
                     id: balanceText
                     visible: root.showBalance
-                    text: "₿ " + root.balance
+                    text: root.balance
                     color: Theme.color.neutral7
                 }
             }
