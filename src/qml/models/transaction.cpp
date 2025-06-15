@@ -4,6 +4,8 @@
 
 #include <qml/models/transaction.h>
 
+#include <qml/bitcoinamount.h>
+
 #include <interfaces/wallet.h>
 #include <key_io.h>
 #include <wallet/types.h>
@@ -51,16 +53,7 @@ QString Transaction::prettyAmount() const
     CAmount net = credit - debit;
     QString sign = (net > 0) ? "+" : (net < 0) ? "-" : "";
     net = std::abs(net);
-
-    qint64 bitcoins = net / 100000000;
-    qint64 remainder = net % 100000000;
-
-    QString result = QString("₿ %1%2.%3")
-        .arg(sign)
-        .arg(bitcoins)
-        .arg(remainder, 8, 10, QChar('0'));
-
-    return result;
+    return BitcoinAmount::satsToBtcString(net);
 }
 
 QString Transaction::dateTimeString() const
