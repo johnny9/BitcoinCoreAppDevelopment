@@ -80,7 +80,7 @@ QString WalletQmlModel::balance() const
     if (!m_wallet) {
         return "0";
     }
-    return BitcoinUnits::format(BitcoinUnits::Unit::BTC, m_wallet->getBalance());
+    return BitcoinAmount::satsToRichBtcString(m_wallet->getBalance());
 }
 
 CAmount WalletQmlModel::balanceSatoshi() const
