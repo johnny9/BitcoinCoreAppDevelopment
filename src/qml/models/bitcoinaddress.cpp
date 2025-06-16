@@ -39,6 +39,19 @@ QString BitcoinAddress::ellipsesAddress() const
 
 int BitcoinAddress::setAddress(const QString &input, int cursorPosition)
 {
+    if (input == m_address) {
+        return cursorPosition;
+    }
+
+    if (input.isEmpty()) {
+        m_address = "";
+        m_formattedAddress = "";
+        Q_EMIT addressChanged();
+        Q_EMIT formattedAddressChanged();
+        Q_EMIT ellipsesAddressChanged();
+        return 0;
+    }
+
     // 1) Define the allowed Base58 characters
     static const QString base58Chars =
         QStringLiteral("0123456789"
