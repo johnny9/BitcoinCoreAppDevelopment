@@ -15,19 +15,19 @@ class BitcoinAddress : public QObject
     Q_PROPERTY(QString formattedAddress READ formattedAddress NOTIFY formattedAddressChanged)
 
 public:
-    explicit BitcoinAddress(QObject *parent = nullptr);
-    BitcoinAddress(const QString &address, QObject *parent = nullptr);
+    explicit BitcoinAddress(QObject* parent = nullptr);
+    BitcoinAddress(const QString& address, QObject* parent = nullptr);
 
-    static QString ellipsesAddress(const QString &address);
-    static QString formattedAddress(const QString &address);
+    static QString ellipsesAddress(const QString& address);
+    static QString formattedAddress(const QString& address);
 
     QString address() const;
     bool isEmpty() const;
     QString formattedAddress() const;
     QString ellipsesAddress() const;
-    Q_INVOKABLE int setAddress(const QString &address, int cursorPosition = 0);
+    Q_INVOKABLE int setAddress(const QString& address, int cursorPosition = 0);
 
-    Q_SIGNALS:
+Q_SIGNALS:
     void addressChanged();
     void formattedAddressChanged();
     void ellipsesAddressChanged();

@@ -4,13 +4,13 @@
 
 
 #include <qml/bitcoinamount.h>
-#include <qml/models/paymentrequest.h>
 #include <qml/models/bitcoinaddress.h>
+#include <qml/models/paymentrequest.h>
 
 #include <addresstype.h>
 #include <key_io.h>
 
-PaymentRequest::PaymentRequest(QObject *parent)
+PaymentRequest::PaymentRequest(QObject* parent)
     : QObject(parent)
 {
     m_amount = new BitcoinAmount(this);
@@ -36,7 +36,7 @@ QString PaymentRequest::label() const
     return m_label;
 }
 
-void PaymentRequest::setLabel(const QString &label)
+void PaymentRequest::setLabel(const QString& label)
 {
     if (m_label == label)
         return;
@@ -50,7 +50,7 @@ QString PaymentRequest::message() const
     return m_message;
 }
 
-void PaymentRequest::setMessage(const QString &message)
+void PaymentRequest::setMessage(const QString& message)
 {
     if (m_message == message)
         return;

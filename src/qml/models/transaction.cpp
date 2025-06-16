@@ -163,8 +163,7 @@ QList<QSharedPointer<Transaction>> Transaction::fromWalletTx(const interfaces::W
             const CTxOut& txout = wtx.tx->vout[i];
 
             if (fAllFromMe) {
-                if(wtx.txout_is_mine[i])
-                {
+                if (wtx.txout_is_mine[i]) {
                     // Ignore parts sent to self, as this is usually the change
                     // from a transaction sent back to our own address.
                     continue;

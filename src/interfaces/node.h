@@ -11,7 +11,7 @@
 #include <net_types.h>                 // For banmap_t
 #include <netaddress.h>                // For Network
 #include <netbase.h>                   // For ConnectionDirection
-#include <node/utxo_snapshot.h>         // For SnapshotMetadata
+#include <node/utxo_snapshot.h>        // For SnapshotMetadata
 #include <support/allocators/secure.h> // For SecureString
 #include <util/translation.h>
 

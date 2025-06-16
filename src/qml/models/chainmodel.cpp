@@ -9,13 +9,13 @@
 #include <QThread>
 #include <QTime>
 #include <interfaces/chain.h>
-#include <node/utxo_snapshot.h>
 #include <kernel/chainparams.h>
+#include <node/utxo_snapshot.h>
 #include <validation.h>
 
 ChainModel::ChainModel(interfaces::Chain& chain)
     : m_chain{chain}
-    //   m_params{Params()}
+//   m_params{Params()}
 {
     QTimer* timer = new QTimer();
     connect(timer, &QTimer::timeout, this, &ChainModel::setCurrentTimeRatio);
@@ -108,10 +108,11 @@ void ChainModel::setCurrentTimeRatio()
 
 // TODO: Change this once a better solution has been found.
 // Using hardcoded snapshot info to display in SnapshotSettings.qml
-QVariantMap ChainModel::getSnapshotInfo() {
+QVariantMap ChainModel::getSnapshotInfo()
+{
     QVariantMap snapshot_info;
 
-   const MapAssumeutxo& valid_assumeutxos_map = Params().Assumeutxo();
+    const MapAssumeutxo& valid_assumeutxos_map = Params().Assumeutxo();
     if (!valid_assumeutxos_map.empty()) {
         const int height = valid_assumeutxos_map.rbegin()->first;
         const auto& hash_serialized = valid_assumeutxos_map.rbegin()->second.hash_serialized;

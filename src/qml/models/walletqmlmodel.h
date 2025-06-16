@@ -11,13 +11,13 @@
 #include <qml/models/sendrecipient.h>
 #include <qml/models/sendrecipientslistmodel.h>
 
+#include <QtCore/QTimer>
 #include <consensus/amount.h>
 #include <interfaces/handler.h>
 #include <interfaces/wallet.h>
+#include <uint256.h>
 #include <wallet/coincontrol.h>
 #include <wallet/wallet.h>
-#include <QtCore/QTimer>
-#include <uint256.h>
 
 #include <memory>
 #include <vector>
@@ -37,7 +37,7 @@ class WalletQmlModel : public QObject
     Q_PROPERTY(bool isWalletLoaded READ isWalletLoaded NOTIFY walletIsLoadedChanged)
 
 public:
-    WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObject *parent = nullptr);
+    WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObject* parent = nullptr);
     WalletQmlModel(QObject *parent = nullptr);
     ~WalletQmlModel();
 

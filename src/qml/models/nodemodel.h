@@ -102,6 +102,7 @@ Q_SIGNALS:
     void showProgress(const QString& title, int progress);
     void headersSyncedChanged();
     void isIBDCompletedChanged();
+
 protected:
     void timerEvent(QTimerEvent* event) override;
 

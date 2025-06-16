@@ -50,7 +50,7 @@ QVariant ActivityListModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     QSharedPointer<Transaction> tx = m_transactions.at(index.row());
-    //updateTransactionStatus(tx);
+    // updateTransactionStatus(tx);
 
     switch (role) {
     case AddressRole:
@@ -121,7 +121,7 @@ void ActivityListModel::refreshWallet()
         }
     }
     std::sort(m_transactions.begin(), m_transactions.end(),
-              [](const QSharedPointer<Transaction> &a, const QSharedPointer<Transaction> &b) {
+              [](const QSharedPointer<Transaction>& a, const QSharedPointer<Transaction>& b) {
                   if (a->time == b->time) {
                       return a->idx < b->idx;
                   }

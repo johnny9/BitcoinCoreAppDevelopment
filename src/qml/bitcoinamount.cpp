@@ -114,10 +114,10 @@ QString BitcoinAmount::satsToRichBtcString(qint64 sat)
 
     // split into whole and 8-digit fraction
     const qint64 wholePart = absSat / COIN;
-    const qint64 fracInt   = absSat % COIN;
+    const qint64 fracInt = absSat % COIN;
     QString frac = QString("%1").arg(fracInt, 8, 10, QLatin1Char('0'));
 
-    QString fadedColor = "\"#B0B0B0\""; // neutral7
+    QString fadedColor = "\"#B0B0B0\"";  // neutral7
     QString normalColor = "\"#FFFFFF\""; // neutral9
 
     // flag amounts < 1 BTC so we can recolor leading zeros
@@ -145,8 +145,7 @@ QString BitcoinAmount::satsToRichBtcString(qint64 sat)
         }
 
         bool isPlaceholderZero = isSubBtc && !seenNonZero && digit == QLatin1Char('0');
-        QString color = isPlaceholderZero ? fadedColor
-                                          : normalColor;
+        QString color = isPlaceholderZero ? fadedColor : normalColor;
 
         out += QString("<font color=%1>%2</font>")
                    .arg(color)

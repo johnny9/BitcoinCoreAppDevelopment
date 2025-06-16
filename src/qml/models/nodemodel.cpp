@@ -14,13 +14,13 @@
 #include <chrono>
 
 #include <QDateTime>
+#include <QDebug>
 #include <QMetaObject>
 #include <QObject>
-#include <QTimerEvent>
 #include <QString>
-#include <QUrl>
 #include <QThread>
-#include <QDebug>
+#include <QTimerEvent>
+#include <QUrl>
 
 NodeModel::NodeModel(interfaces::Node& node)
     : m_node{node}
@@ -201,7 +201,8 @@ void NodeModel::ConnectToSnapshotLoadProgressSignal()
         });
 }
 
-void NodeModel::snapshotLoadThread(QString path_file) {
+void NodeModel::snapshotLoadThread(QString path_file)
+{
     m_snapshot_loading = true;
     Q_EMIT snapshotLoadingChanged();
 
@@ -225,21 +226,24 @@ void NodeModel::snapshotLoadThread(QString path_file) {
     snapshot_thread->start();
 }
 
-void NodeModel::setSnapshotProgress(double new_progress) {
+void NodeModel::setSnapshotProgress(double new_progress)
+{
     if (new_progress != m_snapshot_progress) {
         m_snapshot_progress = new_progress;
         Q_EMIT snapshotProgressChanged();
     }
 }
 
-void NodeModel::setHeadersSynced(bool new_synced) {
+void NodeModel::setHeadersSynced(bool new_synced)
+{
     if (new_synced != m_headers_synced) {
         m_headers_synced = new_synced;
         Q_EMIT headersSyncedChanged();
     }
 }
 
-void NodeModel::setIsIBDCompleted(bool new_completed) {
+void NodeModel::setIsIBDCompleted(bool new_completed)
+{
     if (new_completed != m_is_ibd_completed) {
         m_is_ibd_completed = new_completed;
         Q_EMIT isIBDCompletedChanged();

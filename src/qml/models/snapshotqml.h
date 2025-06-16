@@ -12,7 +12,7 @@
 
 class SnapshotQml : public QObject
 {
-   Q_OBJECT
+    Q_OBJECT
 public:
     SnapshotQml(interfaces::Node& node, QString path);
 

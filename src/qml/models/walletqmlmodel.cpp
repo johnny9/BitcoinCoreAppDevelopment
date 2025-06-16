@@ -17,15 +17,15 @@
 #include <key_io.h>
 #include <outputtype.h>
 #include <qt/bitcoinunits.h>
-#include <wallet/coincontrol.h>
-#include <wallet/wallet.h>
-#include <wallet/types.h>
 #include <uint256.h>
+#include <wallet/coincontrol.h>
+#include <wallet/types.h>
+#include <wallet/wallet.h>
 
-#include <QTimer>
 #include <QList>
-#include <string>
+#include <QTimer>
 #include <memory>
+#include <string>
 
 unsigned int WalletQmlModel::m_next_payment_request_id{1};
 
@@ -112,7 +112,8 @@ void WalletQmlModel::commitPaymentRequest()
     if (m_current_payment_request->address().isEmpty()) {
         // TODO: handle issues with getting the new address (wallet unlock?)
         auto destination = m_wallet->getNewDestination(OutputType::BECH32,
-            m_current_payment_request->label().toStdString()).value();
+                                                       m_current_payment_request->label().toStdString())
+                               .value();
         std::string address = EncodeDestination(destination);
         m_current_payment_request->setDestination(destination);
     }

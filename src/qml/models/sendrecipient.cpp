@@ -5,8 +5,8 @@
 #include <qml/models/sendrecipient.h>
 
 #include <qml/bitcoinamount.h>
-#include <qml/models/walletqmlmodel.h>
 #include <qml/models/bitcoinaddress.h>
+#include <qml/models/walletqmlmodel.h>
 
 #include <key_io.h>
 
@@ -108,7 +108,7 @@ void SendRecipient::clear()
     Q_EMIT addressChanged();
     Q_EMIT labelChanged();
     Q_EMIT messageChanged();
-    Q_EMIT amount()->amountChanged();
+    Q_EMIT amount() -> amountChanged();
 }
 
 void SendRecipient::validateAddress()

@@ -4,14 +4,14 @@
 
 #include <qml/models/bitcoinaddress.h>
 
-BitcoinAddress::BitcoinAddress(QObject *parent)
+BitcoinAddress::BitcoinAddress(QObject* parent)
     : QObject(parent)
 {
     // Initialize with empty address
     setAddress("", 0);
 }
 
-BitcoinAddress::BitcoinAddress(const QString &address, QObject *parent)
+BitcoinAddress::BitcoinAddress(const QString& address, QObject* parent)
     : QObject(parent)
 {
     setAddress(address, 0);
@@ -37,7 +37,7 @@ QString BitcoinAddress::ellipsesAddress() const
     return ellipsesAddress(m_address);
 }
 
-int BitcoinAddress::setAddress(const QString &input, int cursorPosition)
+int BitcoinAddress::setAddress(const QString& input, int cursorPosition)
 {
     if (input == m_address) {
         return cursorPosition;
@@ -97,7 +97,7 @@ int BitcoinAddress::setAddress(const QString &input, int cursorPosition)
     return newCursor;
 }
 
-QString BitcoinAddress::formattedAddress(const QString &address)
+QString BitcoinAddress::formattedAddress(const QString& address)
 {
     QString fmt;
     fmt.reserve(address.length() + address.length() / 4);
@@ -110,16 +110,12 @@ QString BitcoinAddress::formattedAddress(const QString &address)
     return fmt;
 }
 
-QString BitcoinAddress::ellipsesAddress(const QString &address)
+QString BitcoinAddress::ellipsesAddress(const QString& address)
 {
     if (address.length() > 8) {
-        QString left = address.left(4)
-                      + ' '
-                      + address.mid(4, 4);
+        QString left = address.left(4) + ' ' + address.mid(4, 4);
 
-        QString right = address.mid(address.length() - 8, 4)
-                       + ' '
-                       + address.right(4);
+        QString right = address.mid(address.length() - 8, 4) + ' ' + address.right(4);
 
         return left + " ... " + right;
     } else {

@@ -23,16 +23,16 @@ class PaymentRequest : public QObject
     Q_PROPERTY(QString id READ id NOTIFY idChanged)
 
 public:
-    explicit PaymentRequest(QObject *parent = nullptr);
+    explicit PaymentRequest(QObject* parent = nullptr);
 
     QString address() const;
     QString addressFormatted() const;
 
     QString label() const;
-    void setLabel(const QString &label);
+    void setLabel(const QString& label);
 
     QString message() const;
-    void setMessage(const QString &message);
+    void setMessage(const QString& message);
 
     BitcoinAmount* amount() const;
     QString amountError() const;
