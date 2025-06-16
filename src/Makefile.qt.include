@@ -428,6 +428,7 @@ QML_RES_QML = \
   qml/components/PeersIndicator.qml \
   qml/components/ProxySettings.qml \
   qml/components/Separator.qml \
+  qml/components/SnapshotSettings.qml \
   qml/components/StorageLocations.qml \
   qml/components/StorageOptions.qml \
   qml/components/StorageSettings.qml \
