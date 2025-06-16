@@ -69,6 +69,8 @@ Page {
                         Layout.fillWidth: true
                         labelText: qsTr("Label")
                         placeholderText: qsTr("Enter label...")
+                        text: root.request.label
+                        onTextEdited: root.request.label = label.text
                     }
 
                     Separator {
@@ -80,6 +82,8 @@ Page {
                         Layout.fillWidth: true
                         labelText: qsTr("Message")
                         placeholderText: qsTr("Enter message...")
+                        text: root.request.message
+                        onTextEdited: root.request.message = message.text
                     }
 
                     Separator {
