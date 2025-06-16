@@ -374,6 +374,7 @@ QML_RES_ICONS = \
   qml/res/icons/caret-down-medium-filled.png \
   qml/res/icons/caret-left.png \
   qml/res/icons/caret-right.png \
+  qml/res/icons/circle-file.png \
   qml/res/icons/check.png \
   qml/res/icons/coinbase.png \
   qml/res/icons/copy.png \
