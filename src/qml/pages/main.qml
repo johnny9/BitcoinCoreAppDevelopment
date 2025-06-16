@@ -38,7 +38,7 @@ ApplicationWindow {
             if (needOnboarding) {
                 onboardingWizard
             } else {
-                if (AppMode.walletEnabled && AppMode.isDesktop) {
+                if (AppMode.walletEnabled) {
                     desktopWallets
                 } else {
                     node
