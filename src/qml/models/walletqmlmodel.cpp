@@ -111,14 +111,16 @@ void WalletQmlModel::commitPaymentRequest()
 
     if (m_current_payment_request->address().isEmpty()) {
         // TODO: handle issues with getting the new address (wallet unlock?)
-        auto destination = m_wallet->getNewDestination(OutputType::BECH32M,
+        auto destination = m_wallet->getNewDestination(OutputType::BECH32,
             m_current_payment_request->label().toStdString()).value();
         std::string address = EncodeDestination(destination);
         m_current_payment_request->setDestination(destination);
     }
 
     m_wallet->setAddressReceiveRequest(
-        m_current_payment_request->destination(), m_current_payment_request->id().toStdString(), m_current_payment_request->message().toStdString());
+        m_current_payment_request->destination(),
+        m_current_payment_request->id().toStdString(),
+        m_current_payment_request->message().toStdString());
 }
 
 std::set<interfaces::WalletTx> WalletQmlModel::getWalletTxs() const
