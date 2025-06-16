@@ -236,7 +236,7 @@ PageStack {
                     enabled: root.recipient.isValid
                     onClicked: {
                         if (root.wallet.prepareTransaction()) {
-                            root.transactionPrepared(settings.multipleRecipientsEnabled);
+                            root.transactionPrepared(wallet.recipients.count > 1);
                         }
                     }
                 }
