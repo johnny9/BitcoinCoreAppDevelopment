@@ -8,8 +8,8 @@ import org.bitcoincore.qt 1.0
 
 Button {
     id: root
-    width: icon.width
-    height: icon.height
+    width: root.size
+    height: root.size
     required property color color
     required property url source
     property int size: 32

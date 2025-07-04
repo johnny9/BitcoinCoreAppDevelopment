@@ -50,7 +50,9 @@ Button {
     background: Item {
         Rectangle {
             id: bg
-            height: parent.height - 5
+            anchors.top: parent.top
+            anchors.topMargin: 12
+            height: parent.height - 26
             width: parent.width
             radius: 5
             color: Theme.color.neutral3
