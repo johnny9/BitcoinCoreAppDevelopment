@@ -29,7 +29,7 @@ Page {
                 delegate.type == Transaction.Generated) {
                 Theme.color.green
             } else {
-                Theme.color.neutral9
+                Theme.color.orange
             }
         } else {
             Theme.color.blue
