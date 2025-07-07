@@ -24,7 +24,6 @@ Control {
         required property color orangeLight2
         required property color red
         required property color green
-        required property var greenRGB
         required property color blue
         required property color amber
         required property color purple
@@ -59,7 +58,6 @@ Control {
         orangeLight2: "#FFBF72"
         red: "#EC6363"
         green: "#36B46B"
-        greenRGB: [54, 180, 107]
         blue: "#3CA3DE"
         amber: "#C9B500"
         purple: "#C075DC"
@@ -93,7 +91,6 @@ Control {
         orangeLight2: "#FFBF72"
         red: "#EB5757"
         green: "#27AE60"
-        greenRGB: [39, 174, 96]
         blue: "#2D9CDB"
         amber: "#C9B500"
         purple: "#BB6BD9"
