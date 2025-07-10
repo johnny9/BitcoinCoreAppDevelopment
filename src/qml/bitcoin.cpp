@@ -22,6 +22,7 @@
 #endif
 #include <qml/components/blockclockdial.h>
 #include <qml/controls/linegraph.h>
+#include <qml/controls/theme.h>
 #include <qml/guiconstants.h>
 #include <qml/imageprovider.h>
 #include <qml/models/activitylistmodel.h>
@@ -336,6 +337,7 @@ int QmlGuiMain(int argc, char* argv[])
 
     qmlRegisterSingletonInstance<AppMode>("org.bitcoincore.qt", 1, 0, "AppMode", &app_mode);
     qmlRegisterSingletonInstance<Clipboard>("org.bitcoincore.qt", 1, 0, "Clipboard", &clipboard);
+    qmlRegisterSingletonInstance<Theme>("org.bitcoincore.qt", 1, 0, "Theme", Theme::instancePtr());
     qmlRegisterType<BlockClockDial>("org.bitcoincore.qt", 1, 0, "BlockClockDial");
     qmlRegisterType<LineGraph>("org.bitcoincore.qt", 1, 0, "LineGraph");
     qmlRegisterUncreatableType<PeerDetailsModel>("org.bitcoincore.qt", 1, 0, "PeerDetailsModel", "");

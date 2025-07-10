@@ -37,6 +37,7 @@ QT_FORMS_UI = \
 QT_MOC_CPP = \
   qml/components/moc_blockclockdial.cpp \
   qml/controls/moc_linegraph.cpp \
+  qml/controls/moc_theme.cpp \
   qml/models/moc_activitylistmodel.cpp \
   qml/models/moc_bitcoinaddress.cpp \
   qml/models/moc_chainmodel.cpp \
@@ -130,6 +131,7 @@ QT_QRC_LOCALE = qt/bitcoin_locale.qrc
 BITCOIN_QT_H = \
   qml/components/blockclockdial.h \
   qml/controls/linegraph.h \
+  qml/controls/theme.h \
   qml/models/activitylistmodel.h \
   qml/models/bitcoinaddress.h \
   qml/models/chainmodel.h \
@@ -335,6 +337,7 @@ BITCOIN_QML_BASE_CPP = \
   qml/bitcoinamount.cpp \
   qml/components/blockclockdial.cpp \
   qml/controls/linegraph.cpp \
+  qml/controls/theme.cpp \
   qml/models/activitylistmodel.cpp \
   qml/models/bitcoinaddress.cpp \
   qml/models/chainmodel.cpp \
