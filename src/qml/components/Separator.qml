@@ -8,7 +8,7 @@ import "../controls"
 
 Rectangle {
     height: 1
-    color: enabled ? Theme.color.neutral5 : Theme.color.neutral4
+    color: enabled ? Theme.color.neutral4 : Theme.color.neutral3
 
     Behavior on color {
         ColorAnimation { duration: 150 }

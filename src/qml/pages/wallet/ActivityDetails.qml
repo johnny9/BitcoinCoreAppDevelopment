@@ -114,6 +114,7 @@ Page {
                 text: root.amount
                 color: amountColor
                 font.pixelSize: 28
+                bold: true
             }
 
             CoreText {
@@ -160,7 +161,15 @@ Page {
                     anchors.left: parent.left
                     anchors.top: parent.top
                     color: Theme.color.neutral7
-                    text: qsTr("Address")
+                    text: {
+                        if (delegate.type == Transaction.RecvWithAddress ||
+                            delegate.type == Transaction.RecvFromOther ||
+                            delegate.type == Transaction.Generated) {
+                            qsTr("From")
+                        } else {
+                            qsTr("To")
+                        }
+                    }
                     font.pixelSize: 15
                 }
 

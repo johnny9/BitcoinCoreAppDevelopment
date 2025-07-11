@@ -5,6 +5,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.0
 import org.bitcoincore.qt 1.0
 
 import "../../controls"
@@ -101,6 +102,11 @@ PageStack {
                         required property int status;
                         required property int type;
 
+                        leftPadding: 0
+                        rightPadding: 0
+                        topPadding: 10
+                        bottomPadding: 10
+
                         HoverHandler {
                             cursorShape: Qt.PointingHandCursor
                         }
@@ -117,9 +123,7 @@ PageStack {
                         }
 
                         contentItem: RowLayout {
-                            Icon {
-                                Layout.alignment: Qt.AlignCenter
-                                Layout.margins: 6
+                            Image {
                                 source: {
                                     if (delegate.type == Transaction.RecvWithAddress
                                         || delegate.type == Transaction.RecvFromOther) {
@@ -130,20 +134,25 @@ PageStack {
                                         "qrc:/icons/triangle-up"
                                     }
                                 }
-                                color: {
-                                    if (delegate.status == Transaction.Confirmed) {
-                                        if (delegate.type == Transaction.RecvWithAddress ||
-                                            delegate.type == Transaction.RecvFromOther ||
-                                            delegate.type == Transaction.Generated) {
-                                            Theme.color.green
+                                Layout.preferredWidth: 14
+                                Layout.preferredHeight: 14
+                                fillMode: Image.PreserveAspectFit
+                                layer.enabled: true
+                                layer.effect: ColorOverlay {
+                                    color: {
+                                        if (delegate.status == Transaction.Confirmed) {
+                                            if (delegate.type == Transaction.RecvWithAddress ||
+                                                delegate.type == Transaction.RecvFromOther ||
+                                                delegate.type == Transaction.Generated) {
+                                                Theme.color.green
+                                            } else {
+                                                Theme.color.orange
+                                            }
                                         } else {
-                                            Theme.color.orange
+                                            Theme.color.blue
                                         }
-                                    } else {
-                                        Theme.color.blue
                                     }
                                 }
-                                size: 14
                             }
                             CoreText {
                                 Layout.alignment: Qt.AlignCenter
