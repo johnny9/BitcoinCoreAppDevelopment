@@ -94,6 +94,7 @@
         <file>pages/wallet/CreatePassword.qml</file>
         <file>pages/wallet/ImportWalletOptions.qml</file>
         <file>pages/wallet/ImportWalletSuccess.qml</file>
+        <file>pages/wallet/ImportWalletMigration.qml</file>
         <file>pages/wallet/CreateWalletWizard.qml</file>
         <file>pages/wallet/DesktopWallets.qml</file>
         <file>pages/wallet/MultipleSendReview.qml</file>

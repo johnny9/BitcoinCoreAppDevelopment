@@ -192,6 +192,17 @@ class QmlDriver:
             f"Timed out waiting for stack views to become idle: {last_busy}"
         )
 
+    def wait_for_object(self, object_name, timeout_ms=5000):
+        """Block until an object with the given name exists."""
+        deadline = time.time() + (timeout_ms / 1000)
+        while time.time() < deadline:
+            if any(obj.get("objectName") == object_name for obj in self.list_objects()):
+                return
+            time.sleep(0.1)
+        raise QmlDriverError(
+            f"wait_for_object({object_name!r}) failed: Object not found before timeout"
+        )
+
     # ── Transport layer ──────────────────────────────────────────────
 
     def _send(self, cmd):

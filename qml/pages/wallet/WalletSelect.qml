@@ -70,6 +70,7 @@ Popup {
             Layout.preferredWidth: 220
             Layout.preferredHeight: Math.min(listView.count * 34, 300)
             id: listView
+            objectName: "walletSelectList"
             interactive: true
             spacing: 2
             ScrollBar.vertical: ScrollBar { }
@@ -77,6 +78,7 @@ Popup {
 
             delegate: WalletBadge {
                 required property string name;
+                objectName: "walletSelectItem_" + name
 
                 width: 220
                 height: 32
