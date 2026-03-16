@@ -304,6 +304,8 @@ void OptionsQmlModel::buildAvailableLanguages()
         QString tag = file;
         tag.remove(0, 8);       // remove "bitcoin_"
         tag.chop(3);            // remove ".qm"
+        // Skip QML-app-specific translation resources (e.g. "qml_es").
+        if (tag.startsWith(QStringLiteral("qml_"))) continue;
         tags << tag;
     }
     tags.sort(Qt::CaseInsensitive);
