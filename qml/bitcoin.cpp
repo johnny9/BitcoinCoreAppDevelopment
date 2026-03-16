@@ -8,8 +8,6 @@
 #include <common/init.h>
 #include <common/system.h>
 #include <chainparams.h>
-#include <common/args.h>
-#include <common/system.h>
 #include <init.h>
 #include <interfaces/chain.h>
 #include <interfaces/init.h>
