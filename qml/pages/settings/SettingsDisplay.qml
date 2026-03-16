@@ -34,7 +34,7 @@ Item {
                 centerItem: Header {
                     headerBold: true
                     headerSize: 18
-                    header: qsTr("Display settings")
+                    header: qsTr("Display")
                 }
             }
             ColumnLayout {
@@ -56,12 +56,43 @@ Item {
                 Setting {
                     id: gotoBlockClockSize
                     Layout.fillWidth: true
-                    header: qsTr("Block clock display mode")
+                    header: qsTr("Block status size")
                     actionItem: CaretRightIcon {
                         color: gotoBlockClockSize.stateColor
                     }
                     onClicked: {
                         displaySettingsView.push(blockclocksize_page)
+                    }
+                }
+                Separator { Layout.fillWidth: true }
+                Setting {
+                    id: gotoDisplayUnit
+                    objectName: "gotoDisplayUnit"
+                    Layout.fillWidth: true
+                    header: qsTr("Display unit")
+                    description: optionsModel.displayUnitLabel
+                    actionItem: CaretRightIcon {
+                        color: gotoDisplayUnit.stateColor
+                    }
+                    onClicked: {
+                        displaySettingsView.push(displayunit_page)
+                    }
+                }
+                Separator { Layout.fillWidth: true }
+                Setting {
+                    id: gotoLanguage
+                    objectName: "gotoLanguage"
+                    Layout.fillWidth: true
+                    header: qsTr("Language")
+                    // Use qsTr() directly for the system-default label so engine.retranslate()
+                    // refreshes it when switching back from a non-default language. C++ tr()
+                    // calls in property getters are not re-evaluated by retranslate().
+                    description: optionsModel.language === "" ? qsTr("System default") : optionsModel.languageSummary
+                    actionItem: CaretRightIcon {
+                        color: gotoLanguage.stateColor
+                    }
+                    onClicked: {
+                        displaySettingsView.push(language_page)
                     }
                 }
             }
@@ -78,6 +109,22 @@ Item {
     Component {
         id: blockclocksize_page
         SettingsBlockClockDisplayMode {
+            onBack: {
+                displaySettingsView.pop()
+            }
+        }
+    }
+    Component {
+        id: displayunit_page
+        SettingsDisplayUnit {
+            onBack: {
+                displaySettingsView.pop()
+            }
+        }
+    }
+    Component {
+        id: language_page
+        SettingsLanguage {
             onBack: {
                 displaySettingsView.pop()
             }

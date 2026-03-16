@@ -19,6 +19,13 @@ add_executable(bitcoinqml_unit_tests
   test_networkstyle.cpp
   test_qmlinitexecutor_api.cpp
   test_options_model.cpp
+  test_display_settings.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../qml/bitcoinamount.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../qml/bitcoinunits.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../qml/imageprovider.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../qml/networkstyle.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../qml/initexecutor.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../qml/initexecutor.h
   ${CMAKE_CURRENT_SOURCE_DIR}/../bitcoin/src/util/chaintype.cpp
 )
 
