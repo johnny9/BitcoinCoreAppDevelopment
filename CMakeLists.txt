@@ -77,6 +77,7 @@ endif()
 set(QML_QRC "${CMAKE_CURRENT_SOURCE_DIR}/qml/bitcoin_qml.qrc")
 qt6_add_resources(QML_QRC_CPP ${QML_QRC})
 list(APPEND QML_SOURCES ${QML_QRC_CPP})
+
 list(APPEND QML_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/bitcoin/src/init/bitcoin-qt.cpp")
 
 # Build QML library
@@ -115,6 +116,49 @@ target_link_libraries(bitcoinqml
     Qt6::QuickControls2
     Qt6::Widgets
 )
+
+# Compile QML-app-specific translations (.ts → .qm) and embed as resources.
+qt6_add_translation(QML_GUI_QM_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/qml/locale/bitcoin_qml_es.ts
+)
+set_source_files_properties(${QML_GUI_QM_FILES} PROPERTIES
+    QT_RESOURCE_ALIAS "bitcoin_qml_es.qm"
+)
+qt6_add_resources(bitcoinqml "qml_gui_translations"
+    PREFIX "/translations"
+    FILES ${QML_GUI_QM_FILES}
+)
+
+# Embed bitcoin-qt translations built by the bitcoin submodule.
+# The submodule (BUILD_GUI=ON) compiles .ts → .qm files into
+# ${CMAKE_BINARY_DIR}/bitcoin/src/qt/locale/ at build time.
+# We mark each file as GENERATED so CMake does not require it to exist
+# at configure time, and add a dependency on the bitcoin-qt target so
+# the .qm files are built before the resource compiler runs.
+set(BITCOIN_LOCALE_TAGS
+    am ar ast_ES ay az@latin az be bg bn br bs ca cmn cs cy da
+    de_AT de_CH de el en eo es_CL es_CO es_DO es es_SV es_VE et eu
+    fa fil fi fo fr_CM fr_LU fr ga_IE ga gd gl_ES gl gu hak ha he hi
+    hr hu id is it ja ka kk@latin kk kl km kn ko ku_IQ ku ky la lb
+    lt lv mg mi mk ml mn mr_IN mr ms mt my nb ne nl no or pam pa pl
+    ps pt_BR pt ro ru sa sc sd si sk sl sm sn so sq
+    sr@ijekavianlatin sr@latin sr sv sw szl ta te th tk tl tn tr ug uk ur
+    uz@Cyrl uz@Latn uz ve vi yi yo yue zh_CN zh-Hans zh-Hant zh_HK zh zh_TW zu
+)
+set(BITCOIN_QT_QM_FILES)
+foreach(tag IN LISTS BITCOIN_LOCALE_TAGS)
+    set(qm_file "${CMAKE_BINARY_DIR}/bitcoin/src/qt/locale/bitcoin_${tag}.qm")
+    set_source_files_properties(${qm_file} PROPERTIES
+        GENERATED TRUE
+        QT_RESOURCE_ALIAS "bitcoin_${tag}.qm"
+    )
+    list(APPEND BITCOIN_QT_QM_FILES ${qm_file})
+endforeach()
+qt6_add_resources(bitcoinqml "bitcoin_qt_translations"
+    PREFIX "/translations"
+    FILES ${BITCOIN_QT_QM_FILES}
+)
+add_dependencies(bitcoinqml bitcoin-qt)
 
 # Put it all together
 add_executable(bitcoin-core-app main.cpp)

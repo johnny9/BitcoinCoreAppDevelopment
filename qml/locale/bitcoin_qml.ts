@@ -1,0 +1,1933 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1">
+<context>
+    <name>AboutOptions</name>
+    <message>
+        <location filename="../components/AboutOptions.qml" line="17"/>
+        <source>Website</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/AboutOptions.qml" line="29"/>
+        <source>Source code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/AboutOptions.qml" line="41"/>
+        <source>License</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/AboutOptions.qml" line="53"/>
+        <source>Version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/AboutOptions.qml" line="68"/>
+        <source>Developer options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/AboutOptions.qml" line="69"/>
+        <source>Only use these if you have development experience</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Activity</name>
+    <message>
+        <location filename="../pages/wallet/Activity.qml" line="54"/>
+        <source>Activity</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ActivityDetails</name>
+    <message>
+        <location filename="../pages/wallet/ActivityDetails.qml" line="55"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/ActivityDetails.qml" line="66"/>
+        <source>Transaction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/ActivityDetails.qml" line="129"/>
+        <source>%1 confirmations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/ActivityDetails.qml" line="138"/>
+        <source>Label</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/ActivityDetails.qml" line="148"/>
+        <source>Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/ActivityDetails.qml" line="163"/>
+        <source>Address</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AddWalletButton</name>
+    <message>
+        <location filename="../controls/AddWalletButton.qml" line="49"/>
+        <source>Add Wallet</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BannedPeers</name>
+    <message>
+        <location filename="../pages/node/BannedPeers.qml" line="22"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/BannedPeers.qml" line="28"/>
+        <source>Banned peers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/BannedPeers.qml" line="48"/>
+        <source>You banned these peers from connecting to your node.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/BannedPeers.qml" line="87"/>
+        <source>Until %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/BannedPeers.qml" line="97"/>
+        <source>Unban</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/BannedPeers.qml" line="110"/>
+        <source>No banned peers.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BitcoinAddressInputField</name>
+    <message>
+        <location filename="../components/BitcoinAddressInputField.qml" line="17"/>
+        <source>Send to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/BitcoinAddressInputField.qml" line="47"/>
+        <source>Enter address...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BitcoinAmountInputField</name>
+    <message>
+        <location filename="../components/BitcoinAmountInputField.qml" line="17"/>
+        <source>Amount</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BlockClock</name>
+    <message>
+        <location filename="../components/BlockClock.qml" line="229"/>
+        <source>Connecting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/BlockClock.qml" line="231"/>
+        <source>Please wait</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BlockClockDisplayMode</name>
+    <message>
+        <location filename="../components/BlockClockDisplayMode.qml" line="22"/>
+        <source>Compact</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/BlockClockDisplayMode.qml" line="23"/>
+        <source>For personal use on a computer or smartphone.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/BlockClockDisplayMode.qml" line="34"/>
+        <source>Showcase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/BlockClockDisplayMode.qml" line="35"/>
+        <source>A larger block clock for public display on a tablet or other large screen.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CoinSelection</name>
+    <message>
+        <location filename="../pages/wallet/CoinSelection.qml" line="25"/>
+        <source>Coin Selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CoinSelection.qml" line="28"/>
+        <source>Done</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CoinSelection.qml" line="55"/>
+        <source>Total selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CoinSelection.qml" line="76"/>
+        <source>Over required amount</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CoinSelection.qml" line="78"/>
+        <source>Remaining to select</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ConnectionOptions</name>
+    <message>
+        <location filename="../components/ConnectionOptions.qml" line="18"/>
+        <source>Fast always on</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/ConnectionOptions.qml" line="19"/>
+        <source>Loads quickly at all times and uses as much cellular data as needed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/ConnectionOptions.qml" line="26"/>
+        <source>Slow always on</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/ConnectionOptions.qml" line="27"/>
+        <source>Loads at all times with reduced cellular data usage.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/ConnectionOptions.qml" line="32"/>
+        <source>Only when on Wi-Fi</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/ConnectionOptions.qml" line="33"/>
+        <source>Loads quickly when on wi-fi and pauses when on cellular data.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ConnectionSettings</name>
+    <message>
+        <location filename="../components/ConnectionSettings.qml" line="16"/>
+        <source>Enable listening</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/ConnectionSettings.qml" line="17"/>
+        <source>Allows incoming connections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/ConnectionSettings.qml" line="30"/>
+        <source>Map port using NAT-PMP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/ConnectionSettings.qml" line="43"/>
+        <source>Enable RPC server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/ConnectionSettings.qml" line="57"/>
+        <source>Proxy settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CreateBackup</name>
+    <message>
+        <location filename="../pages/wallet/CreateBackup.qml" line="23"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreateBackup.qml" line="59"/>
+        <source>Back up your wallet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreateBackup.qml" line="61"/>
+        <source>Your wallet is a file stored on your hard disk.
+To prevent accidental loss, it is recommended you keep a copy of your wallet file in a secure place, like a dedicated USB Drive.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreateBackup.qml" line="70"/>
+        <source>View file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreateBackup.qml" line="86"/>
+        <source>Done</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CreateConfirm</name>
+    <message>
+        <location filename="../pages/wallet/CreateConfirm.qml" line="23"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreateConfirm.qml" line="59"/>
+        <source>Your wallet has been created</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreateConfirm.qml" line="61"/>
+        <source>It is good practice to make a small test transaction before you actively use this wallet for larger amounts.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreateConfirm.qml" line="70"/>
+        <source>Next</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CreateIntro</name>
+    <message>
+        <location filename="../pages/wallet/CreateIntro.qml" line="23"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreateIntro.qml" line="58"/>
+        <source>You are about to create 
+a single-key bitcoin wallet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreateIntro.qml" line="67"/>
+        <source>You can fully control it in this application.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreateIntro.qml" line="83"/>
+        <source>Wallet data will be stored locally on your hard drive.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreateIntro.qml" line="99"/>
+        <source>You can optionally protect it with a password.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreateIntro.qml" line="110"/>
+        <source>Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CreateName</name>
+    <message>
+        <location filename="../pages/wallet/CreateName.qml" line="24"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreateName.qml" line="41"/>
+        <source>Choose a wallet name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreateName.qml" line="51"/>
+        <source>Eg. My bitcoin wallet...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreateName.qml" line="65"/>
+        <source>Continue</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CreatePassword</name>
+    <message>
+        <location filename="../pages/wallet/CreatePassword.qml" line="25"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreatePassword.qml" line="31"/>
+        <source>Skip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreatePassword.qml" line="48"/>
+        <location filename="../pages/wallet/CreatePassword.qml" line="59"/>
+        <source>Choose a password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreatePassword.qml" line="50"/>
+        <source>It is recommended to set a password to protect your wallet file from unwanted access from others.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreatePassword.qml" line="70"/>
+        <source>Enter password...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreatePassword.qml" line="78"/>
+        <source>Confirm password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreatePassword.qml" line="86"/>
+        <source>Enter password again...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreatePassword.qml" line="94"/>
+        <source>I understand that if I lose or forget this password I might lose access to the bitcoin stored in this wallet.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreatePassword.qml" line="109"/>
+        <source>Continue</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CreateWalletWizard</name>
+    <message>
+        <location filename="../pages/wallet/CreateWalletWizard.qml" line="31"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreateWalletWizard.qml" line="34"/>
+        <source>Skip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreateWalletWizard.qml" line="60"/>
+        <source>Add a wallet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreateWalletWizard.qml" line="62"/>
+        <source>In this early stage of development, only wallet.dat files are supported.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreateWalletWizard.qml" line="72"/>
+        <source>Create wallet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/CreateWalletWizard.qml" line="83"/>
+        <source>Import wallet</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DesktopWallets</name>
+    <message>
+        <location filename="../pages/wallet/DesktopWallets.qml" line="66"/>
+        <source>Activity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/DesktopWallets.qml" line="71"/>
+        <source>Send</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/DesktopWallets.qml" line="76"/>
+        <source>Receive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/DesktopWallets.qml" line="110"/>
+        <source>Paused</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/DesktopWallets.qml" line="116"/>
+        <source>Connecting</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DeveloperOptions</name>
+    <message>
+        <location filename="../components/DeveloperOptions.qml" line="15"/>
+        <source>Database cache size (MiB)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/DeveloperOptions.qml" line="16"/>
+        <source>This is not a valid cache size. Please choose a value between %1 and %2 MiB.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/DeveloperOptions.qml" line="40"/>
+        <source>Script verification threads</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/DeveloperOptions.qml" line="41"/>
+        <source>This is not a valid thread count. Please choose a value between %1 and %2 threads.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/DeveloperOptions.qml" line="64"/>
+        <source>Dark Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ExternalPopup</name>
+    <message>
+        <location filename="../components/ExternalPopup.qml" line="31"/>
+        <source>External Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/ExternalPopup.qml" line="46"/>
+        <source>Do you want to open the following website in your browser?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/ExternalPopup.qml" line="62"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/ExternalPopup.qml" line="69"/>
+        <source>Ok</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FeeSelection</name>
+    <message>
+        <location filename="../components/FeeSelection.qml" line="27"/>
+        <source>Fee</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/FeeSelection.qml" line="202"/>
+        <source>High</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/FeeSelection.qml" line="202"/>
+        <source>(~10 mins)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/FeeSelection.qml" line="203"/>
+        <source>Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/FeeSelection.qml" line="203"/>
+        <source>(~60 mins)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/FeeSelection.qml" line="204"/>
+        <source>Low</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/FeeSelection.qml" line="204"/>
+        <source>(~24 hrs)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>LabeledCoinControlButton</name>
+    <message>
+        <location filename="../controls/LabeledCoinControlButton.qml" line="25"/>
+        <source>Inputs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../controls/LabeledCoinControlButton.qml" line="36"/>
+        <source>No coins available</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../controls/LabeledCoinControlButton.qml" line="38"/>
+        <source>Select</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../controls/LabeledCoinControlButton.qml" line="40"/>
+        <source>%1 input%2 selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MultipleSendReview</name>
+    <message>
+        <location filename="../pages/wallet/MultipleSendReview.qml" line="28"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/MultipleSendReview.qml" line="52"/>
+        <source>Transaction details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/MultipleSendReview.qml" line="102"/>
+        <source>Total amount</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/MultipleSendReview.qml" line="124"/>
+        <source>Fee</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/MultipleSendReview.qml" line="147"/>
+        <source>Send</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NetworkIndicator</name>
+    <message>
+        <location filename="../components/NetworkIndicator.qml" line="52"/>
+        <source>Testnet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/NetworkIndicator.qml" line="52"/>
+        <source>Test Network</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/NetworkIndicator.qml" line="61"/>
+        <source>Signet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/NetworkIndicator.qml" line="61"/>
+        <source>Signet Network</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/NetworkIndicator.qml" line="70"/>
+        <source>Regtest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/NetworkIndicator.qml" line="70"/>
+        <source>Regtest Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NetworkTraffic</name>
+    <message>
+        <location filename="../pages/node/NetworkTraffic.qml" line="24"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/NetworkTraffic.qml" line="30"/>
+        <source>Network traffic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/NetworkTraffic.qml" line="34"/>
+        <source>Network Traffic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/NetworkTraffic.qml" line="36"/>
+        <source>How much data you have sent to and received from your peers.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/NetworkTraffic.qml" line="62"/>
+        <source>5 min</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/NetworkTraffic.qml" line="78"/>
+        <source>1 hour</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/NetworkTraffic.qml" line="94"/>
+        <source>12 hours</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/NetworkTraffic.qml" line="110"/>
+        <source>1 day</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/NetworkTraffic.qml" line="129"/>
+        <source>Received: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/NetworkTraffic.qml" line="149"/>
+        <source>Sent: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NodeSettings</name>
+    <message>
+        <location filename="../pages/node/NodeSettings.qml" line="25"/>
+        <source>Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/NodeSettings.qml" line="29"/>
+        <source>Done</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/NodeSettings.qml" line="44"/>
+        <source>About</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/NodeSettings.qml" line="57"/>
+        <source>Display</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/NodeSettings.qml" line="69"/>
+        <source>Storage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/NodeSettings.qml" line="81"/>
+        <source>Connection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/NodeSettings.qml" line="94"/>
+        <source>Peers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/NodeSettings.qml" line="107"/>
+        <source>Network Traffic</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>OnboardingBlockclock</name>
+    <message>
+        <location filename="../pages/onboarding/OnboardingBlockclock.qml" line="16"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/onboarding/OnboardingBlockclock.qml" line="25"/>
+        <source>The block clock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/onboarding/OnboardingBlockclock.qml" line="26"/>
+        <source>The Bitcoin network targets a new block every 10 minutes. Sometimes it&apos;s faster and sometimes slower.
+
+The block clock indicates each block on a dial that represents the current day.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/onboarding/OnboardingBlockclock.qml" line="29"/>
+        <source>Next</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>OnboardingConnection</name>
+    <message>
+        <location filename="../pages/onboarding/OnboardingConnection.qml" line="30"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/onboarding/OnboardingConnection.qml" line="41"/>
+        <source>Starting initial download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/onboarding/OnboardingConnection.qml" line="43"/>
+        <source>The application will connect to the Bitcoin network and start downloading and verifying transactions.
+
+This may take several hours, or even days, based on your connection.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/onboarding/OnboardingConnection.qml" line="50"/>
+        <source>Connection settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/onboarding/OnboardingConnection.qml" line="55"/>
+        <source>Next</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>OnboardingCover</name>
+    <message>
+        <location filename="../pages/onboarding/OnboardingCover.qml" line="47"/>
+        <source>Bitcoin Core App</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/onboarding/OnboardingCover.qml" line="49"/>
+        <source>Be part of the Bitcoin network.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/onboarding/OnboardingCover.qml" line="52"/>
+        <source>100% open-source &amp; open-design</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/onboarding/OnboardingCover.qml" line="53"/>
+        <source>Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>OnboardingStorageAmount</name>
+    <message>
+        <location filename="../pages/onboarding/OnboardingStorageAmount.qml" line="32"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/onboarding/OnboardingStorageAmount.qml" line="37"/>
+        <source>Storage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/onboarding/OnboardingStorageAmount.qml" line="39"/>
+        <source>Data retrieved from the Bitcoin network is stored on your device.
+You have 500GB of storage available.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/onboarding/OnboardingStorageAmount.qml" line="53"/>
+        <source>Detailed settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/onboarding/OnboardingStorageAmount.qml" line="57"/>
+        <source>Next</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>OnboardingStorageLocation</name>
+    <message>
+        <location filename="../pages/onboarding/OnboardingStorageLocation.qml" line="18"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/onboarding/OnboardingStorageLocation.qml" line="23"/>
+        <source>Storage location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/onboarding/OnboardingStorageLocation.qml" line="25"/>
+        <source>Where do you want to store the downloaded block data?
+You need a minimum of %1GB of storage.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/onboarding/OnboardingStorageLocation.qml" line="29"/>
+        <source>Next</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>OnboardingStrengthen</name>
+    <message>
+        <location filename="../pages/onboarding/OnboardingStrengthen.qml" line="16"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/onboarding/OnboardingStrengthen.qml" line="25"/>
+        <source>Strengthen bitcoin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/onboarding/OnboardingStrengthen.qml" line="26"/>
+        <source>Bitcoin Core runs a full Bitcoin node which verifies the rules of the network are being followed.
+
+Users running nodes is what makes bitcoin so resilient and trustworthy.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/onboarding/OnboardingStrengthen.qml" line="29"/>
+        <source>Next</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>OptionButton</name>
+    <message>
+        <location filename="../controls/OptionButton.qml" line="83"/>
+        <source>Recommended</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PeerDetails</name>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="30"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="36"/>
+        <source>Peer %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="55"/>
+        <source>Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="66"/>
+        <source>Address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="67"/>
+        <source>VIA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="68"/>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="74"/>
+        <source>Permissions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="94"/>
+        <source>Version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="95"/>
+        <source>User agent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="96"/>
+        <source>Services</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="100"/>
+        <source>Transaction relay</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="111"/>
+        <source>Address relay</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="124"/>
+        <source>Mapped AS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="151"/>
+        <source>Block data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="161"/>
+        <source>Starting block</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="162"/>
+        <source>Synced headers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="163"/>
+        <source>Synced blocks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="167"/>
+        <source>Network traffic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="177"/>
+        <source>Direction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="190"/>
+        <source>Connection time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="191"/>
+        <source>Last send</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="191"/>
+        <location filename="../pages/node/PeerDetails.qml" line="192"/>
+        <source> ago</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="192"/>
+        <source>Last receive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="193"/>
+        <source>Sent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="193"/>
+        <location filename="../pages/node/PeerDetails.qml" line="194"/>
+        <source> total</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="194"/>
+        <source>Received</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="195"/>
+        <source>Ping time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="201"/>
+        <source>Ping wait</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="231"/>
+        <source>Min ping</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="232"/>
+        <source>Time offset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="243"/>
+        <source>Disconnect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="252"/>
+        <location filename="../pages/node/PeerDetails.qml" line="348"/>
+        <source>Ban</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="276"/>
+        <source>1 hour</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="277"/>
+        <source>1 day</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="278"/>
+        <source>1 week</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="279"/>
+        <source>1 year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="289"/>
+        <source>Ban this peer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/PeerDetails.qml" line="340"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PeerDetailsModel</name>
+    <message>
+        <location filename="../models/peerdetailsmodel.h" line="70"/>
+        <location filename="../models/peerdetailsmodel.h" line="73"/>
+        <source>N/A</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PeerListModel</name>
+    <message>
+        <location filename="../models/peerlistmodel.cpp" line="62"/>
+        <source>Inbound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../models/peerlistmodel.cpp" line="62"/>
+        <source>Outbound</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Peers</name>
+    <message>
+        <location filename="../pages/node/Peers.qml" line="25"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/Peers.qml" line="31"/>
+        <source>Peers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/Peers.qml" line="60"/>
+        <source>Peers are nodes you exchange data with.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/Peers.qml" line="78"/>
+        <source>ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/Peers.qml" line="87"/>
+        <source>Direction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/Peers.qml" line="96"/>
+        <source>User Agent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/Peers.qml" line="105"/>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/Peers.qml" line="114"/>
+        <source>Ip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/Peers.qml" line="123"/>
+        <source>Network</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/Peers.qml" line="161"/>
+        <source>Looking for %1 more peer(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/Peers.qml" line="174"/>
+        <source>View %1 banned %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/Peers.qml" line="174"/>
+        <source>peer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/Peers.qml" line="174"/>
+        <source>peers</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ProxySettings</name>
+    <message>
+        <location filename="../components/ProxySettings.qml" line="13"/>
+        <source>IP and Port</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/ProxySettings.qml" line="14"/>
+        <source>Invalid IP address or port format. Use &apos;255.255.255.255:65535&apos; or &apos;[ffff::]:65535&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/ProxySettings.qml" line="20"/>
+        <source>Default Proxy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/ProxySettings.qml" line="22"/>
+        <source>Run peer connections through a proxy (SOCKS5) for improved privacy. The default proxy supports connections via IPv4, IPv6 and Tor.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/ProxySettings.qml" line="30"/>
+        <location filename="../components/ProxySettings.qml" line="81"/>
+        <source>Enable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/ProxySettings.qml" line="70"/>
+        <source>Tor Proxy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/ProxySettings.qml" line="72"/>
+        <source>Run Tor connections through a dedicated proxy.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="../pages/settings/SettingsDisplay.qml" line="98"/>
+        <location filename="../models/options_model.cpp" line="239"/>
+        <source>System default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="25"/>
+        <source>Inbound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="26"/>
+        <source>Outbound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="30"/>
+        <source>Full Relay</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="31"/>
+        <source>Block Relay</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="32"/>
+        <source>Manual</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="33"/>
+        <source>Feeler</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="34"/>
+        <source>Address Fetch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="42"/>
+        <source>Unroutable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="43"/>
+        <source>IPv4</source>
+        <comment>network name</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="44"/>
+        <source>IPv6</source>
+        <comment>network name</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="45"/>
+        <source>Onion</source>
+        <comment>network name</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="46"/>
+        <source>I2P</source>
+        <comment>network name</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="47"/>
+        <source>CJDNS</source>
+        <comment>network name</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="62"/>
+        <location filename="../peerstatsutil.cpp" line="74"/>
+        <source>%1 d</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="63"/>
+        <location filename="../peerstatsutil.cpp" line="75"/>
+        <source>%1 h</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="64"/>
+        <location filename="../peerstatsutil.cpp" line="76"/>
+        <source>%1 m</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="66"/>
+        <location filename="../peerstatsutil.cpp" line="77"/>
+        <location filename="../peerstatsutil.cpp" line="102"/>
+        <source>%1 s</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="89"/>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="95"/>
+        <source>N/A</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="97"/>
+        <source>%1 ms</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="107"/>
+        <source>%1 B</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="108"/>
+        <source>%1 kB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="109"/>
+        <source>%1 MB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../peerstatsutil.cpp" line="110"/>
+        <source>%1 GB</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RequestPayment</name>
+    <message>
+        <location filename="../pages/wallet/RequestPayment.qml" line="32"/>
+        <location filename="../pages/wallet/RequestPayment.qml" line="221"/>
+        <source>Request a payment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/RequestPayment.qml" line="138"/>
+        <source>Label</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/RequestPayment.qml" line="139"/>
+        <source>Enter label...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/RequestPayment.qml" line="149"/>
+        <source>Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/RequestPayment.qml" line="150"/>
+        <source>Enter message...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/RequestPayment.qml" line="168"/>
+        <source>Address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/RequestPayment.qml" line="177"/>
+        <source>copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/RequestPayment.qml" line="204"/>
+        <location filename="../pages/wallet/RequestPayment.qml" line="224"/>
+        <source>Create bitcoin address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/RequestPayment.qml" line="214"/>
+        <source>Copy payment request</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/RequestPayment.qml" line="238"/>
+        <source>Clear</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Send</name>
+    <message>
+        <location filename="../pages/wallet/Send.qml" line="97"/>
+        <source>Send bitcoin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/Send.qml" line="132"/>
+        <source>Recipient %1 of %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/Send.qml" line="211"/>
+        <source>Amount</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/Send.qml" line="298"/>
+        <source>Note to self</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/Send.qml" line="299"/>
+        <source>Enter ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/Send.qml" line="337"/>
+        <source>Review</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SendOptionsPopup</name>
+    <message>
+        <location filename="../controls/SendOptionsPopup.qml" line="34"/>
+        <source>Enable Coin control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../controls/SendOptionsPopup.qml" line="45"/>
+        <source>Multiple Recipients</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SendRecipient</name>
+    <message>
+        <location filename="../models/sendrecipient.cpp" line="117"/>
+        <source>Address is valid for mainnet, not the current network</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../models/sendrecipient.cpp" line="119"/>
+        <source>Address is valid for testnet, not the current network</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../models/sendrecipient.cpp" line="121"/>
+        <source>Invalid address format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../models/sendrecipient.cpp" line="134"/>
+        <source>Amount must be greater than zero</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../models/sendrecipient.cpp" line="136"/>
+        <source>Amount exceeds maximum limit of 21,000,000 BTC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../models/sendrecipient.cpp" line="138"/>
+        <source>Amount exceeds available balance</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SendResult</name>
+    <message>
+        <location filename="../pages/wallet/SendResult.qml" line="56"/>
+        <source>Transaction sent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/SendResult.qml" line="65"/>
+        <source>Based on your selected fee, it should be confirmed within the next 10 minutes.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/SendResult.qml" line="74"/>
+        <source>Close window</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SendReview</name>
+    <message>
+        <location filename="../pages/wallet/SendReview.qml" line="28"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/SendReview.qml" line="52"/>
+        <source>Transaction details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/SendReview.qml" line="59"/>
+        <source>Send to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/SendReview.qml" line="73"/>
+        <source>Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/SendReview.qml" line="87"/>
+        <source>Amount</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/SendReview.qml" line="101"/>
+        <source>Fee</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/SendReview.qml" line="115"/>
+        <source>Total</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/SendReview.qml" line="131"/>
+        <source>Send</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SettingsAbout</name>
+    <message>
+        <location filename="../pages/settings/SettingsAbout.qml" line="18"/>
+        <location filename="../pages/settings/SettingsAbout.qml" line="59"/>
+        <source>About</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsAbout.qml" line="20"/>
+        <source>Bitcoin Core is an open source project.
+If you find it useful, please contribute.
+
+ This is experimental software.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsAbout.qml" line="50"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SettingsBlockClockDisplayMode</name>
+    <message>
+        <location filename="../pages/settings/SettingsBlockClockDisplayMode.qml" line="24"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsBlockClockDisplayMode.qml" line="30"/>
+        <source>Block clock display mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SettingsConnection</name>
+    <message>
+        <location filename="../pages/settings/SettingsConnection.qml" line="29"/>
+        <location filename="../pages/settings/SettingsConnection.qml" line="71"/>
+        <source>Connection settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsConnection.qml" line="62"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsConnection.qml" line="78"/>
+        <source>Done</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SettingsDeveloper</name>
+    <message>
+        <location filename="../pages/settings/SettingsDeveloper.qml" line="16"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsDeveloper.qml" line="24"/>
+        <source>Developer options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsDeveloper.qml" line="51"/>
+        <source>Developer settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SettingsDisplay</name>
+    <message>
+        <location filename="../pages/settings/SettingsDisplay.qml" line="31"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsDisplay.qml" line="37"/>
+        <source>Display</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsDisplay.qml" line="47"/>
+        <source>Theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsDisplay.qml" line="59"/>
+        <source>Block status size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsDisplay.qml" line="71"/>
+        <source>Ask before opening links</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsDisplay.qml" line="83"/>
+        <source>Display unit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsDisplay.qml" line="97"/>
+        <source>Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SettingsDisplayUnit</name>
+    <message>
+        <location filename="../pages/settings/SettingsDisplayUnit.qml" line="26"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsDisplayUnit.qml" line="32"/>
+        <source>Display unit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsDisplayUnit.qml" line="49"/>
+        <source>BTC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsDisplayUnit.qml" line="50"/>
+        <source>8 decimal places (0.00000001 BTC = 1 sat)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsDisplayUnit.qml" line="59"/>
+        <source>sat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsDisplayUnit.qml" line="60"/>
+        <source>Satoshi, the smallest unit (1 sat = 0.00000001 BTC)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SettingsLanguage</name>
+    <message>
+        <location filename="../pages/settings/SettingsLanguage.qml" line="26"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsLanguage.qml" line="32"/>
+        <source>Choose language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsLanguage.qml" line="45"/>
+        <source>Search...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SettingsProxy</name>
+    <message>
+        <location filename="../pages/settings/SettingsProxy.qml" line="21"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsProxy.qml" line="27"/>
+        <source>Proxy Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SettingsStorage</name>
+    <message>
+        <location filename="../pages/settings/SettingsStorage.qml" line="19"/>
+        <source>Storage settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsStorage.qml" line="56"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsStorage.qml" line="65"/>
+        <source>Storage Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsStorage.qml" line="71"/>
+        <source>Done</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SettingsTheme</name>
+    <message>
+        <location filename="../pages/settings/SettingsTheme.qml" line="24"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/settings/SettingsTheme.qml" line="30"/>
+        <source>Theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Shutdown</name>
+    <message>
+        <location filename="../pages/node/Shutdown.qml" line="29"/>
+        <source>Saving...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/node/Shutdown.qml" line="31"/>
+        <source>Do not shut down the computer until this is done.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StorageLocations</name>
+    <message>
+        <location filename="../components/StorageLocations.qml" line="23"/>
+        <source>Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/StorageLocations.qml" line="24"/>
+        <source>Your application directory.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/StorageLocations.qml" line="36"/>
+        <source>Custom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/StorageLocations.qml" line="37"/>
+        <source>Choose the directory and storage device.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StorageOptions</name>
+    <message>
+        <location filename="../components/StorageOptions.qml" line="24"/>
+        <source>Reduce storage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/StorageOptions.qml" line="25"/>
+        <source>Uses about %1GB. For simple wallet use.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/StorageOptions.qml" line="40"/>
+        <source>Store all data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/StorageOptions.qml" line="42"/>
+        <source>Uses about %1GB. Support the network.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/StorageOptions.qml" line="55"/>
+        <source>Custom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/StorageOptions.qml" line="56"/>
+        <source>Storing about %1GB of data.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StorageSettings</name>
+    <message>
+        <location filename="../components/StorageSettings.qml" line="17"/>
+        <source>Store recent blocks only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/StorageSettings.qml" line="38"/>
+        <source>Block Storage limit (GB)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/StorageSettings.qml" line="39"/>
+        <source>This is not a valid prune target. Please choose a value that is equal to or larger than 1GB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/StorageSettings.qml" line="65"/>
+        <source>Data Directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ThemeSettings</name>
+    <message>
+        <location filename="../components/ThemeSettings.qml" line="21"/>
+        <source>Light</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../components/ThemeSettings.qml" line="36"/>
+        <source>Dark</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WalletBadge</name>
+    <message>
+        <location filename="../pages/wallet/WalletBadge.qml" line="101"/>
+        <source>Add Wallet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/wallet/WalletBadge.qml" line="101"/>
+        <source>Select Wallet</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WalletSelect</name>
+    <message>
+        <location filename="../pages/wallet/WalletSelect.qml" line="59"/>
+        <source>Wallets</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>initerrormessage</name>
+    <message>
+        <location filename="../pages/initerrormessage.qml" line="27"/>
+        <source>There was an issue starting up.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pages/initerrormessage.qml" line="34"/>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <location filename="../pages/main.qml" line="18"/>
+        <source>Bitcoin Core App</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+</TS>
