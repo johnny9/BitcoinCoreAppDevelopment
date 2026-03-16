@@ -38,14 +38,9 @@ Page {
         width: Math.min(parent.width, 450)
         anchors.horizontalCenter: parent.horizontalCenter
 
-        ButtonGroup {
-            id: unitGroup
-        }
-
         OptionButton {
             objectName: "displayUnitBTC"
             Layout.fillWidth: true
-            ButtonGroup.group: unitGroup
             text: qsTr("BTC")
             description: qsTr("8 decimal places (0.00000001 BTC = 1 sat)")
             checked: optionsModel.displayUnit === 0
@@ -55,7 +50,6 @@ Page {
         OptionButton {
             objectName: "displayUnitSAT"
             Layout.fillWidth: true
-            ButtonGroup.group: unitGroup
             text: qsTr("sat")
             description: qsTr("Satoshi, the smallest unit (1 sat = 0.00000001 BTC)")
             checked: optionsModel.displayUnit === 1
