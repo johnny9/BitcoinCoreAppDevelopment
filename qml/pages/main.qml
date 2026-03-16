@@ -15,7 +15,7 @@ import "./wallet"
 
 ApplicationWindow {
     id: appWindow
-    title: "Bitcoin Core App"
+    title: qsTr("Bitcoin Core App")
     minimumWidth: 640
     minimumHeight: 665
     color: Theme.color.background

@@ -23,7 +23,7 @@ PageStack {
             centerItem: Header {
                 headerBold: true
                 headerSize: 18
-                header: "Settings"
+                header: qsTr("Settings")
             }
             rightItem: NavButton {
                 id: doneButton
@@ -53,6 +53,7 @@ PageStack {
                 Separator { Layout.fillWidth: true }
                 Setting {
                     id: gotoDisplay
+                    objectName: "gotoDisplay"
                     Layout.fillWidth: true
                     header: qsTr("Display")
                     actionItem: CaretRightIcon {
