@@ -66,8 +66,10 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQuickWindow>
+#include <QSettings>
 #include <QString>
 #include <QStyleHints>
+#include <QTranslator>
 #include <QUrl>
 
 QT_BEGIN_NAMESPACE
@@ -220,6 +222,28 @@ int QmlGuiMain(int argc, char* argv[])
     app.setOrganizationDomain(QAPP_ORG_DOMAIN);
     app.setApplicationName(QAPP_APP_NAME_DEFAULT);
 
+    // Manages translators swapped on runtime language changes.
+    // app_translator: bitcoin-qt strings (shared C++ layer)
+    // qml_translator: QML-app-specific strings
+    std::unique_ptr<QTranslator> app_translator;
+    std::unique_ptr<QTranslator> qml_translator;
+    const auto reset_translator = [](std::unique_ptr<QTranslator>& t) {
+        if (t) { QCoreApplication::removeTranslator(t.get()); t.reset(); }
+    };
+    const auto install_language = [&](const QString& lang) {
+        reset_translator(app_translator);
+        reset_translator(qml_translator);
+        if (!lang.isEmpty()) {
+            auto t = std::make_unique<QTranslator>();
+            if (t->load(QStringLiteral(":/translations/bitcoin_%1.qm").arg(lang)))
+                { QCoreApplication::installTranslator(t.get()); app_translator = std::move(t); }
+
+            auto tq = std::make_unique<QTranslator>();
+            if (tq->load(QStringLiteral(":/translations/bitcoin_qml_%1.qm").arg(lang)))
+                { QCoreApplication::installTranslator(tq.get()); qml_translator = std::move(tq); }
+        }
+    };
+
     // Parse command-line options. We do this after qt in order to show an error if there are problems parsing these.
     SetupServerArgs(gArgs, init->canListenIpc());
 
@@ -343,6 +367,27 @@ int QmlGuiMain(int argc, char* argv[])
     OptionsQmlModel options_model(*node, !need_onboarding.toBool());
     engine.rootContext()->setContextProperty("optionsModel", &options_model);
     engine.rootContext()->setContextProperty("needOnboarding", need_onboarding);
+
+    // -lang CLI flag overrides the persisted setting (bitcoin-qt compatibility).
+    // Must be after gArgs.ParseParameters() and after setupChainQSettings() so
+    // QSettings targets the correct chain-specific file.
+    // Unlike bitcoin-qt which treats -lang as session-only, this persists the
+    // selection so subsequent launches continue using the CLI-specified language.
+    // To reset to system default, use the Settings UI or pass -lang= (empty).
+    const QString cli_lang = QString::fromStdString(gArgs.GetArg("-lang", ""));
+    if (!cli_lang.isEmpty()) {
+        options_model.setLanguage(cli_lang);
+    }
+
+    // Install language before QML engine loads so that all qsTr() calls in QML
+    // pick up the correct locale from the start.
+    install_language(options_model.language());
+
+    // Retranslate the QML UI immediately when the user picks a new language.
+    QObject::connect(&options_model, &OptionsQmlModel::languageChanged, [&]() {
+        install_language(options_model.language());
+        engine.retranslate();
+    });
 
     AppMode app_mode = SetupAppMode();
     Clipboard clipboard;
