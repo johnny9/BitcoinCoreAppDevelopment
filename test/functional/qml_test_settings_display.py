@@ -14,6 +14,7 @@ This test requires:
   - bitcoin-core-app built with -DENABLE_TEST_AUTOMATION=ON
 """
 
+import shutil
 import sys
 import time
 
@@ -162,6 +163,50 @@ def test_language_selection(gui):
     print(f"  Headers restored to English  PASSED")
 
 
+def test_settings_persistence(datadir):
+    """Restart the app without -resetguisettings and verify settings persisted.
+
+    Issue #512 requires: change unit/language → restart → verify persisted.
+    """
+    print("\n── test_settings_persistence ─────────────────────────────────")
+
+    harness2 = QmlTestHarness(
+        extra_args=["-disablewallet"],
+        reset_settings=False,
+        datadir=datadir,
+    )
+    try:
+        harness2.start()
+        gui2 = harness2.driver
+
+        # After a normal restart (no -resetguisettings) onboarding is skipped.
+        gui2.wait_for_page("nodeSettingsButton", timeout_ms=POST_ONBOARDING_TIMEOUT_MS)
+        print("  Reached NodeRunner main screen after restart")
+
+        navigate_to_display_settings(gui2)
+
+        # Verify SAT is still selected.
+        gui2.click("gotoDisplayUnit")
+        gui2.wait_for_page("settingsDisplayUnitPage", timeout_ms=5000)
+        sat_persisted = gui2.get_property("displayUnitSAT", "checked")
+        assert sat_persisted, (
+            f"SAT should still be selected after restart, got checked={sat_persisted}"
+        )
+        print("  Display unit (SAT) persisted across restart  PASSED")
+        gui2.click("settingsDisplayUnitBack")
+        gui2.wait_for_page("gotoDisplayUnit", timeout_ms=5000)
+
+        # Verify Spanish is still selected.
+        lang_summary = gui2.get_property("gotoLanguage", "description")
+        assert "Español" in lang_summary, (
+            f"Language should still be Spanish after restart, got: {lang_summary!r}"
+        )
+        print(f"  Language (Español) persisted across restart  PASSED")
+
+    finally:
+        harness2.stop()
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def run_tests():
@@ -184,9 +229,23 @@ def run_tests():
         test_display_unit_selection(gui)
         test_language_selection(gui)
 
-        print("\n" + "=" * 60)
-        print("All display settings tests PASSED")
-        print("=" * 60)
+        # Set known state for persistence test: SAT + Spanish.
+        print("\n── Setting up state for persistence test ─────────────────────")
+        gui.click("gotoDisplayUnit")
+        gui.wait_for_page("settingsDisplayUnitPage", timeout_ms=5000)
+        gui.click("displayUnitSAT")
+        gui.click("settingsDisplayUnitBack")
+        gui.wait_for_page("gotoDisplayUnit", timeout_ms=5000)
+        gui.click("gotoLanguage")
+        gui.wait_for_page("settingsLanguagePage", timeout_ms=5000)
+        gui.set_text("languageSearch", "español")
+        gui.wait_for_page("language_es", timeout_ms=3000)
+        gui.click("language_es")
+        gui.wait_for_page("gotoLanguage", timeout_ms=5000)
+        print("  State set: SAT + Spanish")
+
+        datadir = harness.datadir
+        tmpdir = harness.tmpdir
 
     except Exception as e:
         print(f"\nFAILED: {e}", file=sys.stderr)
@@ -196,7 +255,24 @@ def run_tests():
             dump_qml_tree(harness.driver)
         sys.exit(1)
     finally:
-        harness.stop()
+        # Keep the datadir on disk so the second harness can reuse it.
+        harness.stop(cleanup=False)
+
+    # Phase 2: restart without -resetguisettings and verify persistence.
+    try:
+        test_settings_persistence(datadir)
+    except Exception as e:
+        print(f"\nFAILED: {e}", file=sys.stderr)
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
+    finally:
+        if tmpdir:
+            shutil.rmtree(tmpdir, ignore_errors=True)
+
+    print("\n" + "=" * 60)
+    print("All display settings tests PASSED")
+    print("=" * 60)
 
 
 if __name__ == '__main__':

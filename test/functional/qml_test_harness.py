@@ -87,11 +87,12 @@ class QmlTestHarness:
     instead of launching a new one.
     """
 
-    def __init__(self, socket_path=None, extra_args=None):
+    def __init__(self, socket_path=None, extra_args=None, reset_settings=True, datadir=None):
         self.external = socket_path is not None
         self.process = None
         self.driver = None
         self.extra_args = extra_args or []
+        self.reset_settings = reset_settings
 
         if self.external:
             self.socket_path = socket_path
@@ -99,9 +100,15 @@ class QmlTestHarness:
             self.datadir = None
         else:
             self.gui_binary = find_gui_binary()
-            self.tmpdir = tempfile.mkdtemp(prefix="qml_test_bridge_")
-            self.datadir = setup_datadir(self.tmpdir)
-            self.socket_path = os.path.join(self.tmpdir, "test_bridge.sock")
+            if datadir is not None:
+                # Reuse an existing datadir; don't create or delete a tmpdir.
+                self.tmpdir = None
+                self.datadir = datadir
+                self.socket_path = os.path.join(datadir, "test_bridge.sock")
+            else:
+                self.tmpdir = tempfile.mkdtemp(prefix="qml_test_bridge_")
+                self.datadir = setup_datadir(self.tmpdir)
+                self.socket_path = os.path.join(self.tmpdir, "test_bridge.sock")
 
     def start(self):
         """Launch bitcoin-core-app or attach to an existing instance."""
@@ -118,7 +125,7 @@ class QmlTestHarness:
             self.gui_binary,
             f"-datadir={self.datadir}",
             f"-test-automation={self.socket_path}",
-            "-resetguisettings",
+        ] + (["-resetguisettings"] if self.reset_settings else []) + [
             "-logtimemicros",
             "-debug",
             "-debugexclude=libevent",
@@ -138,8 +145,12 @@ class QmlTestHarness:
         self.driver = QmlDriver(self.socket_path, timeout=GUI_STARTUP_TIMEOUT)
         print("QmlDriver connected to test bridge.")
 
-    def stop(self):
-        """Shut down the GUI process (only if we launched it)."""
+    def stop(self, cleanup=True):
+        """Shut down the GUI process (only if we launched it).
+
+        If cleanup is False, the tmpdir and datadir are preserved on disk so
+        a second harness can reuse the same datadir for a restart-persistence test.
+        """
         if self.process and self.process.poll() is None:
             self.process.send_signal(signal.SIGTERM)
             try:
@@ -149,7 +160,7 @@ class QmlTestHarness:
                 self.process.wait()
         if self.driver:
             self.driver.close()
-        if self.tmpdir:
+        if cleanup and self.tmpdir:
             shutil.rmtree(self.tmpdir, ignore_errors=True)
             self.tmpdir = None
 
