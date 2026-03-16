@@ -240,13 +240,28 @@ PageStack {
                                 anchors.fill: parent
                                 onClicked: root.recipient.amount.flipUnit()
                             }
-                            CoreText {
+                            Loader {
                                 id: unitLabel
                                 anchors.right: flipIcon.left
                                 anchors.verticalCenter: parent.verticalCenter
-                                text: root.recipient.amount.unitLabel
-                                font.pixelSize: 18
-                                color: enabled ? Theme.color.neutral7 : Theme.color.neutral4
+                                sourceComponent: root.recipient.amount.unit === BitcoinAmount.SAT
+                                    ? satoshiIconComponent : btcTextComponent
+                            }
+                            Component {
+                                id: btcTextComponent
+                                CoreText {
+                                    text: root.recipient.amount.unitLabel
+                                    font.pixelSize: 18
+                                    color: enabled ? Theme.color.neutral7 : Theme.color.neutral4
+                                }
+                            }
+                            Component {
+                                id: satoshiIconComponent
+                                CoreText {
+                                    text: "s"
+                                    font.pixelSize: 18
+                                    color: enabled ? Theme.color.neutral7 : Theme.color.neutral4
+                                }
                             }
                             Icon {
                                 id: flipIcon

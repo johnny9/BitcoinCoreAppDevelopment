@@ -143,7 +143,7 @@ Button {
                 CoreText {
                     id: balanceText
                     visible: root.showBalance
-                    text: "₿ " + root.balance
+                    text: (optionsModel.displayUnit === 1 ? "s" : "₿") + " " + root.balance
                     color: Theme.color.neutral7
                 }
             }

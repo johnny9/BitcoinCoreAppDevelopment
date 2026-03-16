@@ -92,13 +92,29 @@ ColumnLayout {
                 }
             }
 
-            CoreText {
+            Loader {
                 id: unitLabel
                 anchors.right: flipIcon.left
                 anchors.verticalCenter: parent.verticalCenter
-                text: root.amount ? root.amount.unitLabel : ""
-                font.pixelSize: 18
-                color: enabled ? Theme.color.neutral7 : Theme.color.neutral4
+                sourceComponent: root.amount && root.amount.unit === BitcoinAmount.SAT
+                    ? satoshiIconComponent
+                    : btcTextComponent
+            }
+            Component {
+                id: btcTextComponent
+                CoreText {
+                    text: root.amount ? root.amount.unitLabel : ""
+                    font.pixelSize: 18
+                    color: root.enabled ? Theme.color.neutral7 : Theme.color.neutral4
+                }
+            }
+            Component {
+                id: satoshiIconComponent
+                CoreText {
+                    text: "s"
+                    font.pixelSize: 18
+                    color: root.enabled ? Theme.color.neutral7 : Theme.color.neutral4
+                }
             }
 
             Icon {

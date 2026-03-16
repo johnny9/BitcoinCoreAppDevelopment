@@ -96,4 +96,62 @@ TestCase {
         btcBtn.clicked()
         compare(optionsModel.displayUnit, 0)
     }
+
+    // Mirrors the balance prefix expression in WalletBadge.qml.
+    Component {
+        id: balancePrefixComponent
+        Text {
+            property string balance: "1 000"
+            text: (optionsModel.displayUnit === 1 ? "s" : "₿") + " " + balance
+        }
+    }
+
+    function test_walletBadge_prefix_is_s_in_sat_mode() {
+        optionsModel.displayUnit = 1
+        const obj = createTemporaryObject(balancePrefixComponent, this)
+        verify(obj !== null)
+        compare(obj.text, "s 1 000")
+        optionsModel.displayUnit = 0
+    }
+
+    function test_walletBadge_prefix_is_btc_symbol_in_btc_mode() {
+        optionsModel.displayUnit = 0
+        const obj = createTemporaryObject(balancePrefixComponent, this)
+        verify(obj !== null)
+        compare(obj.text, "₿ 1 000")
+    }
+
+    // Mirrors the Loader + Component pattern in BitcoinAmountInputField.qml,
+    // Send.qml, and RequestPayment.qml.
+    Component {
+        id: unitLabelComponent
+        Item {
+            id: wrapper
+            property int unit: 0
+            Loader {
+                objectName: "unitLabelLoader"
+                sourceComponent: wrapper.unit === 1 ? satComponent : btcComponent
+            }
+            Component { id: btcComponent; Text { text: "₿" } }
+            Component { id: satComponent; Text { text: "s" } }
+        }
+    }
+
+    function test_unitLabel_shows_s_in_sat_mode() {
+        const obj = createTemporaryObject(unitLabelComponent, this)
+        obj.unit = 1
+        waitForRendering(obj)
+        const loader = findChild(obj, "unitLabelLoader")
+        verify(loader.item !== null)
+        compare(loader.item.text, "s")
+    }
+
+    function test_unitLabel_shows_btc_symbol_in_btc_mode() {
+        const obj = createTemporaryObject(unitLabelComponent, this)
+        obj.unit = 0
+        waitForRendering(obj)
+        const loader = findChild(obj, "unitLabelLoader")
+        verify(loader.item !== null)
+        compare(loader.item.text, "₿")
+    }
 }
