@@ -35,6 +35,13 @@ PageStack {
     }
 
 
+    Binding {
+        target: root.recipient ? root.recipient.amount : null
+        property: "unit"
+        value: optionsModel.displayUnit
+        when: root.recipient !== null
+    }
+
     initialItem: Page {
         background: null
 

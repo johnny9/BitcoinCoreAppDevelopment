@@ -34,6 +34,7 @@ class WalletQmlModel : public QObject
     Q_PROPERTY(WalletQmlModelTransaction* currentTransaction READ currentTransaction NOTIFY currentTransactionChanged)
     Q_PROPERTY(unsigned int targetBlocks READ feeTargetBlocks WRITE setFeeTargetBlocks NOTIFY feeTargetBlocksChanged)
     Q_PROPERTY(bool isWalletLoaded READ isWalletLoaded NOTIFY walletIsLoadedChanged)
+    Q_PROPERTY(int displayUnit READ displayUnit WRITE setDisplayUnit NOTIFY displayUnitChanged)
 
 public:
     WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObject* parent = nullptr);
@@ -79,6 +80,8 @@ public:
 
     bool isWalletLoaded() const { return m_is_wallet_loaded; }
     void setWalletLoaded(bool loaded);
+    int displayUnit() const { return m_display_unit; }
+    void setDisplayUnit(int unit);
 
 Q_SIGNALS:
     void nameChanged();
@@ -86,6 +89,7 @@ Q_SIGNALS:
     void currentTransactionChanged();
     void feeTargetBlocksChanged();
     void walletIsLoadedChanged();
+    void displayUnitChanged(int unit);
 
 private:
     unsigned int nextPaymentRequestId() const;
@@ -98,6 +102,7 @@ private:
     WalletQmlModelTransaction* m_current_transaction{nullptr};
     wallet::CCoinControl m_coin_control;
     bool m_is_wallet_loaded{false};
+    int m_display_unit{0};
 };
 
 #endif // BITCOIN_QML_MODELS_WALLETQMLMODEL_H

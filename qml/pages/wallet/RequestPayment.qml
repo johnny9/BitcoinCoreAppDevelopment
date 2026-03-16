@@ -18,6 +18,12 @@ Page {
     property WalletQmlModel wallet: walletController.selectedWallet
     property PaymentRequest request: wallet ? wallet.currentPaymentRequest : null
 
+    Binding {
+        target: root.request ? root.request.amount : null
+        property: "unit"
+        value: optionsModel.displayUnit
+    }
+
     ScrollView {
         clip: true
         width: parent.width
