@@ -12,8 +12,11 @@
 #include <common/system.h>
 #include <validation.h>
 
+#include <qml/models/settings_keys.h>
+
 #include <QObject>
 #include <QString>
+#include <QStringList>
 #include <QUrl>
 
 namespace interfaces {
@@ -43,6 +46,11 @@ class OptionsQmlModel : public QObject
     Q_PROPERTY(bool torEnabled READ torEnabled WRITE setTorEnabled NOTIFY torEnabledChanged)
     Q_PROPERTY(QString torAddress READ torAddress WRITE setTorAddress NOTIFY torAddressChanged)
     Q_PROPERTY(bool proxySettingsDirty READ proxySettingsDirty NOTIFY proxySettingsDirtyChanged)
+    Q_PROPERTY(QString language READ language WRITE setLanguage NOTIFY languageChanged)
+    Q_PROPERTY(QString languageSummary READ languageSummary NOTIFY languageChanged)
+    Q_PROPERTY(QStringList availableLanguages READ availableLanguages CONSTANT)
+    Q_PROPERTY(int displayUnit READ displayUnit WRITE setDisplayUnit NOTIFY displayUnitChanged)
+    Q_PROPERTY(QString displayUnitLabel READ displayUnitLabel NOTIFY displayUnitChanged)
 
 public:
     explicit OptionsQmlModel(interfaces::Node& node, bool is_onboarded);
@@ -87,6 +95,14 @@ public:
         if (m_tor_enabled && m_tor_address != m_initial_tor_address) return true;
         return false;
     }
+    QString language() const { return m_language; }
+    void setLanguage(const QString& new_language);
+    QString languageSummary() const;
+    QStringList availableLanguages() const { return m_available_languages; }
+    Q_INVOKABLE QString languageLabel(const QString& locale_tag) const;
+    int displayUnit() const { return m_display_unit; }
+    void setDisplayUnit(int new_display_unit);
+    QString displayUnitLabel() const;
 
 public Q_SLOTS:
     void setCustomDataDirString(const QString &new_custom_datadir_string) {
@@ -109,6 +125,8 @@ Q_SIGNALS:
     void torEnabledChanged(bool enabled);
     void torAddressChanged(QString address);
     void proxySettingsDirtyChanged();
+    void languageChanged();
+    void displayUnitChanged(int new_display_unit);
 
 private:
     interfaces::Node& m_node;
@@ -136,8 +154,12 @@ private:
     QString m_initial_proxy_address;
     bool m_initial_tor_enabled;
     QString m_initial_tor_address;
+    QString m_language;
+    QStringList m_available_languages;
+    int m_display_unit{0};
 
     common::SettingsValue pruneSetting() const;
+    void buildAvailableLanguages();
 };
 
 #endif // BITCOIN_QML_MODELS_OPTIONS_MODEL_H

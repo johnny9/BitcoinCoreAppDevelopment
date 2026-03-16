@@ -22,7 +22,9 @@
 
 #include <QDebug>
 #include <QDir>
+#include <QLocale>
 #include <QSettings>
+#include <QStringList>
 
 namespace {
 int PruneMiBtoGB(int64_t mib)
@@ -70,6 +72,12 @@ OptionsQmlModel::OptionsQmlModel(interfaces::Node& node, bool is_onboarded)
     m_initial_proxy_address = m_proxy_address;
     m_initial_tor_enabled   = m_tor_enabled;
     m_initial_tor_address   = m_tor_address;
+
+    QSettings settings;
+    m_language = settings.value(SettingsKeys::LANGUAGE, "").toString();
+    m_display_unit = settings.value(SettingsKeys::DISPLAY_UNIT, 0).toInt();
+
+    buildAvailableLanguages();
 }
 
 void OptionsQmlModel::setDbcacheSizeMiB(int new_dbcache_size_mib)
@@ -282,6 +290,80 @@ void OptionsQmlModel::setDataDir(QString new_data_dir)
         Q_EMIT dataDirChanged(new_data_dir);
     }
 }
+
+void OptionsQmlModel::buildAvailableLanguages()
+{
+    m_available_languages.clear();
+    m_available_languages << "";  // empty = system default
+
+    QDir translations_dir(":/translations");
+    QStringList files = translations_dir.entryList({"bitcoin_*.qm"}, QDir::Files);
+    QStringList tags;
+    for (const QString& file : files) {
+        // Strip "bitcoin_" prefix and ".qm" suffix to get locale tag.
+        QString tag = file;
+        tag.remove(0, 8);       // remove "bitcoin_"
+        tag.chop(3);            // remove ".qm"
+        tags << tag;
+    }
+    tags.sort(Qt::CaseInsensitive);
+    m_available_languages << tags;
+}
+
+void OptionsQmlModel::setLanguage(const QString& new_language)
+{
+    if (new_language != m_language) {
+        m_language = new_language;
+        QSettings settings;
+        settings.setValue(SettingsKeys::LANGUAGE, m_language);
+        Q_EMIT languageChanged();
+    }
+}
+
+QString OptionsQmlModel::languageSummary() const
+{
+    return languageLabel(m_language);
+}
+
+QString OptionsQmlModel::languageLabel(const QString& locale_tag) const
+{
+    if (locale_tag.isEmpty()) {
+        return QObject::tr("System default");
+    }
+    QLocale locale(locale_tag);
+    QString native = locale.nativeLanguageName();
+    if (native.isEmpty()) {
+        return locale_tag;
+    }
+    // Capitalize first letter of native name.
+    native[0] = native[0].toUpper();
+    QString english = QLocale::languageToString(locale.language());
+    // Append territory disambiguation when the tag includes a territory code.
+    if (locale_tag.contains('_')) {
+        QString native_territory = locale.nativeTerritoryName();
+        if (!native_territory.isEmpty()) {
+            native += QStringLiteral(" (%1)").arg(native_territory);
+        }
+        english += QStringLiteral(" (%1)").arg(QLocale::territoryToString(locale.territory()));
+    }
+    return QStringLiteral("%1 \u2014 %2").arg(native, english);
+}
+
+void OptionsQmlModel::setDisplayUnit(int new_display_unit)
+{
+    if (new_display_unit != m_display_unit) {
+        m_display_unit = new_display_unit;
+        QSettings settings;
+        settings.setValue(SettingsKeys::DISPLAY_UNIT, m_display_unit);
+        Q_EMIT displayUnitChanged(m_display_unit);
+    }
+}
+
+QString OptionsQmlModel::displayUnitLabel() const
+{
+    return (m_display_unit == 1) ? QStringLiteral("sat") : QStringLiteral("BTC");
+}
+
 
 void OptionsQmlModel::onboard()
 {
