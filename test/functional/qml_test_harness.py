@@ -118,6 +118,7 @@ class QmlTestHarness:
             f"-datadir={self.datadir}",
             f"-test-automation={self.socket_path}",
             "-resetguisettings",
+            "-disablewallet",
             "-logtimemicros",
             "-debug",
             "-debugexclude=libevent",
