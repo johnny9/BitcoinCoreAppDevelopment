@@ -114,6 +114,8 @@ target_link_libraries(bitcoinqml
     Qt6::Quick
     Qt6::QuickControls2
     Qt6::Widgets
+  PRIVATE
+    bitcoin_cli
 )
 
 # Put it all together
