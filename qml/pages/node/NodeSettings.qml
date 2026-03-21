@@ -113,6 +113,19 @@ PageStack {
                         root.push(networktraffic_page)
                     }
                 }
+                Separator { Layout.fillWidth: true }
+                Setting {
+                    id: gotoConsole
+                    objectName: "settingsConsole"
+                    Layout.fillWidth: true
+                    header: qsTr("Console")
+                    actionItem: CaretRightIcon {
+                        color: gotoConsole.stateColor
+                    }
+                    onClicked: {
+                        root.push(console_page)
+                    }
+                }
                 Item {
                     Layout.fillHeight: true
                 }
@@ -179,6 +192,12 @@ PageStack {
         id: networktraffic_page
         NetworkTraffic {
             showHeader: false
+            onBack: root.pop()
+        }
+    }
+    Component {
+        id: console_page
+        CommandConsole {
             onBack: root.pop()
         }
     }

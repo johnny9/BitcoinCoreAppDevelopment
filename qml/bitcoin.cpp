@@ -41,6 +41,7 @@
 #include <qml/models/peerdetailsmodel.h>
 #include <qml/models/peerlistsortproxy.h>
 #include <qml/models/peerlistmodel.h>
+#include <qml/models/rpcconsolemodel.h>
 #include <qml/models/sendrecipient.h>
 #include <qml/models/walletlistmodel.h>
 #include <qml/models/walletqmlmodel.h>
@@ -334,6 +335,12 @@ int QmlGuiMain(int argc, char* argv[])
     engine.rootContext()->setContextProperty("peerTableModel", &peer_model);
     engine.rootContext()->setContextProperty("peerListModelProxy", &peer_model_sort_proxy);
     engine.rootContext()->setContextProperty("banListModel", &ban_list_model);
+
+    RpcConsoleModel rpc_console_model{*node};
+    QObject::connect(&node_model, &NodeModel::nodeInitialized,
+                     &rpc_console_model, &RpcConsoleModel::onNodeInitialized);
+    engine.rootContext()->setContextProperty("rpcConsoleModel", &rpc_console_model);
+
 #ifdef ENABLE_WALLET
     WalletListModel wallet_list_model{*node, nullptr};
     engine.rootContext()->setContextProperty("walletController", &wallet_controller);
@@ -352,6 +359,7 @@ int QmlGuiMain(int argc, char* argv[])
     qmlRegisterType<BlockClockDial>("org.bitcoincore.qt", 1, 0, "BlockClockDial");
     qmlRegisterType<LineGraph>("org.bitcoincore.qt", 1, 0, "LineGraph");
     qmlRegisterUncreatableType<PeerDetailsModel>("org.bitcoincore.qt", 1, 0, "PeerDetailsModel", "");
+    qmlRegisterUncreatableType<RpcConsoleModel>("org.bitcoincore.qt", 1, 0, "RpcConsoleModel", "");
     qmlRegisterType<BitcoinAmount>("org.bitcoincore.qt", 1, 0, "BitcoinAmount");
     qmlRegisterType<BitcoinAddress>("org.bitcoincore.qt", 1, 0, "BitcoinAddress");
     qmlRegisterType<PaymentRequest>("org.bitcoincore.qt", 1, 0, "PaymentRequest");
