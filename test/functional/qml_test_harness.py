@@ -87,10 +87,11 @@ class QmlTestHarness:
     instead of launching a new one.
     """
 
-    def __init__(self, socket_path=None):
+    def __init__(self, socket_path=None, extra_args=None):
         self.external = socket_path is not None
         self.process = None
         self.driver = None
+        self.extra_args = extra_args or []
 
         if self.external:
             self.socket_path = socket_path
@@ -118,12 +119,12 @@ class QmlTestHarness:
             f"-datadir={self.datadir}",
             f"-test-automation={self.socket_path}",
             "-resetguisettings",
-            "-disablewallet",
             "-logtimemicros",
             "-debug",
             "-debugexclude=libevent",
             "-debugexclude=leveldb",
             "-nolisten",
+            *self.extra_args,
         ]
 
         print(f"Starting GUI: {' '.join(args)}")
