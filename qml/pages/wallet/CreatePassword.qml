@@ -12,6 +12,7 @@ import "../settings"
 
 Page {
     id: root
+    objectName: "createWalletPassword"
     signal back
     signal next
     background: null
@@ -28,7 +29,9 @@ Page {
             }
         }
         rightItem: NavButton {
+            objectName: "createWalletSkipPasswordButton"
             text: qsTr("Skip")
+            enabled: walletController.initialized
             onClicked: {
                 walletController.createSingleSigWallet(walletName, "")
                 root.next()
@@ -107,7 +110,7 @@ Page {
             Layout.rightMargin: Layout.leftMargin
             Layout.alignment: Qt.AlignCenter
             text: qsTr("Continue")
-            enabled: password.text != "" && passwordRepeat.text != "" && password.text == passwordRepeat.text && confirmToggle.loadedItem.checked
+            enabled: walletController.initialized && password.text != "" && passwordRepeat.text != "" && password.text == passwordRepeat.text && confirmToggle.loadedItem.checked
             onClicked: {
                 walletController.createSingleSigWallet(walletName, password.text)
                 root.next()
