@@ -8,6 +8,7 @@
 
 const TranslateFn G_TRANSLATION_FUN{nullptr};
 
+int RunBitcoinUriTests(int argc, char* argv[]);
 int RunBitcoinAmountTests(int argc, char* argv[]);
 int RunPeerListModelTests(int argc, char* argv[]);
 int RunPeerStatsUtilTests(int argc, char* argv[]);
@@ -22,6 +23,7 @@ int main(int argc, char* argv[])
     QGuiApplication app(argc, argv);
 
     int status = 0;
+    status |= RunBitcoinUriTests(argc, argv);
     status |= RunBitcoinAmountTests(argc, argv);
     status |= RunPeerListModelTests(argc, argv);
     status |= RunPeerStatsUtilTests(argc, argv);
