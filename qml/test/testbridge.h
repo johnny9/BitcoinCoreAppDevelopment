@@ -8,6 +8,7 @@
 #include <QByteArray>
 #include <QHash>
 #include <QJsonValue>
+#include <QList>
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <QObject>
@@ -31,6 +32,7 @@
 ///   {"cmd": "get_text", "objectName": "<name>"}
 ///   {"cmd": "save_screenshot", "path": "<png_path>"}
 ///   {"cmd": "list_objects"}
+///   {"cmd": "set_clipboard_text", "text": "<value>"}
 class TestBridge : public QObject
 {
     Q_OBJECT
@@ -74,6 +76,7 @@ private:
     QByteArray cmdGetText(const QString& object_name);
     QByteArray cmdSaveScreenshot(const QString& path);
     QByteArray cmdListObjects();
+    QByteArray cmdSetClipboardText(const QString& text);
 
     /// Build a JSON error response.
     static QByteArray errorResponse(const QString& message);

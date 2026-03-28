@@ -120,22 +120,31 @@ class QmlDriver:
                 f"wait_for_page({page_name!r}) failed: {resp['error']}"
             )
 
-    def wait_for_property(self, object_name, prop, value, timeout_ms=5000):
-        """Block until object's property equals value.
+    def wait_for_property(self, object_name, prop, value=None, timeout_ms=5000, contains=None, nonEmpty=False):
+        """Block until object's property matches the condition.
 
         Args:
             object_name: objectName of the QML object.
             prop: Property name to check.
-            value: Expected value (JSON-serialisable).
+            value: Expected value (JSON-serialisable). If None and contains/nonEmpty
+                   are not set, the property just needs to be valid.
             timeout_ms: Maximum wait time in milliseconds.
+            contains: If set, the property's string value must contain this substring.
+            nonEmpty: If True, the property's string value must be non-empty.
         """
-        resp = self._send({
+        cmd = {
             "cmd": "wait_for_property",
             "objectName": object_name,
             "prop": prop,
-            "value": value,
             "timeout": timeout_ms,
-        })
+        }
+        if contains is not None:
+            cmd["contains"] = contains
+        elif nonEmpty:
+            cmd["nonEmpty"] = True
+        elif value is not None:
+            cmd["value"] = value
+        resp = self._send(cmd)
         if "error" in resp:
             raise QmlDriverError(
                 f"wait_for_property({object_name!r}, {prop!r}={value!r}) failed: {resp['error']}"
@@ -161,6 +170,27 @@ class QmlDriver:
                 f"save_screenshot({path!r}) failed: {resp['error']}"
             )
         return resp
+
+    def set_clipboard_text(self, text):
+        """Set the system clipboard to the given text string."""
+        resp = self._send({"cmd": "set_clipboard_text", "text": text})
+        if "error" in resp:
+            raise QmlDriverError(f"set_clipboard_text failed: {resp['error']}")
+
+    def simulate_drop(self, object_name, text=None, urls=None):
+        """Simulate a drag-drop onto a named QML DropArea.
+
+        Pass text= for a text/plain drop or urls= (list of URL strings) for a
+        text/uri-list drop (e.g. file:// URLs).
+        """
+        cmd = {"cmd": "simulate_drop", "objectName": object_name}
+        if urls is not None:
+            cmd["urls"] = urls
+        else:
+            cmd["text"] = text or ""
+        resp = self._send(cmd)
+        if "error" in resp:
+            raise QmlDriverError(f"simulate_drop({object_name!r}) failed: {resp['error']}")
 
     def settle(self, timeout_ms=5000, stack_view_names=("mainPageStack", "createWalletWizard")):
         """Wait for relevant StackView transitions to finish.
