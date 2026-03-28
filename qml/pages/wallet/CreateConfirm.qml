@@ -12,6 +12,7 @@ import "../settings"
 
 Page {
     id: root
+    objectName: "createWalletConfirm"
     signal back
     signal next
     background: null
@@ -62,6 +63,7 @@ Page {
         }
 
         ContinueButton {
+            objectName: "createWalletConfirmButton"
             Layout.preferredWidth: Math.min(300, parent.width - 2 * Layout.leftMargin)
             Layout.topMargin: 30
             Layout.leftMargin: 20

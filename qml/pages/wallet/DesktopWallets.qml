@@ -68,11 +68,13 @@ Page {
             visible: walletController.isWalletLoaded
             NavigationTab {
                 id: activityTabButton
+                objectName: "walletActivityTab"
                 text: qsTr("Activity")
                 property int index: 0
                 ButtonGroup.group: navigationTabs
             }
             NavigationTab {
+                objectName: "walletSendTab"
                 text: qsTr("Send")
                 property int index: 1
                 ButtonGroup.group: navigationTabs
