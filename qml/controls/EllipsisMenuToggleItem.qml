@@ -10,10 +10,6 @@ import org.bitcoincore.qt 1.0
 Button {
     property int bgRadius: 5
     property color bgDefaultColor: "transparent"
-    property color bgHoverColor: Theme.color.neutral2
-    property color textColor: Theme.color.neutral7
-    property color textHoverColor: Theme.color.neutral9
-    property color textActiveColor: Theme.color.neutral7
 
     id: root
     checkable: true
@@ -21,6 +17,7 @@ Button {
     hoverEnabled: AppMode.isDesktop
 
     implicitWidth: 280
+    implicitHeight: 44
 
     MouseArea {
         anchors.fill: parent
@@ -68,8 +65,7 @@ Button {
     states: [
         State {
             name: "HOVER"; when: root.hovered
-            PropertyChanges { target: bg; color: root.bgHoverColor }
-            PropertyChanges { target: buttonText; color: root.textHoverColor }
+            PropertyChanges { target: buttonText; color: Theme.color.orange }
         }
     ]
 }
