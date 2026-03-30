@@ -19,7 +19,7 @@ OptionPopup {
     signal openPaymentRequest()
 
     implicitWidth: 300
-    implicitHeight: columnLayout.implicitHeight + 15
+    implicitHeight: columnLayout.implicitHeight + 10
 
     clip: true
     modal: true
@@ -43,10 +43,6 @@ OptionPopup {
                 root.close()
                 root.openPaymentRequest()
             }
-        }
-
-        Separator {
-            Layout.fillWidth: true
         }
 
         EllipsisMenuToggleItem {
