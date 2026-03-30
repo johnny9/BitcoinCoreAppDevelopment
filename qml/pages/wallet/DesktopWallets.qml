@@ -22,6 +22,16 @@ Page {
     signal addWallet()
     signal sendTransaction(bool multipleRecipientsEnabled)
 
+    function handleWalletMigrationRequired(walletPath) {
+        const stackView = root.StackView.view
+        if (!stackView || stackView.currentItem !== root) {
+            return
+        }
+
+        walletSelect.close()
+        stackView.push(walletMigrationPage, { "walletPath": walletPath })
+    }
+
     function handleWalletBadgeClicked() {
         if (!walletController.initialized) {
             return
@@ -50,8 +60,7 @@ Page {
             settingsTabButton.checked = true
         }
         function onWalletMigrationRequired(walletPath) {
-            walletSelect.close()
-            root.StackView.view.push(walletMigrationPage, { "walletPath": walletPath })
+            root.handleWalletMigrationRequired(walletPath)
         }
     }
 
