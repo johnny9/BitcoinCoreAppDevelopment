@@ -43,8 +43,11 @@ qint64 BitcoinAmount::satoshi() const
 void BitcoinAmount::setSatoshi(qint64 new_amount)
 {
     if (m_satoshi != new_amount || !m_isSet) {
+        const bool label_changes = (m_unit == Unit::SAT) &&
+                                   ((qAbs(m_satoshi) == 1) != (qAbs(new_amount) == 1));
         m_isSet = true;
         m_satoshi = new_amount;
+        if (label_changes) Q_EMIT unitChanged();
         Q_EMIT amountChanged();
     }
 }
@@ -54,8 +57,10 @@ void BitcoinAmount::clear()
     if (!m_isSet && m_satoshi == 0) {
         return;
     }
+    const bool label_changes = (m_unit == Unit::SAT) && (qAbs(m_satoshi) == 1);
     m_satoshi = 0;
     m_isSet = false;
+    if (label_changes) Q_EMIT unitChanged();
     Q_EMIT amountChanged();
 }
 
@@ -75,7 +80,7 @@ QString BitcoinAmount::unitLabel() const
 {
     switch (m_unit) {
     case Unit::BTC: return "₿";
-    case Unit::SAT: return "sat";
+    case Unit::SAT: return (qAbs(m_satoshi) == 1) ? QStringLiteral("sat") : QStringLiteral("sats");
     }
     assert(false);
 }
