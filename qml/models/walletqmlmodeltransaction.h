@@ -38,6 +38,8 @@ public:
 
     CAmount getTotalTransactionAmount() const;
 
+    void setDisplayUnit(int unit);
+
     void reassignAmounts(int nChangePosRet); // needed for the subtract-fee-from-amount feature
 
 Q_SIGNALS:
@@ -48,11 +50,14 @@ Q_SIGNALS:
     void totalChanged();
 
 private:
+    static QString formatWithUnit(CAmount value, int display_unit);
+
     QString m_address;
     CAmount m_amount;
     CAmount m_fee;
     QString m_label;
     CTransactionRef m_wtx;
+    int m_display_unit{0};
 };
 
 #endif // BITCOIN_QML_MODELS_WALLETQMLMODELTRANSACTION_H

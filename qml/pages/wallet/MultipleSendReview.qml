@@ -82,7 +82,7 @@ Page {
 
                         CoreText {
                             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-                            text: amount
+                            text: amount + (optionsModel.displayUnit === 1 ? " sats" : " ₿")
                             font.pixelSize: 18
                         }
                     }
