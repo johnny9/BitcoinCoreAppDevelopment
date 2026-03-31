@@ -214,7 +214,7 @@ PageStack {
                             color: Theme.color.neutral9
                             placeholderTextColor: enabled ? Theme.color.neutral7 : Theme.color.neutral4
                             background: Item {}
-                            placeholderText: "0.00000000"
+                            placeholderText: root.recipient.amount.unit === BitcoinAmount.SAT ? "0" : "0.00000000"
                             selectByMouse: true
                             text: root.recipient.amount.display
                             onTextEdited: root.recipient.amount.display = text
@@ -240,28 +240,13 @@ PageStack {
                                 anchors.fill: parent
                                 onClicked: root.recipient.amount.flipUnit()
                             }
-                            Loader {
+                            CoreText {
                                 id: unitLabel
                                 anchors.right: flipIcon.left
                                 anchors.verticalCenter: parent.verticalCenter
-                                sourceComponent: root.recipient.amount.unit === BitcoinAmount.SAT
-                                    ? satoshiIconComponent : btcTextComponent
-                            }
-                            Component {
-                                id: btcTextComponent
-                                CoreText {
-                                    text: root.recipient.amount.unitLabel
-                                    font.pixelSize: 18
-                                    color: enabled ? Theme.color.neutral7 : Theme.color.neutral4
-                                }
-                            }
-                            Component {
-                                id: satoshiIconComponent
-                                CoreText {
-                                    text: "s"
-                                    font.pixelSize: 18
-                                    color: enabled ? Theme.color.neutral7 : Theme.color.neutral4
-                                }
+                                text: root.recipient.amount.unitLabel
+                                font.pixelSize: 18
+                                color: enabled ? Theme.color.neutral7 : Theme.color.neutral4
                             }
                             Icon {
                                 id: flipIcon
