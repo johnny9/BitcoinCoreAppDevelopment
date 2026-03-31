@@ -103,6 +103,7 @@ public:
     int displayUnit() const { return m_display_unit; }
     void setDisplayUnit(int new_display_unit);
     QString displayUnitLabel() const;
+    Q_INVOKABLE QString displayUnitLabelForAmount(qint64 satoshi) const;
 
 public Q_SLOTS:
     void setCustomDataDirString(const QString &new_custom_datadir_string) {

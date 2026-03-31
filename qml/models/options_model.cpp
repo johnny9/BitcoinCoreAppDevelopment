@@ -366,6 +366,12 @@ QString OptionsQmlModel::displayUnitLabel() const
     return (m_display_unit == 1) ? QStringLiteral("sat") : QStringLiteral("BTC");
 }
 
+QString OptionsQmlModel::displayUnitLabelForAmount(qint64 satoshi) const
+{
+    if (m_display_unit != 1) return QStringLiteral("₿");
+    return (qAbs(satoshi) == 1) ? QStringLiteral("sat") : QStringLiteral("sats");
+}
+
 
 void OptionsQmlModel::onboard()
 {

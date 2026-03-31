@@ -97,61 +97,60 @@ TestCase {
         compare(optionsModel.displayUnit, 0)
     }
 
-    // Mirrors the balance prefix expression in WalletBadge.qml.
+    // Mirrors the balance suffix expression in WalletBadge.qml.
+    // balanceSatoshi=1000 → plural "sats"; balanceSatoshi=1 → singular "sat".
     Component {
-        id: balancePrefixComponent
+        id: balanceSuffixComponent
         Text {
             property string balance: "1 000"
-            text: (optionsModel.displayUnit === 1 ? "s" : "₿") + " " + balance
+            property var balanceSatoshi: 1000
+            text: balance + " " + (optionsModel.displayUnit === 1 ? (balanceSatoshi === 1 ? "sat" : "sats") : "₿")
         }
     }
 
-    function test_walletBadge_prefix_is_s_in_sat_mode() {
+    function test_walletBadge_suffix_is_sats_in_sat_mode() {
         optionsModel.displayUnit = 1
-        const obj = createTemporaryObject(balancePrefixComponent, this)
+        const obj = createTemporaryObject(balanceSuffixComponent, this)
         verify(obj !== null)
-        compare(obj.text, "s 1 000")
+        compare(obj.text, "1 000 sats")
         optionsModel.displayUnit = 0
     }
 
-    function test_walletBadge_prefix_is_btc_symbol_in_btc_mode() {
-        optionsModel.displayUnit = 0
-        const obj = createTemporaryObject(balancePrefixComponent, this)
+    function test_walletBadge_suffix_is_sat_singular_in_sat_mode() {
+        optionsModel.displayUnit = 1
+        const obj = createTemporaryObject(balanceSuffixComponent, this)
         verify(obj !== null)
-        compare(obj.text, "₿ 1 000")
+        obj.balanceSatoshi = 1
+        compare(obj.text, "1 000 sat")
+        optionsModel.displayUnit = 0
     }
 
-    // Mirrors the Loader + Component pattern in BitcoinAmountInputField.qml,
-    // Send.qml, and RequestPayment.qml.
-    Component {
-        id: unitLabelComponent
-        Item {
-            id: wrapper
-            property int unit: 0
-            Loader {
-                objectName: "unitLabelLoader"
-                sourceComponent: wrapper.unit === 1 ? satComponent : btcComponent
-            }
-            Component { id: btcComponent; Text { text: "₿" } }
-            Component { id: satComponent; Text { text: "s" } }
-        }
+    function test_walletBadge_suffix_is_btc_symbol_in_btc_mode() {
+        optionsModel.displayUnit = 0
+        const obj = createTemporaryObject(balanceSuffixComponent, this)
+        verify(obj !== null)
+        compare(obj.text, "1 000 ₿")
     }
 
-    function test_unitLabel_shows_s_in_sat_mode() {
-        const obj = createTemporaryObject(unitLabelComponent, this)
-        obj.unit = 1
-        waitForRendering(obj)
-        const loader = findChild(obj, "unitLabelLoader")
-        verify(loader.item !== null)
-        compare(loader.item.text, "s")
+    // Tests displayUnitLabelForAmount pluralization logic.
+    function test_displayUnitLabelForAmount_singular_in_sat_mode() {
+        optionsModel.displayUnit = 1
+        compare(optionsModel.displayUnitLabelForAmount(1), "sat")
+        compare(optionsModel.displayUnitLabelForAmount(-1), "sat")
+        optionsModel.displayUnit = 0
     }
 
-    function test_unitLabel_shows_btc_symbol_in_btc_mode() {
-        const obj = createTemporaryObject(unitLabelComponent, this)
-        obj.unit = 0
-        waitForRendering(obj)
-        const loader = findChild(obj, "unitLabelLoader")
-        verify(loader.item !== null)
-        compare(loader.item.text, "₿")
+    function test_displayUnitLabelForAmount_plural_in_sat_mode() {
+        optionsModel.displayUnit = 1
+        compare(optionsModel.displayUnitLabelForAmount(0), "sats")
+        compare(optionsModel.displayUnitLabelForAmount(2), "sats")
+        compare(optionsModel.displayUnitLabelForAmount(1000), "sats")
+        optionsModel.displayUnit = 0
+    }
+
+    function test_displayUnitLabelForAmount_btc_symbol_in_btc_mode() {
+        optionsModel.displayUnit = 0
+        compare(optionsModel.displayUnitLabelForAmount(1), "₿")
+        compare(optionsModel.displayUnitLabelForAmount(1000), "₿")
     }
 }

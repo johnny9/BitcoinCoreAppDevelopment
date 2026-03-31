@@ -27,6 +27,7 @@ class WalletQmlModel : public QObject
     Q_OBJECT
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
     Q_PROPERTY(QString balance READ balance NOTIFY balanceChanged)
+    Q_PROPERTY(qint64 balanceSatoshi READ balanceSatoshi NOTIFY balanceChanged)
     Q_PROPERTY(ActivityListModel* activityListModel READ activityListModel CONSTANT)
     Q_PROPERTY(CoinsListModel* coinsListModel READ coinsListModel CONSTANT)
     Q_PROPERTY(SendRecipientsListModel* recipients READ sendRecipientList CONSTANT)
@@ -43,7 +44,7 @@ public:
 
     QString name() const;
     QString balance() const;
-    CAmount balanceSatoshi() const;
+    qint64 balanceSatoshi() const;
     Q_INVOKABLE void commitPaymentRequest();
 
     ActivityListModel* activityListModel() const { return m_activity_list_model; }

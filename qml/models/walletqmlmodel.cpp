@@ -101,7 +101,7 @@ QString WalletQmlModel::balance() const
     return QmlBitcoinUnits::format(unit, m_wallet->getBalance());
 }
 
-CAmount WalletQmlModel::balanceSatoshi() const
+qint64 WalletQmlModel::balanceSatoshi() const
 {
     if (!m_wallet) {
         return 0;

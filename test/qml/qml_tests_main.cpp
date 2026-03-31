@@ -25,6 +25,10 @@ public:
         if (u != m_displayUnit) { m_displayUnit = u; Q_EMIT displayUnitChanged(u); }
     }
     QString displayUnitLabel() const { return m_displayUnit == 1 ? "sat" : "BTC"; }
+    Q_INVOKABLE QString displayUnitLabelForAmount(qint64 satoshi) const {
+        if (m_displayUnit != 1) return QString("₿");
+        return (qAbs(satoshi) == 1) ? QString("sat") : QString("sats");
+    }
     QString language() const { return m_language; }
     void setLanguage(const QString& l) {
         if (l != m_language) { m_language = l; Q_EMIT languageChanged(); }
