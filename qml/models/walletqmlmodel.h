@@ -6,7 +6,6 @@
 #define BITCOIN_QML_MODELS_WALLETQMLMODEL_H
 
 #include <qml/models/activitylistmodel.h>
-#include <qml/models/bitcoinuri.h>
 #include <qml/models/coinslistmodel.h>
 #include <qml/models/paymentrequest.h>
 #include <qml/models/sendrecipient.h>
@@ -22,7 +21,6 @@
 #include <vector>
 
 #include <QObject>
-#include <QVariantMap>
 
 class WalletQmlModel : public QObject
 {
@@ -55,8 +53,6 @@ public:
     Q_INVOKABLE bool prepareTransaction();
     Q_INVOKABLE void sendTransaction();
     Q_INVOKABLE QString newAddress(QString label);
-    Q_INVOKABLE QVariantMap parseBitcoinUri(const QString& uri_text);
-    Q_INVOKABLE QVariantMap parseBitcoinUriFromFile(const QString& source_path);
 
     std::set<interfaces::WalletTx> getWalletTxs() const;
     interfaces::WalletTx getWalletTx(const uint256& hash) const;
