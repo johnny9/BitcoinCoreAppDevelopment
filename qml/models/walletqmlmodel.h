@@ -67,6 +67,8 @@ public:
 
     using TransactionChangedFn = std::function<void(const uint256& txid, ChangeType status)>;
     virtual std::unique_ptr<interfaces::Handler> handleTransactionChanged(TransactionChangedFn fn);
+    using StatusChangedFn = std::function<void()>;
+    virtual std::unique_ptr<interfaces::Handler> handleStatusChanged(StatusChangedFn fn);
 
     interfaces::Wallet::CoinsList listCoins() const;
     bool lockCoin(const COutPoint& output);
@@ -101,6 +103,7 @@ private:
     WalletQmlModelTransaction* m_current_transaction{nullptr};
     wallet::CCoinControl m_coin_control;
     bool m_is_wallet_loaded{false};
+    std::unique_ptr<interfaces::Handler> m_handler_status_changed;
 };
 
 #endif // BITCOIN_QML_MODELS_WALLETQMLMODEL_H

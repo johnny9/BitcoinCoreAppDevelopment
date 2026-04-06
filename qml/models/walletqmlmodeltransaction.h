@@ -5,6 +5,7 @@
 #ifndef BITCOIN_QML_MODELS_WALLETQMLMODELTRANSACTION_H
 #define BITCOIN_QML_MODELS_WALLETQMLMODELTRANSACTION_H
 
+#include <qml/bitcoinamount.h>
 #include <qml/models/sendrecipientslistmodel.h>
 
 #include <consensus/amount.h>
@@ -19,14 +20,18 @@ class WalletQmlModelTransaction : public QObject
     Q_PROPERTY(QString label READ label CONSTANT)
     Q_PROPERTY(QString fee READ fee NOTIFY feeChanged)
     Q_PROPERTY(QString total READ total NOTIFY totalChanged)
+    Q_PROPERTY(BitcoinAmount* feeAmount READ feeAmount CONSTANT)
+    Q_PROPERTY(BitcoinAmount* totalAmount READ totalAmount CONSTANT)
 public:
     explicit WalletQmlModelTransaction(const SendRecipientsListModel* recipient, QObject* parent = nullptr);
 
     QString address() const;
     QString amount() const;
     QString fee() const;
+    BitcoinAmount* feeAmount() const;
     QString label() const;
     QString total() const;
+    BitcoinAmount* totalAmount() const;
 
     CTransactionRef& getWtx();
     void setWtx(const CTransactionRef&);
@@ -51,6 +56,8 @@ private:
     QString m_address;
     CAmount m_amount;
     CAmount m_fee;
+    BitcoinAmount* m_fee_amount;
+    BitcoinAmount* m_total_amount;
     QString m_label;
     CTransactionRef m_wtx;
 };

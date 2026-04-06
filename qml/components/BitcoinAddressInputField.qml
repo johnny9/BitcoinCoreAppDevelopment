@@ -16,6 +16,7 @@ ColumnLayout {
     property string errorText: ""
     property string labelText: qsTr("Send to")
     property bool enabled: true
+    property alias inputObjectName: addressInput.objectName
 
     signal editingFinished()
 

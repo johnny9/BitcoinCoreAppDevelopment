@@ -12,6 +12,7 @@ SendRecipientsListModel::SendRecipientsListModel(QObject* parent)
 {
     m_wallet = qobject_cast<WalletQmlModel*>(parent);
     auto* recipient = new SendRecipient(m_wallet, this);
+    connectRecipientSignals(recipient);
     connect(recipient->amount(), &BitcoinAmount::amountChanged,
             this, &SendRecipientsListModel::updateTotalAmount);
     m_recipients.append(recipient);
@@ -33,6 +34,8 @@ QVariant SendRecipientsListModel::data(const QModelIndex& index, int role) const
     case LabelRole: return r->label();
     case AmountRole: return r->amount()->toDisplay();
     case MessageRole: return r->message();
+    case FormattedAddressRole: return r->address()->formattedAddress();
+    case AmountUnitLabelRole: return r->amount()->unitLabel();
     default: return {};
     }
     return {};
@@ -45,6 +48,8 @@ QHash<int, QByteArray> SendRecipientsListModel::roleNames() const
         {LabelRole, "label"},
         {AmountRole, "amount"},
         {MessageRole, "message"},
+        {FormattedAddressRole, "formattedAddress"},
+        {AmountUnitLabelRole, "amountUnitLabel"},
     };
 }
 
@@ -53,6 +58,7 @@ void SendRecipientsListModel::add()
     const int row = m_recipients.size();
     beginInsertRows(QModelIndex(), row, row);
     auto* recipient = new SendRecipient(m_wallet, this);
+    connectRecipientSignals(recipient);
     connect(recipient->amount(), &BitcoinAmount::amountChanged,
             this, &SendRecipientsListModel::updateTotalAmount);
     if (m_recipients.size() > 0) {
@@ -116,6 +122,43 @@ SendRecipient* SendRecipientsListModel::currentRecipient() const
     return m_recipients[m_current];
 }
 
+void SendRecipientsListModel::connectRecipientSignals(SendRecipient* recipient)
+{
+    const auto emit_roles_changed = [this, recipient](const QList<int>& roles) {
+        const int row = recipientRow(recipient);
+        if (row < 0) {
+            return;
+        }
+
+        const QModelIndex model_index = index(row, 0);
+        Q_EMIT dataChanged(model_index, model_index, roles);
+    };
+
+    connect(recipient, &SendRecipient::labelChanged, this, [emit_roles_changed] {
+        emit_roles_changed({LabelRole});
+    });
+    connect(recipient, &SendRecipient::messageChanged, this, [emit_roles_changed] {
+        emit_roles_changed({MessageRole});
+    });
+    connect(recipient->address(), &BitcoinAddress::formattedAddressChanged, this, [emit_roles_changed] {
+        emit_roles_changed({AddressRole, FormattedAddressRole});
+    });
+    connect(recipient->address(), &BitcoinAddress::ellipsesAddressChanged, this, [emit_roles_changed] {
+        emit_roles_changed({AddressRole, FormattedAddressRole});
+    });
+    connect(recipient->amount(), &BitcoinAmount::amountChanged, this, [emit_roles_changed] {
+        emit_roles_changed({AmountRole});
+    });
+    connect(recipient->amount(), &BitcoinAmount::unitChanged, this, [emit_roles_changed] {
+        emit_roles_changed({AmountRole, AmountUnitLabelRole});
+    });
+}
+
+int SendRecipientsListModel::recipientRow(const SendRecipient* recipient) const
+{
+    return m_recipients.indexOf(const_cast<SendRecipient*>(recipient));
+}
+
 void SendRecipientsListModel::updateTotalAmount()
 {
     qint64 total = 0;
@@ -142,6 +185,7 @@ void SendRecipientsListModel::clear()
     m_totalAmount = 0;
 
     auto* recipient = new SendRecipient(m_wallet, this);
+    connectRecipientSignals(recipient);
     connect(recipient->amount(), &BitcoinAmount::amountChanged,
             this, &SendRecipientsListModel::updateTotalAmount);
     m_recipients.append(recipient);
@@ -177,4 +221,24 @@ void SendRecipientsListModel::clearToFront()
         m_totalAmount = m_recipients[0]->amount()->satoshi();
         Q_EMIT totalAmountChanged();
     }
+}
+
+QString SendRecipientsListModel::addressTextAt(int row) const
+{
+    const QModelIndex model_index = index(row, 0);
+    return data(model_index, AddressRole).toString();
+}
+
+QString SendRecipientsListModel::fullAddressTextAt(int row) const
+{
+    const QModelIndex model_index = index(row, 0);
+    return data(model_index, FormattedAddressRole).toString();
+}
+
+QString SendRecipientsListModel::amountTextAt(int row) const
+{
+    const QModelIndex model_index = index(row, 0);
+    const QString amount = data(model_index, AmountRole).toString();
+    const QString unit = data(model_index, AmountUnitLabelRole).toString();
+    return unit.isEmpty() ? amount : amount + " " + unit;
 }

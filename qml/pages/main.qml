@@ -69,6 +69,7 @@ ApplicationWindow {
         OnboardingWizard {
             onFinished: {
                 optionsModel.onboard()
+                nodeModel.startNodeInitializionThread()
                 if (AppMode.walletEnabled && AppMode.isDesktop) {
                     main.push([
                         desktopWallets, {},

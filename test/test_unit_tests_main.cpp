@@ -4,13 +4,16 @@
 
 #include <QGuiApplication>
 
+#include <chainparams.h>
 #include <util/translation.h>
 
 const TranslateFn G_TRANSLATION_FUN{nullptr};
 
 int RunBitcoinAmountTests(int argc, char* argv[]);
+int RunBitcoinAddressTests(int argc, char* argv[]);
 int RunPeerListModelTests(int argc, char* argv[]);
 int RunPeerStatsUtilTests(int argc, char* argv[]);
+int RunWalletQmlModelTransactionTests(int argc, char* argv[]);
 int RunQmlBitcoinUnitsTests(int argc, char* argv[]);
 int RunImageProviderTests(int argc, char* argv[]);
 int RunNetworkStyleTests(int argc, char* argv[]);
@@ -21,11 +24,14 @@ int RunWalletQmlControllerTests(int argc, char* argv[]);
 int main(int argc, char* argv[])
 {
     QGuiApplication app(argc, argv);
+    SelectParams(ChainType::REGTEST);
 
     int status = 0;
+    status |= RunBitcoinAddressTests(argc, argv);
     status |= RunBitcoinAmountTests(argc, argv);
     status |= RunPeerListModelTests(argc, argv);
     status |= RunPeerStatsUtilTests(argc, argv);
+    status |= RunWalletQmlModelTransactionTests(argc, argv);
     status |= RunQmlBitcoinUnitsTests(argc, argv);
     status |= RunImageProviderTests(argc, argv);
     status |= RunNetworkStyleTests(argc, argv);

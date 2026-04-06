@@ -12,7 +12,7 @@ import "../settings"
 
 Page {
     id: root
-    objectName: pageObjectName
+    objectName: pageObjectName.length > 0 ? pageObjectName : "createWalletConfirmPage"
     signal back
     signal next
     property string headerText: qsTr("Your wallet has been created")
@@ -68,7 +68,7 @@ Page {
         }
 
         ContinueButton {
-            objectName: root.nextButtonObjectName
+            objectName: root.nextButtonObjectName.length > 0 ? root.nextButtonObjectName : "createWalletConfirmNextButton"
             Layout.preferredWidth: Math.min(300, parent.width - 2 * Layout.leftMargin)
             Layout.topMargin: 30
             Layout.leftMargin: 20

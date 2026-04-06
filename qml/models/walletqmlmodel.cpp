@@ -23,6 +23,8 @@
 #include <wallet/wallet.h>
 
 #include <QDateTime>
+#include <QDebug>
+#include <QMetaObject>
 
 namespace {
 struct QmlReceiveRequestRecipient
@@ -68,6 +70,11 @@ WalletQmlModel::WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObje
     m_coins_list_model = new CoinsListModel(this);
     m_send_recipients = new SendRecipientsListModel(this);
     m_current_payment_request = new PaymentRequest(this);
+    m_handler_status_changed = handleStatusChanged([this] {
+        QMetaObject::invokeMethod(this, [this] {
+            Q_EMIT balanceChanged();
+        });
+    });
 }
 
 WalletQmlModel::WalletQmlModel(QObject* parent)
@@ -246,6 +253,14 @@ std::unique_ptr<interfaces::Handler> WalletQmlModel::handleTransactionChanged(Tr
         return nullptr;
     }
     return m_wallet->handleTransactionChanged(fn);
+}
+
+std::unique_ptr<interfaces::Handler> WalletQmlModel::handleStatusChanged(StatusChangedFn fn)
+{
+    if (!m_wallet) {
+        return nullptr;
+    }
+    return m_wallet->handleStatusChanged(fn);
 }
 
 bool WalletQmlModel::prepareTransaction()

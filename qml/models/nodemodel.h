@@ -100,6 +100,7 @@ private:
     double m_verification_progress{0.0};
     bool m_pause{false};
     bool m_faulted{false};
+    bool m_initialization_requested{false};
 
     int m_shutdown_polling_timer_id{0};
 

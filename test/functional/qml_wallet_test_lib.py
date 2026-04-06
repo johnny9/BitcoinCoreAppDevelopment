@@ -135,7 +135,7 @@ class WalletFlowHarness:
         self.name = name
         self.port_offset = port_offset
         self.gui_binary = find_gui_binary()
-        self.bitcoind_binary = find_bitcoind()
+        self.bitcoind_binary = None
         self.tmpdir = tempfile.mkdtemp(prefix=f"{name}_")
         self.socket_path = os.path.join(self.tmpdir, "test_bridge.sock")
         self.gui_datadir = os.path.join(self.tmpdir, "gui_node")
@@ -160,7 +160,9 @@ class WalletFlowHarness:
         return os.path.join(self.source_datadir, "regtest", "wallets")
 
     def start_source_node(self, extra_args=None, binary=None):
-        args = [binary or self.bitcoind_binary, f"-datadir={self.source_datadir}"]
+        bitcoind_binary = binary or self.bitcoind_binary or find_bitcoind()
+        self.bitcoind_binary = bitcoind_binary
+        args = [bitcoind_binary, f"-datadir={self.source_datadir}"]
         if extra_args:
             args.extend(extra_args)
         self.source_process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

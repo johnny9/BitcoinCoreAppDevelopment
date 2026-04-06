@@ -1,7 +1,9 @@
 <!DOCTYPE RCC><RCC version="1.0">
     <qresource prefix="/qml">
         <file>components/AboutOptions.qml</file>
+        <file>components/BitcoinAddressDisplayField.qml</file>
         <file>components/BitcoinAddressInputField.qml</file>
+        <file>components/BitcoinAmountDisplayField.qml</file>
         <file>components/BitcoinAmountInputField.qml</file>
         <file>components/BlockClock.qml</file>
         <file>components/BlockClockDisplayMode.qml</file>
@@ -23,6 +25,7 @@
         <file>components/ThemeSettings.qml</file>
         <file>components/TotalBytesIndicator.qml</file>
         <file>components/Tooltip.qml</file>
+        <file>components/LabeledValueField.qml</file>
         <file>components/WalletSettings.qml</file>
         <file>controls/AddWalletButton.qml</file>
         <file>controls/CaretRightIcon.qml</file>

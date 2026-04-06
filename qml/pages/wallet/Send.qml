@@ -13,6 +13,7 @@ import "../../components"
 
 PageStack {
     id: root
+    objectName: "sendPage"
     vertical: true
 
     property WalletQmlModel wallet: walletController.selectedWallet
@@ -86,12 +87,17 @@ PageStack {
 
                     IconButton {
                         id: menuButton
+                        objectName: "sendOptionsButton"
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
                         checked: sendOptionsPopup.opened
                         iconSource: "image://images/ellipsis"
                         onClicked: {
-                            sendOptionsPopup.open()
+                            if (sendOptionsPopup.opened) {
+                                sendOptionsPopup.close()
+                            } else {
+                                sendOptionsPopup.open()
+                            }
                         }
                     }
 
@@ -120,6 +126,7 @@ PageStack {
                     }
 
                     IconButton {
+                        objectName: "sendRecipientPrevButton"
                         Layout.preferredWidth: 30
                         Layout.preferredHeight: 30
                         size: 30
@@ -131,6 +138,7 @@ PageStack {
                     }
 
                     IconButton {
+                        objectName: "sendRecipientNextButton"
                         Layout.preferredWidth: 30
                         Layout.preferredHeight: 30
                         size: 30
@@ -142,6 +150,7 @@ PageStack {
                     }
 
                     IconButton {
+                        objectName: "sendRecipientAddButton"
                         Layout.preferredWidth: 30
                         Layout.preferredHeight: 30
                         size: 30
@@ -153,6 +162,7 @@ PageStack {
                     }
 
                     IconButton {
+                        objectName: "sendRecipientRemoveButton"
                         Layout.preferredWidth: 30
                         Layout.preferredHeight: 30
                         size: 30
@@ -170,7 +180,9 @@ PageStack {
                 }
 
                 BitcoinAddressInputField {
+                    objectName: "sendAddressField"
                     Layout.fillWidth: true
+                    inputObjectName: "sendAddressInput"
                     enabled: walletController.initialized
                     address: root.recipient.address
                     errorText: root.recipient.addressError
@@ -198,10 +210,11 @@ PageStack {
 
                         TextField {
                             id: amountInput
+                            objectName: "sendAmountInput"
                             anchors.left: amountLabel.right
                             anchors.verticalCenter: parent.verticalCenter
                             leftPadding: 0
-                            font.family: "Inter"
+                            font.family: "BitcoinCoreSans"
                             font.styleName: "Regular"
                             font.pixelSize: 18
                             color: Theme.color.neutral9
@@ -225,16 +238,21 @@ PageStack {
                             maximumLength: root.recipient.amount.unit === BitcoinAmount.BTC ? 17 : 16
                         }
                         Item {
+                            objectName: "sendAmountUnitToggle"
                             width: unitLabel.width + flipIcon.width
                             height: Math.max(unitLabel.height, flipIcon.height)
                             anchors.right: parent.right
                             anchors.verticalCenter: parent.verticalCenter
+                            function click() {
+                                root.recipient.amount.flipUnit()
+                            }
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: root.recipient.amount.flipUnit()
                             }
                             CoreText {
                                 id: unitLabel
+                                objectName: "sendAmountUnitLabel"
                                 anchors.right: flipIcon.left
                                 anchors.verticalCenter: parent.verticalCenter
                                 text: root.recipient.amount.unitLabel
@@ -278,6 +296,8 @@ PageStack {
 
                 LabeledTextInput {
                     id: label
+                    objectName: "sendNoteField"
+                    inputObjectName: "sendNoteInput"
                     Layout.fillWidth: true
                     labelText: qsTr("Note to self")
                     placeholderText: qsTr("Enter ...")
@@ -316,6 +336,7 @@ PageStack {
 
                 ContinueButton {
                     id: continueButton
+                    objectName: "sendReviewButton"
                     Layout.fillWidth: true
                     Layout.topMargin: 30
                     text: qsTr("Review")
