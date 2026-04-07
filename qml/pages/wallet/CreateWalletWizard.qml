@@ -20,6 +20,13 @@ PageStack {
     property string walletName: ""
     property int launchContext: CreateWalletWizard.Context.Onboarding
 
+    Component.onCompleted: walletController.refreshExternalSignerStatus()
+    onVisibleChanged: {
+        if (visible) {
+            walletController.refreshExternalSignerStatus()
+        }
+    }
+
     initialItem: Page {
         background: null
 
@@ -67,7 +74,9 @@ PageStack {
                 Layout.rightMargin: 20
                 header: qsTr("Add a wallet")
                 headerBold: true
-                description: qsTr("Supported wallet types are view-only, single-key,\nand multi-key.")
+                description: walletController.canCreateExternalSignerWallet
+                    ? qsTr("Supported wallet types are external signer, view-only, single-key,\nand multi-key.")
+                    : qsTr("Supported wallet types are view-only, single-key,\nand multi-key.")
             }
 
             ContinueButton {
@@ -101,6 +110,48 @@ PageStack {
                 onClicked: {
                     walletController.clearWalletLoadStatus()
                     root.push(import_options)
+                }
+            }
+
+            ContinueButton {
+                objectName: "createExternalWalletEntryButton"
+                visible: walletController.canCreateExternalSignerWallet
+                Layout.preferredWidth: Math.min(300, parent.width - 2 * Layout.leftMargin)
+                Layout.leftMargin: 20
+                Layout.rightMargin: Layout.leftMargin
+                Layout.alignment: Qt.AlignCenter
+                text: walletController.externalSignerName.length > 0
+                    ? qsTr("Create external wallet")
+                    : qsTr("Create hardware wallet")
+                borderColor: Theme.color.neutral6
+                borderHoverColor: Theme.color.orangeLight1
+                borderPressedColor: Theme.color.orangeLight2
+                textColor: Theme.color.orange
+                backgroundColor: "transparent"
+                backgroundHoverColor: "transparent"
+                backgroundPressedColor: "transparent"
+                onClicked: {
+                    walletController.clearWalletLoadStatus()
+                    walletController.refreshExternalSignerStatus()
+                    root.push(external_wallet, {
+                        "defaultWalletName": walletController.suggestedExternalSignerWalletName
+                    })
+                }
+            }
+
+            CoreText {
+                visible: optionsModel.externalSignerPath.length > 0 && !walletController.canCreateExternalSignerWallet
+                Layout.fillWidth: true
+                Layout.leftMargin: 20
+                Layout.rightMargin: 20
+                Layout.topMargin: 20
+                wrapMode: Text.WordWrap
+                color: Theme.color.neutral8
+                text: {
+                    if (walletController.externalSignerError.length > 0) {
+                        return walletController.externalSignerError
+                    }
+                    return qsTr("No external signer is currently detected. Open Wallet settings to verify the signer path and rescan.")
                 }
             }
         }
@@ -142,6 +193,13 @@ PageStack {
         }
     }
     Component {
+        id: external_wallet
+        CreateExternalWallet {
+            onBack: root.pop()
+            onNext: root.push(external_confirm)
+        }
+    }
+    Component {
         id: password
         CreatePassword {
             walletName: root.walletName
@@ -154,6 +212,16 @@ PageStack {
         CreateConfirm {
             onBack: root.pop()
             onNext: root.push(backup)
+        }
+    }
+    Component {
+        id: external_confirm
+        CreateConfirm {
+            headerText: qsTr("Your external wallet has been created")
+            descriptionText: qsTr("This wallet uses the connected external signer for addresses and signing.")
+            nextButtonText: qsTr("Done")
+            onBack: root.pop()
+            onNext: root.finished()
         }
     }
     Component {

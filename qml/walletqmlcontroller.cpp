@@ -6,17 +6,21 @@
 
 #include <qml/models/walletqmlmodel.h>
 
+#include <common/settings.h>
 #include <interfaces/node.h>
 #include <support/allocators/secure.h>
 #include <util/result.h>
+#include <wallet/walletutil.h>
 #include <wallet/scriptpubkeyman.h>
 #include <wallet/wallet.h>
-#include <wallet/walletutil.h>
 #include <util/threadnames.h>
+
+#include <stdexcept>
 
 #include <QDir>
 #include <QFileInfo>
 #include <QMetaObject>
+#include <QRegularExpression>
 #include <QStringList>
 #include <QTimer>
 #include <QUrl>
@@ -134,22 +138,82 @@ void WalletQmlController::unloadWallets()
     m_wallets.clear();
 }
 
-void WalletQmlController::createSingleSigWallet(const QString &name, const QString &passphrase)
+bool WalletQmlController::createSingleSigWallet(const QString &name, const QString &passphrase)
 {
     clearWalletLoadStatus();
     clearWalletMigrationStatus();
+    m_warning_messages.clear();
     const SecureString secure_passphrase{passphrase.toStdString()};
     const std::string wallet_name{name.toStdString()};
     auto wallet{m_node.walletLoader().createWallet(wallet_name, secure_passphrase, wallet::WALLET_FLAG_DESCRIPTORS, m_warning_messages)};
+    setWalletLoadWarnings(JoinWarnings(m_warning_messages));
     QMutexLocker locker(&m_wallets_mutex);
     if (wallet) {
         m_selected_wallet = new WalletQmlModel(std::move(*wallet));
         m_wallets.push_back(m_selected_wallet);
+        setWalletLoaded(true);
         setNoWalletsFound(false);
         Q_EMIT selectedWalletChanged();
+        return true;
     } else {
         m_error_message = util::ErrorString(wallet);
+        const QString error = QString::fromStdString(m_error_message.translated);
+        setWalletLoadError(error.isEmpty() ? tr("Wallet creation failed.") : error);
+        return false;
     }
+}
+
+bool WalletQmlController::createExternalSignerWallet(const QString& name)
+{
+    clearWalletLoadStatus();
+    clearWalletMigrationStatus();
+    m_warning_messages.clear();
+
+    const QString wallet_name = name.trimmed();
+    if (wallet_name.isEmpty()) {
+        setWalletLoadError(tr("Choose a wallet name."));
+        return false;
+    }
+
+    refreshExternalSignerStatus();
+    if (!m_external_signer_path_configured) {
+        setWalletLoadError(tr("Set an external signer path in Wallet settings first."));
+        return false;
+    }
+    if (!m_external_signer_error.isEmpty()) {
+        setWalletLoadError(m_external_signer_error);
+        return false;
+    }
+    if (m_external_signer_count == 0) {
+        setWalletLoadError(tr("Connect an external signer and try again."));
+        return false;
+    }
+    if (m_external_signer_count > 1) {
+        setWalletLoadError(tr("More than one external signer was found. Connect only one device and try again."));
+        return false;
+    }
+
+    constexpr uint64_t flags = wallet::WALLET_FLAG_DESCRIPTORS |
+        wallet::WALLET_FLAG_DISABLE_PRIVATE_KEYS |
+        wallet::WALLET_FLAG_EXTERNAL_SIGNER;
+    const SecureString empty_passphrase;
+    auto wallet = m_node.walletLoader().createWallet(wallet_name.toStdString(), empty_passphrase, flags, m_warning_messages);
+    setWalletLoadWarnings(JoinWarnings(m_warning_messages));
+
+    QMutexLocker locker(&m_wallets_mutex);
+    if (wallet) {
+        m_selected_wallet = new WalletQmlModel(std::move(*wallet));
+        m_wallets.push_back(m_selected_wallet);
+        setWalletLoaded(true);
+        setNoWalletsFound(false);
+        Q_EMIT selectedWalletChanged();
+        return true;
+    }
+
+    const bilingual_str result_error = util::ErrorString(wallet);
+    const QString error = QString::fromStdString(result_error.translated);
+    setWalletLoadError(error.isEmpty() ? tr("Wallet creation failed.") : error);
+    return false;
 }
 
 void WalletQmlController::importWallet(const QString& path)
@@ -178,6 +242,35 @@ void WalletQmlController::clearWalletMigrationStatus()
 void WalletQmlController::requestOpenWalletSettings()
 {
     Q_EMIT openWalletSettingsRequested();
+}
+
+void WalletQmlController::refreshExternalSignerStatus()
+{
+    const QString signer_path = QString::fromStdString(
+        SettingToString(m_node.getPersistentSetting("signer"), "")).trimmed();
+    const bool path_configured = !signer_path.isEmpty();
+    if (path_configured) {
+        m_node.forceSetting("signer", signer_path.toStdString());
+    } else {
+        m_node.forceSetting("signer", common::SettingsValue{});
+    }
+    int signer_count = 0;
+    QString signer_name;
+    QString error;
+
+    try {
+        auto signers = m_node.listExternalSigners();
+        signer_count = static_cast<int>(signers.size());
+        if (signer_count == 1) {
+            signer_name = QString::fromStdString(signers.front()->getName());
+        } else if (signer_count > 1) {
+            error = tr("More than one external signer was found. Connect only one device.");
+        }
+    } catch (const std::runtime_error& e) {
+        error = QString::fromStdString(e.what());
+    }
+
+    setExternalSignerStatus(path_configured, signer_count, signer_name, error);
 }
 
 QString WalletQmlController::normalizeWalletPath(const QString& path) const
@@ -491,6 +584,7 @@ void WalletQmlController::initialize()
         setNoWalletsFound(false);
     }
 
+    refreshExternalSignerStatus();
     m_initialized = true;
     Q_EMIT initializedChanged();
 }
@@ -658,6 +752,9 @@ QString WalletQmlController::describeImportedWalletKeyScheme(interfaces::Wallet&
     }
 
     LOCK(raw_wallet->cs_wallet);
+    if (raw_wallet->IsWalletFlagSet(wallet::WALLET_FLAG_EXTERNAL_SIGNER)) {
+        return tr("External signer");
+    }
     if (raw_wallet->IsWalletFlagSet(wallet::WALLET_FLAG_DISABLE_PRIVATE_KEYS)) {
         return tr("Watch-only");
     }
@@ -684,4 +781,37 @@ void WalletQmlController::setLastImportedWalletInfo(const QString& wallet_name, 
 void WalletQmlController::clearLastImportedWalletInfo()
 {
     setLastImportedWalletInfo(QString(), QString());
+}
+
+QString WalletQmlController::makeSuggestedExternalSignerWalletName(const QString& signer_name) const
+{
+    QString suggested = signer_name.trimmed();
+    suggested.replace(QRegularExpression(QStringLiteral("[^A-Za-z0-9_]")), QStringLiteral("_"));
+    suggested.remove(QRegularExpression(QStringLiteral("^_+")));
+    while (suggested.contains(QStringLiteral("__"))) {
+        suggested.replace(QStringLiteral("__"), QStringLiteral("_"));
+    }
+    if (suggested.isEmpty()) {
+        suggested = QStringLiteral("external_signer");
+    }
+    return suggested.left(20);
+}
+
+void WalletQmlController::setExternalSignerStatus(bool path_configured, int signer_count, const QString& signer_name, const QString& error)
+{
+    const QString suggested_name = makeSuggestedExternalSignerWalletName(signer_name);
+    if (m_external_signer_path_configured == path_configured &&
+        m_external_signer_count == signer_count &&
+        m_external_signer_name == signer_name &&
+        m_external_signer_error == error &&
+        m_suggested_external_signer_wallet_name == suggested_name) {
+        return;
+    }
+
+    m_external_signer_path_configured = path_configured;
+    m_external_signer_count = signer_count;
+    m_external_signer_name = signer_name;
+    m_external_signer_error = error;
+    m_suggested_external_signer_wallet_name = suggested_name;
+    Q_EMIT externalSignerStatusChanged();
 }

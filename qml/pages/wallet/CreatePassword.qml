@@ -18,6 +18,8 @@ Page {
 
     required property string walletName;
 
+    Component.onCompleted: walletController.clearWalletLoadStatus()
+
     header: NavigationBar2 {
         id: navbar
         leftItem: NavButton {
@@ -30,8 +32,10 @@ Page {
         rightItem: NavButton {
             text: qsTr("Skip")
             onClicked: {
-                walletController.createSingleSigWallet(walletName, "")
-                root.next()
+                walletController.clearWalletLoadStatus()
+                if (walletController.createSingleSigWallet(walletName, "")) {
+                    root.next()
+                }
             }
         }
     }
@@ -68,6 +72,7 @@ Page {
             focus: true
             hideText: true
             placeholderText: qsTr("Enter password...")
+            onTextChanged: walletController.clearWalletLoadStatus()
         }
         CoreText {
             Layout.topMargin: 20
@@ -84,6 +89,7 @@ Page {
             Layout.rightMargin: 20
             hideText: true
             placeholderText: qsTr("Enter password again...")
+            onTextChanged: walletController.clearWalletLoadStatus()
         }
 
         Setting {
@@ -100,6 +106,15 @@ Page {
             }
         }
 
+        CoreText {
+            Layout.leftMargin: 20
+            Layout.rightMargin: 20
+            visible: walletController.walletLoadError.length > 0
+            color: Theme.color.red
+            wrapMode: Text.WordWrap
+            text: walletController.walletLoadError
+        }
+
         ContinueButton {
             Layout.preferredWidth: Math.min(300, parent.width - 2 * Layout.leftMargin)
             Layout.topMargin: 40
@@ -109,8 +124,10 @@ Page {
             text: qsTr("Continue")
             enabled: password.text != "" && passwordRepeat.text != "" && password.text == passwordRepeat.text && confirmToggle.loadedItem.checked
             onClicked: {
-                walletController.createSingleSigWallet(walletName, password.text)
-                root.next()
+                walletController.clearWalletLoadStatus()
+                if (walletController.createSingleSigWallet(walletName, password.text)) {
+                    root.next()
+                }
             }
         }
     }

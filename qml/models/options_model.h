@@ -42,7 +42,9 @@ class OptionsQmlModel : public QObject
     Q_PROPERTY(QString proxyAddress READ proxyAddress WRITE setProxyAddress NOTIFY proxyAddressChanged)
     Q_PROPERTY(bool torEnabled READ torEnabled WRITE setTorEnabled NOTIFY torEnabledChanged)
     Q_PROPERTY(QString torAddress READ torAddress WRITE setTorAddress NOTIFY torAddressChanged)
+    Q_PROPERTY(QString externalSignerPath READ externalSignerPath WRITE setExternalSignerPath NOTIFY externalSignerPathChanged)
     Q_PROPERTY(bool proxySettingsDirty READ proxySettingsDirty NOTIFY proxySettingsDirtyChanged)
+    Q_PROPERTY(bool walletSettingsDirty READ walletSettingsDirty NOTIFY walletSettingsDirtyChanged)
 
 public:
     explicit OptionsQmlModel(interfaces::Node& node, bool is_onboarded);
@@ -71,6 +73,7 @@ public:
     QUrl getDefaultDataDirectory();
     Q_INVOKABLE bool setCustomDataDirArgs(QString path);
     Q_INVOKABLE QString getCustomDataDirString();
+    Q_INVOKABLE QString externalSignerPathValidationError(const QString& path) const;
     bool proxyEnabled() const { return m_proxy_enabled; }
     void setProxyEnabled(bool enabled);
     QString proxyAddress() const { return m_proxy_address; }
@@ -79,6 +82,8 @@ public:
     void setTorEnabled(bool enabled);
     QString torAddress() const { return m_tor_address; }
     void setTorAddress(const QString& address);
+    QString externalSignerPath() const { return m_external_signer_path; }
+    void setExternalSignerPath(const QString& path);
     bool proxySettingsDirty() const {
         if (!m_onboarded) return false;
         if (m_proxy_enabled != m_initial_proxy_enabled) return true;
@@ -86,6 +91,10 @@ public:
         if (m_tor_enabled != m_initial_tor_enabled) return true;
         if (m_tor_enabled && m_tor_address != m_initial_tor_address) return true;
         return false;
+    }
+    bool walletSettingsDirty() const {
+        if (!m_onboarded) return false;
+        return m_external_signer_path != m_initial_external_signer_path;
     }
 
 public Q_SLOTS:
@@ -108,7 +117,9 @@ Q_SIGNALS:
     void proxyAddressChanged(QString address);
     void torEnabledChanged(bool enabled);
     void torAddressChanged(QString address);
+    void externalSignerPathChanged(QString path);
     void proxySettingsDirtyChanged();
+    void walletSettingsDirtyChanged();
 
 private:
     interfaces::Node& m_node;
@@ -132,10 +143,12 @@ private:
     QString m_proxy_address;
     bool m_tor_enabled;
     QString m_tor_address;
+    QString m_external_signer_path;
     bool m_initial_proxy_enabled;
     QString m_initial_proxy_address;
     bool m_initial_tor_enabled;
     QString m_initial_tor_address;
+    QString m_initial_external_signer_path;
 
     common::SettingsValue pruneSetting() const;
 };

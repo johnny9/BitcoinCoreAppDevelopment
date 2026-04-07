@@ -5,6 +5,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import org.bitcoincore.qt 1.0
 import "../../controls"
 import "../../components"
 import "../settings"
@@ -16,6 +17,20 @@ PageStack {
 
     id: root
     objectName: "nodeSettingsStack"
+
+    Connections {
+        target: typeof walletController !== "undefined" ? walletController : null
+        function onOpenWalletSettingsRequested() {
+            root.openWalletSettings()
+        }
+    }
+
+    function openWalletSettings() {
+        while (root.depth > 1) {
+            root.pop()
+        }
+        root.push(wallet_page)
+    }
 
     initialItem: Page {
         background: null
@@ -75,6 +90,23 @@ PageStack {
                     }
                 }
                 Separator { Layout.fillWidth: true }
+                Setting {
+                    id: gotoWallet
+                    objectName: "settingsWallet"
+                    visible: AppMode.walletEnabled
+                    Layout.fillWidth: true
+                    header: qsTr("External Signer")
+                    actionItem: CaretRightIcon {
+                        color: gotoWallet.stateColor
+                    }
+                    onClicked: {
+                        root.push(wallet_page)
+                    }
+                }
+                Separator {
+                    visible: gotoWallet.visible
+                    Layout.fillWidth: true
+                }
                 Setting {
                     id: gotoConnection
                     objectName: "settingsConnection"
@@ -137,6 +169,12 @@ PageStack {
     Component {
         id: storage_page
         SettingsStorage {
+            onBack: root.pop()
+        }
+    }
+    Component {
+        id: wallet_page
+        SettingsWallet {
             onBack: root.pop()
         }
     }

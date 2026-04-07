@@ -12,9 +12,12 @@
 #include <qml/models/sendrecipientslistmodel.h>
 #include <qml/models/walletqmlmodeltransaction.h>
 
+#include <common/args.h>
+#include <common/settings.h>
 #include <consensus/amount.h>
 #include <interfaces/handler.h>
 #include <interfaces/wallet.h>
+#include <univalue.h>
 #include <wallet/coincontrol.h>
 
 #include <memory>

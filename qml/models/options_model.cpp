@@ -22,6 +22,8 @@
 
 #include <QDebug>
 #include <QDir>
+#include <QFileInfo>
+#include <QRegularExpression>
 #include <QSettings>
 
 namespace {
@@ -33,6 +35,55 @@ int PruneMiBtoGB(int64_t mib)
 int64_t PruneGBtoMiB(int gb)
 {
     return gb * GB_BYTES / 1024 / 1024;
+}
+
+QString NormalizeCommandPath(const QString& path)
+{
+    const QString trimmed = path.trimmed();
+    if (trimmed.isEmpty()) {
+        return {};
+    }
+
+    const QUrl url(trimmed);
+    return url.isLocalFile() ? url.toLocalFile() : trimmed;
+}
+
+QString FirstCommandToken(const QString& command)
+{
+    static const QRegularExpression TOKEN_RE(QStringLiteral(R"re(^\s*(?:"([^"]+)"|'([^']+)'|(\S+)))re"));
+    const auto match = TOKEN_RE.match(command);
+    if (!match.hasMatch()) {
+        return {};
+    }
+    for (int i = 1; i <= 3; ++i) {
+        const QString captured = match.captured(i);
+        if (!captured.isEmpty()) {
+            return captured;
+        }
+    }
+    return {};
+}
+
+QString ExpandUserPath(const QString& path)
+{
+    if (path == QStringLiteral("~")) {
+        return QDir::homePath();
+    }
+    if (path.startsWith(QStringLiteral("~/"))) {
+        return QDir::homePath() + path.mid(1);
+    }
+    return path;
+}
+
+bool TokenLooksLikePath(const QString& token)
+{
+    return token.startsWith(QStringLiteral("/")) ||
+           token.startsWith(QStringLiteral("./")) ||
+           token.startsWith(QStringLiteral("../")) ||
+           token.startsWith(QStringLiteral("~/")) ||
+           token.contains(QLatin1Char('/')) ||
+           token.contains(QLatin1Char('\\')) ||
+           QDir::isAbsolutePath(token);
 }
 } // namespace
 
@@ -66,10 +117,13 @@ OptionsQmlModel::OptionsQmlModel(interfaces::Node& node, bool is_onboarded)
     m_tor_enabled = !onion_setting.isEmpty();
     m_tor_address = onion_setting;
 
+    m_external_signer_path = QString::fromStdString(SettingToString(m_node.getPersistentSetting("signer"), ""));
+
     m_initial_proxy_enabled = m_proxy_enabled;
     m_initial_proxy_address = m_proxy_address;
     m_initial_tor_enabled   = m_tor_enabled;
     m_initial_tor_address   = m_tor_address;
+    m_initial_external_signer_path = m_external_signer_path;
 }
 
 void OptionsQmlModel::setDbcacheSizeMiB(int new_dbcache_size_mib)
@@ -217,6 +271,56 @@ void OptionsQmlModel::setTorAddress(const QString& address)
     }
 }
 
+void OptionsQmlModel::setExternalSignerPath(const QString& path)
+{
+    const QString normalized_path = NormalizeCommandPath(path);
+    if (normalized_path != m_external_signer_path) {
+        bool was_dirty = walletSettingsDirty();
+        m_external_signer_path = normalized_path;
+        if (m_external_signer_path.isEmpty()) {
+            m_node.forceSetting("signer", common::SettingsValue{});
+        } else {
+            m_node.forceSetting("signer", m_external_signer_path.toStdString());
+        }
+        if (m_onboarded) {
+            if (m_external_signer_path.isEmpty()) {
+                m_node.updateRwSetting("signer", common::SettingsValue{});
+            } else {
+                m_node.updateRwSetting("signer", m_external_signer_path.toStdString());
+            }
+        }
+        if (walletSettingsDirty() != was_dirty) {
+            Q_EMIT walletSettingsDirtyChanged();
+        }
+        Q_EMIT externalSignerPathChanged(m_external_signer_path);
+    }
+}
+
+QString OptionsQmlModel::externalSignerPathValidationError(const QString& path) const
+{
+    const QString normalized_path = NormalizeCommandPath(path);
+    if (normalized_path.isEmpty()) {
+        return {};
+    }
+
+    const QString token = FirstCommandToken(normalized_path);
+    if (token.isEmpty() || !TokenLooksLikePath(token)) {
+        return {};
+    }
+
+    const QFileInfo info(ExpandUserPath(token));
+    if (!info.exists()) {
+        return tr("The configured signer path does not exist.");
+    }
+    if (!info.isFile()) {
+        return tr("The configured signer path is not a file.");
+    }
+    if (!info.isExecutable()) {
+        return tr("The configured signer path is not executable.");
+    }
+    return {};
+}
+
 common::SettingsValue OptionsQmlModel::pruneSetting() const
 {
     assert(!m_prune || m_prune_size_gb >= 1);
@@ -286,6 +390,11 @@ void OptionsQmlModel::setDataDir(QString new_data_dir)
 void OptionsQmlModel::onboard()
 {
     m_node.resetSettings();
+    if (m_external_signer_path.isEmpty()) {
+        m_node.forceSetting("signer", common::SettingsValue{});
+    } else {
+        m_node.forceSetting("signer", m_external_signer_path.toStdString());
+    }
     if (m_dbcache_size_mib != DEFAULT_DB_CACHE >> 20) {
         m_node.updateRwSetting("dbcache", m_dbcache_size_mib);
     }
@@ -310,9 +419,13 @@ void OptionsQmlModel::onboard()
     if (m_tor_enabled && !m_tor_address.isEmpty()) {
         m_node.updateRwSetting("onion", m_tor_address.toStdString());
     }
+    if (!m_external_signer_path.isEmpty()) {
+        m_node.updateRwSetting("signer", m_external_signer_path.toStdString());
+    }
     m_onboarded = true;
     m_initial_proxy_enabled = m_proxy_enabled;
     m_initial_proxy_address = m_proxy_address;
     m_initial_tor_enabled   = m_tor_enabled;
     m_initial_tor_address   = m_tor_address;
+    m_initial_external_signer_path = m_external_signer_path;
 }

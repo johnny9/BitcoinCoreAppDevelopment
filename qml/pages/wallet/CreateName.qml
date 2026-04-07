@@ -14,8 +14,20 @@ Page {
     id: root
     signal back
     signal next
+    enum WalletType { SingleSig, ExternalSigner }
     property string walletName: ""
+    property int walletType: CreateName.WalletType.SingleSig
+    property string initialWalletName: ""
+    readonly property bool externalSignerWallet: walletType === CreateName.WalletType.ExternalSigner
     background: null
+
+    Component.onCompleted: {
+        walletController.clearWalletLoadStatus()
+        if (walletNameInput.text.length === 0 && initialWalletName.length > 0) {
+            walletNameInput.text = initialWalletName
+            root.walletName = initialWalletName
+        }
+    }
 
     header: NavigationBar2 {
         id: navbar
@@ -40,6 +52,9 @@ Page {
             Layout.rightMargin: 20
             header: qsTr("Choose a wallet name")
             headerBold: true
+            description: root.externalSignerWallet
+                ? qsTr("This wallet will use the connected external signer.")
+                : ""
         }
 
         CoreTextField {
@@ -48,11 +63,25 @@ Page {
             Layout.fillWidth: true
             Layout.leftMargin: 20
             Layout.rightMargin: 20
-            placeholderText: qsTr("Eg. My bitcoin wallet...")
+            placeholderText: root.externalSignerWallet
+                ? qsTr("Eg. Hardware wallet...")
+                : qsTr("Eg. My bitcoin wallet...")
             validator: RegularExpressionValidator { regularExpression: /^[a-zA-Z0-9_]{1,20}$/ }
             onTextChanged: {
+                walletController.clearWalletLoadStatus()
+                root.walletName = walletNameInput.text
                 continueButton.enabled = walletNameInput.text.length > 0
             }
+        }
+
+        CoreText {
+            visible: walletController.walletLoadError.length > 0
+            Layout.fillWidth: true
+            Layout.leftMargin: 20
+            Layout.rightMargin: 20
+            color: Theme.color.red
+            wrapMode: Text.WordWrap
+            text: walletController.walletLoadError
         }
 
         ContinueButton {
@@ -62,7 +91,7 @@ Page {
             Layout.rightMargin: 20
             Layout.alignment: Qt.AlignCenter
             enabled: walletNameInput.text.length > 0
-            text: qsTr("Continue")
+            text: root.externalSignerWallet ? qsTr("Create wallet") : qsTr("Continue")
             onClicked: {
                 console.log("Creating wallet with name: " + walletNameInput.text)
                 root.walletName = walletNameInput.text

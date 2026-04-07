@@ -14,6 +14,9 @@ Page {
     id: root
     signal back
     signal next
+    property string headerText: qsTr("Your wallet has been created")
+    property string descriptionText: qsTr("It is good practice to make a small test transaction before you actively use this wallet for larger amounts.")
+    property string nextButtonText: qsTr("Next")
     background: null
 
     header: NavigationBar2 {
@@ -56,9 +59,9 @@ Page {
             Layout.topMargin: 20
             Layout.leftMargin: 20
             Layout.rightMargin: 20
-            header: qsTr("Your wallet has been created")
+            header: root.headerText
             headerBold: true
-            description: qsTr("It is good practice to make a small test transaction before you actively use this wallet for larger amounts.")
+            description: root.descriptionText
         }
 
         ContinueButton {
@@ -67,7 +70,7 @@ Page {
             Layout.leftMargin: 20
             Layout.rightMargin: Layout.leftMargin
             Layout.alignment: Qt.AlignCenter
-            text: qsTr("Next")
+            text: root.nextButtonText
             onClicked: {
                 root.next()
             }
