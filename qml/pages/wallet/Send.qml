@@ -266,6 +266,7 @@ PageStack {
                         objectName: "sendUriImportApplyButton"
                         Layout.fillWidth: true
                         text: qsTr("Apply")
+                        enabled: uriImportInput.text.trim().length > 0
                         onClicked: {
                             sendUriImportPopup.close()
                             sendPage.applyPaymentRequestFromText(uriImportInput.text, qsTr("manual entry"))
