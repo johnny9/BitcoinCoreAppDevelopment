@@ -96,6 +96,7 @@ ColumnLayout {
             }
 
             CoreText {
+                objectName: "externalSignerStatusText"
                 Layout.fillWidth: true
                 wrapMode: Text.WordWrap
                 color: Theme.color.neutral9
@@ -122,6 +123,7 @@ ColumnLayout {
     }
 
     ContinueButton {
+        objectName: "externalSignerCheckDeviceButton"
         Layout.topMargin: 20
         Layout.preferredWidth: Math.min(300, parent.width)
         Layout.alignment: Qt.AlignLeft

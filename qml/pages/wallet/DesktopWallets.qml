@@ -126,6 +126,7 @@ Page {
             }
             NavigationTab {
                 id: settingsTabButton
+                objectName: "desktopWalletSettingsTabButton"
                 iconSource: "image://images/gear-outline"
                 iconColor: Theme.color.neutral7
                 Layout.preferredWidth: 30

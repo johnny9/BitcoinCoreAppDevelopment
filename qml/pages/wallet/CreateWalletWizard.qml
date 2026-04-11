@@ -217,9 +217,11 @@ PageStack {
     Component {
         id: external_confirm
         CreateConfirm {
+            pageObjectName: "externalWalletCreatedPage"
             headerText: qsTr("Your external wallet has been created")
             descriptionText: qsTr("This wallet uses the connected external signer for addresses and signing.")
             nextButtonText: qsTr("Done")
+            nextButtonObjectName: "externalWalletCreatedDoneButton"
             onBack: root.pop()
             onNext: root.finished()
         }

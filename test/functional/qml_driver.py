@@ -151,10 +151,16 @@ class QmlDriver:
         return resp["objects"]
 
     def save_screenshot(self, path):
-        """Save a screenshot of the current QML window to a PNG file."""
+        """Save a screenshot of the current QML window to a PNG file.
+
+        Screenshots are intended to capture stable checkpoint states, so wait
+        for the relevant StackView transitions to finish before asking the test
+        bridge to render the window contents.
+        """
         directory = os.path.dirname(path)
         if directory:
             os.makedirs(directory, exist_ok=True)
+        self.settle()
         resp = self._send({"cmd": "save_screenshot", "path": path})
         if "error" in resp:
             raise QmlDriverError(
@@ -162,14 +168,18 @@ class QmlDriver:
             )
         return resp
 
-    def settle(self, timeout_ms=5000, stack_view_names=("mainPageStack", "createWalletWizard")):
+    def settle(
+        self,
+        timeout_ms=5000,
+        stack_view_names=("mainPageStack", "createWalletWizard", "nodeSettingsStack"),
+    ):
         """Wait for relevant StackView transitions to finish.
 
         The wallet flow transitions run through the app's main page stack and,
-        once opened, the nested create-wallet wizard stack. Waiting for their
-        `busy` property to become false is more reliable than sleeping.
-        Missing stack views are ignored so this remains safe before nested
-        flows have been created.
+        once opened, the nested create-wallet wizard stack and settings stack.
+        Waiting for their `busy` property to become false is more reliable than
+        sleeping. Missing stack views are ignored so this remains safe before
+        nested flows have been created.
         """
         deadline = time.time() + (timeout_ms / 1000)
         last_busy = {}
