@@ -15,6 +15,7 @@ Page {
     signal next
 
     property string defaultWalletName: ""
+    readonly property bool creatingWallet: walletController.walletLoadInProgress
 
     background: null
 
@@ -32,11 +33,22 @@ Page {
         leftItem: NavButton {
             iconSource: "image://images/caret-left"
             text: qsTr("Back")
+            enabled: !root.creatingWallet
             onClicked: root.back()
         }
     }
 
+    Connections {
+        target: walletController
+        function onWalletLoadSucceeded() {
+            if (root.visible) {
+                root.next()
+            }
+        }
+    }
+
     ColumnLayout {
+        id: columnLayout
         width: Math.min(parent.width, 450)
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: 24
@@ -55,6 +67,7 @@ Page {
         }
 
         CoreText {
+            Layout.fillWidth: true
             Layout.leftMargin: 20
             Layout.rightMargin: 20
             font.pixelSize: 15
@@ -69,7 +82,8 @@ Page {
             Layout.fillWidth: true
             Layout.leftMargin: 20
             Layout.rightMargin: 20
-            focus: true
+            focus: !root.creatingWallet
+            enabled: !root.creatingWallet
             placeholderText: qsTr("Eg. hardware_wallet")
             text: root.defaultWalletName
             validator: RegularExpressionValidator { regularExpression: /^[a-zA-Z0-9_]{1,20}$/ }
@@ -77,6 +91,7 @@ Page {
         }
 
         CoreText {
+            Layout.fillWidth: true
             Layout.leftMargin: 20
             Layout.rightMargin: 20
             visible: walletController.walletLoadError.length > 0
@@ -85,19 +100,40 @@ Page {
             text: walletController.walletLoadError
         }
 
+        RowLayout {
+            objectName: "externalWalletCreationLoadingState"
+            Layout.alignment: Qt.AlignHCenter
+            Layout.topMargin: 4
+            visible: root.creatingWallet
+            spacing: 10
+
+            BusyIndicator {
+                objectName: "externalWalletCreationBusyIndicator"
+                Layout.preferredWidth: 24
+                Layout.preferredHeight: 24
+                running: parent.visible
+            }
+
+            CoreText {
+                objectName: "externalWalletCreationStatusText"
+                text: qsTr("Creating wallet with the connected signer...")
+                color: Theme.color.neutral7
+                font.pixelSize: 15
+                wrap: false
+            }
+        }
+
         ContinueButton {
             objectName: "createExternalWalletButton"
-            Layout.preferredWidth: Math.min(300, parent.width - 40)
+            Layout.preferredWidth: Math.min(300, columnLayout.width - 40)
             Layout.leftMargin: 20
             Layout.rightMargin: 20
             Layout.alignment: Qt.AlignCenter
-            enabled: walletNameInput.acceptableInput && walletController.canCreateExternalSignerWallet
-            text: qsTr("Create wallet")
+            enabled: !root.creatingWallet && walletNameInput.acceptableInput && walletController.canCreateExternalSignerWallet
+            text: root.creatingWallet ? qsTr("Creating wallet...") : qsTr("Create wallet")
             onClicked: {
                 walletController.clearWalletLoadStatus()
-                if (walletController.createExternalSignerWallet(walletNameInput.text)) {
-                    root.next()
-                }
+                walletController.createExternalSignerWallet(walletNameInput.text)
             }
         }
     }

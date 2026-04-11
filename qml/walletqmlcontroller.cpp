@@ -196,24 +196,38 @@ bool WalletQmlController::createExternalSignerWallet(const QString& name)
     constexpr uint64_t flags = wallet::WALLET_FLAG_DESCRIPTORS |
         wallet::WALLET_FLAG_DISABLE_PRIVATE_KEYS |
         wallet::WALLET_FLAG_EXTERNAL_SIGNER;
-    const SecureString empty_passphrase;
-    auto wallet = m_node.walletLoader().createWallet(wallet_name.toStdString(), empty_passphrase, flags, m_warning_messages);
-    setWalletLoadWarnings(JoinWarnings(m_warning_messages));
+    m_wallet_load_requested = true;
+    m_pending_wallet_load_action = WalletLoadAction::Load;
+    setWalletLoadInProgress(true);
 
-    QMutexLocker locker(&m_wallets_mutex);
-    if (wallet) {
-        m_selected_wallet = new WalletQmlModel(std::move(*wallet));
-        m_wallets.push_back(m_selected_wallet);
-        setWalletLoaded(true);
-        setNoWalletsFound(false);
-        Q_EMIT selectedWalletChanged();
-        return true;
-    }
+    QTimer::singleShot(0, m_worker, [this, wallet_name, flags]() {
+        std::vector<bilingual_str> warning_messages;
+        const SecureString empty_passphrase;
+        auto wallet = m_node.walletLoader().createWallet(
+            wallet_name.toStdString(),
+            empty_passphrase,
+            flags,
+            warning_messages);
+        const QString warnings = JoinWarnings(warning_messages);
 
-    const bilingual_str result_error = util::ErrorString(wallet);
-    const QString error = QString::fromStdString(result_error.translated);
-    setWalletLoadError(error.isEmpty() ? tr("Wallet creation failed.") : error);
-    return false;
+        if (!wallet) {
+            const bilingual_str result_error = util::ErrorString(wallet);
+            const QString error = QString::fromStdString(result_error.translated);
+            QMetaObject::invokeMethod(this, [this, error, warnings]() {
+                m_wallet_load_requested = false;
+                m_pending_wallet_load_action = WalletLoadAction::None;
+                setWalletLoadInProgress(false);
+                setWalletLoadWarnings(warnings);
+                setWalletLoadError(error.isEmpty() ? tr("Wallet creation failed.") : error);
+            });
+            return;
+        }
+
+        QMetaObject::invokeMethod(this, [this, warnings]() {
+            setWalletLoadWarnings(warnings);
+        });
+    });
+    return true;
 }
 
 void WalletQmlController::importWallet(const QString& path)
