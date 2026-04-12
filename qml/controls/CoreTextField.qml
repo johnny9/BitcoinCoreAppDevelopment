@@ -12,7 +12,7 @@ TextField {
 
     implicitHeight: 56
     implicitWidth: 450
-    font.family: "Inter"
+    font.family: "BitcoinCoreSans"
     font.styleName: "Regular"
     font.pixelSize: 18
     color: Theme.color.neutral9

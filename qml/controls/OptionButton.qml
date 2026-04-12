@@ -98,7 +98,7 @@ Button {
                         color: Theme.color.neutral2
                         radius: 5
                     }
-                    font.family: "Inter"
+                    font.family: "BitcoinCoreSans"
                     font.styleName: "Semi Bold"
                     font.pixelSize: 13
                     contentItem: Text {

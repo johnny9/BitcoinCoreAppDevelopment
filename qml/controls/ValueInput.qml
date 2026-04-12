@@ -39,7 +39,7 @@ TextInput {
         }
     ]
 
-    font.family: "Inter"
+    font.family: "BitcoinCoreSans"
     font.styleName: "Regular"
     font.pixelSize: root.descriptionSize
     color: root.textColor

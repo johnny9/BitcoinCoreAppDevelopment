@@ -318,8 +318,9 @@ int QmlGuiMain(int argc, char* argv[])
     QObject::connect(&node_model, &NodeModel::nodeInitialized,
                      &ban_list_model, &BanListModel::refresh);
 
-    LoadFontResource(":/fonts/inter/regular");
-    LoadFontResource(":/fonts/inter/semibold");
+    LoadFontResource(":/fonts/bitcoincoresans/regular");
+    LoadFontResource(":/fonts/bitcoincoresans/semibold");
+    LoadFontResource(":/fonts/robotomono/regular");
 
     QQmlApplicationEngine engine;
 

@@ -9,7 +9,7 @@ Text {
     property bool bold: false
     property bool wrap: true
     color: enabled ? Theme.color.neutral9 : Theme.color.neutral4
-    font.family: "Inter"
+    font.family: "BitcoinCoreSans"
     font.styleName: bold ? "Semi Bold" : "Regular"
     font.pixelSize: 13
     horizontalAlignment: Text.AlignHCenter

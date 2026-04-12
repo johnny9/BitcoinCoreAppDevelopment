@@ -161,7 +161,8 @@
         <file alias="visible">res/icons/visible.png</file>
     </qresource>
     <qresource prefix="/fonts">
-        <file alias="inter/regular">res/fonts/Inter-Regular.otf</file>
-        <file alias="inter/semibold">res/fonts/Inter-SemiBold.otf</file>
+        <file alias="bitcoincoresans/regular">res/fonts/BitcoinCoreSans-Regular.otf</file>
+        <file alias="bitcoincoresans/semibold">res/fonts/BitcoinCoreSans-SemiBold.otf</file>
+        <file alias="robotomono/regular">res/fonts/RobotoMono-Regular.ttf</file>
     </qresource>
 </RCC>

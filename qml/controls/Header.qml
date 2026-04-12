@@ -34,7 +34,7 @@ ColumnLayout {
         sourceComponent: Label {
             Layout.fillWidth: true
             topPadding: root.headerMargin
-            font.family: "Inter"
+            font.family: "BitcoinCoreSans"
             font.styleName: root.headerBold ? "Semi Bold" : "Regular"
             font.pixelSize: root.headerSize
             color: root.headerColor
@@ -53,7 +53,7 @@ ColumnLayout {
         visible: active
         sourceComponent: Label {
             topPadding: showHeader ? root.descriptionMargin : root.headerMargin
-            font.family: "Inter"
+            font.family: "BitcoinCoreSans"
             font.styleName: root.descriptionBold ? "Semi Bold" : "Regular"
             font.pixelSize: root.descriptionSize
             color: root.descriptionColor
@@ -72,7 +72,7 @@ ColumnLayout {
         visible: active
         sourceComponent: Label {
             topPadding: root.subtextMargin
-            font.family: "Inter"
+            font.family: "BitcoinCoreSans"
             font.styleName: "Regular"
             font.pixelSize: root.subtextSize
             color: root.subtextColor
