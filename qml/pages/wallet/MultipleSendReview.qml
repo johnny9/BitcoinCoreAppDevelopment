@@ -37,7 +37,7 @@ Page {
         leftItem: NavButton {
             objectName: "multipleSendReviewBackButton"
             iconSource: "image://images/caret-left"
-            text: qsTr("Back")
+            text: root.wallet && root.wallet.hasExternalSigner ? qsTr("Edit") : qsTr("Back")
             onClicked: {
                 root.back()
             }
@@ -253,9 +253,23 @@ Page {
                 unitText: root.transaction ? root.transaction.totalAmount.unitLabel : ""
             }
 
+            ExternalSignerReviewActions {
+                visible: root.wallet && root.wallet.hasExternalSigner
+                wallet: root.wallet
+                buttonObjectName: "multipleSendReviewExternalSignerButton"
+                statusObjectName: "multipleSendReviewStatusText"
+                Layout.fillWidth: true
+                Layout.topMargin: 30
+                onSendRequested: {
+                    root.wallet.sendTransaction()
+                    root.transactionSent()
+                }
+            }
+
             ContinueButton {
                 id: confirmationButton
                 objectName: "multipleSendReviewSendButton"
+                visible: !root.wallet || !root.wallet.hasExternalSigner
                 Layout.fillWidth: true
                 Layout.topMargin: 30
                 text: qsTr("Send")
