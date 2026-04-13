@@ -15,6 +15,7 @@ add_executable(bitcoinqml_unit_tests
   test_bitcoinamount.cpp
   test_peerlistmodel.cpp
   test_peerstatsutil.cpp
+  test_walletqmlmodel.cpp
   test_walletqmlmodeltransaction.cpp
   test_qmlbitcoinunits.cpp
   test_imageprovider.cpp
