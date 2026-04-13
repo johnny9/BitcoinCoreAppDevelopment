@@ -20,6 +20,91 @@
 
 #include <algorithm>
 
+namespace {
+QByteArray okResponse()
+{
+    QJsonObject resp;
+    resp[QStringLiteral("ok")] = true;
+    return QJsonDocument(resp).toJson(QJsonDocument::Compact);
+}
+
+QByteArray clickObject(QObject* obj)
+{
+    if (!obj) {
+        QJsonObject resp;
+        resp[QStringLiteral("error")] = QStringLiteral("Cannot click null object");
+        return QJsonDocument(resp).toJson(QJsonDocument::Compact);
+    }
+
+    auto* item = qobject_cast<QQuickItem*>(obj);
+    const QMetaObject* meta = obj->metaObject();
+
+    const QString class_name = QString::fromLatin1(meta->className());
+    if (class_name.startsWith(QStringLiteral("EllipsisMenuToggleItem"))) {
+        int clicked_index = meta->indexOfSignal("clicked()");
+        if (clicked_index >= 0 && meta->method(clicked_index).invoke(obj, Qt::DirectConnection)) {
+            return okResponse();
+        }
+    }
+
+    bool invoked = false;
+    int click_method_index = meta->indexOfMethod("click()");
+    if (click_method_index >= 0) {
+        invoked = meta->method(click_method_index).invoke(obj, Qt::DirectConnection);
+        if (invoked) {
+            return okResponse();
+        }
+    }
+
+    const bool checkable = obj->property("checkable").toBool();
+    int toggle_index = meta->indexOfMethod("toggle()");
+    if (checkable && toggle_index >= 0) {
+        invoked = meta->method(toggle_index).invoke(obj, Qt::DirectConnection);
+    }
+
+    int clicked_index = meta->indexOfSignal("clicked()");
+    if (clicked_index >= 0) {
+        if (meta->method(clicked_index).invoke(obj, Qt::DirectConnection)) {
+            return okResponse();
+        }
+    }
+
+    int trigger_index = meta->indexOfMethod("trigger()");
+    if (trigger_index >= 0) {
+        if (meta->method(trigger_index).invoke(obj, Qt::DirectConnection)) {
+            return okResponse();
+        }
+    }
+
+    if (invoked) {
+        return okResponse();
+    }
+
+    if (item) {
+        QQuickWindow* window = item->window();
+        if (window && item->width() > 0 && item->height() > 0) {
+            QPointF center = item->mapToScene(
+                QPointF(item->width() / 2.0, item->height() / 2.0));
+            QPoint pos = center.toPoint();
+
+            QMouseEvent press(QEvent::MouseButtonPress, pos, window->mapToGlobal(pos),
+                              Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+            QMouseEvent release(QEvent::MouseButtonRelease, pos, window->mapToGlobal(pos),
+                                Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
+
+            QCoreApplication::sendEvent(window, &press);
+            QCoreApplication::sendEvent(window, &release);
+
+            return okResponse();
+        }
+    }
+
+    QJsonObject resp;
+    resp[QStringLiteral("error")] = QStringLiteral("Cannot click object");
+    return QJsonDocument(resp).toJson(QJsonDocument::Compact);
+}
+} // namespace
+
 TestBridge::TestBridge(QQmlApplicationEngine* engine, const QString& socket_path, QObject* parent)
     : QObject(parent), m_engine(engine), m_server(new QLocalServer(this))
 {
@@ -166,6 +251,66 @@ QObject* TestBridge::findObjectByName(const QString& name) const
     return matches.first();
 }
 
+QObject* TestBridge::findNamedObjectInSubtree(QObject* root, const QString& name) const
+{
+    if (!root || name.isEmpty()) return nullptr;
+
+    QSet<const QObject*> visited;
+    QList<QObject*> stack{root};
+    while (!stack.isEmpty()) {
+        QObject* current = stack.takeLast();
+        if (!current || visited.contains(current)) continue;
+        visited.insert(current);
+
+        if (current->objectName() == name) {
+            return current;
+        }
+
+        for (QObject* child : current->children()) {
+            stack.append(child);
+        }
+        if (auto* item = qobject_cast<QQuickItem*>(current)) {
+            for (QQuickItem* visual_child : item->childItems()) {
+                stack.append(visual_child);
+            }
+        }
+    }
+
+    return nullptr;
+}
+
+QObject* TestBridge::findListItem(QObject* view_obj, int row) const
+{
+    if (!view_obj || row < 0) return nullptr;
+
+    const QMetaObject* meta = view_obj->metaObject();
+    int item_at_index = meta->indexOfMethod("itemAtIndex(int)");
+    if (item_at_index >= 0) {
+        QQuickItem* item = nullptr;
+        if (meta->method(item_at_index).invoke(
+                view_obj,
+                Qt::DirectConnection,
+                Q_RETURN_ARG(QQuickItem*, item),
+                Q_ARG(int, row)) && item) {
+            return item;
+        }
+    }
+
+    QObject* content_item = view_obj->property("contentItem").value<QObject*>();
+    auto* content_quick_item = qobject_cast<QQuickItem*>(content_item);
+    if (!content_quick_item) return nullptr;
+
+    for (QQuickItem* child : content_quick_item->childItems()) {
+        if (!child) continue;
+        const QVariant index = child->property("index");
+        if (index.isValid() && index.toInt() == row) {
+            return child;
+        }
+    }
+
+    return nullptr;
+}
+
 QObject* TestBridge::resolveCurrentLeafItem(QObject* item) const
 {
     QObject* current = item;
@@ -255,6 +400,16 @@ QByteArray TestBridge::processCommand(const QByteArray& json_cmd)
             obj.value(QStringLiteral("nonEmpty")).toBool(false));
     } else if (cmd == QLatin1String("get_text")) {
         return cmdGetText(obj.value(QStringLiteral("objectName")).toString());
+    } else if (cmd == QLatin1String("click_list_item")) {
+        return cmdClickListItem(
+            obj.value(QStringLiteral("objectName")).toString(),
+            obj.value(QStringLiteral("index")).toInt(-1),
+            obj.value(QStringLiteral("childObjectName")).toString());
+    } else if (cmd == QLatin1String("get_list_item_property")) {
+        return cmdGetListItemProperty(
+            obj.value(QStringLiteral("objectName")).toString(),
+            obj.value(QStringLiteral("index")).toInt(-1),
+            obj.value(QStringLiteral("prop")).toString());
     } else if (cmd == QLatin1String("save_screenshot")) {
         return cmdSaveScreenshot(obj.value(QStringLiteral("path")).toString());
     } else if (cmd == QLatin1String("list_objects")) {
@@ -334,79 +489,11 @@ QByteArray TestBridge::cmdClick(const QString& object_name)
         return errorResponse(QStringLiteral("Object not found: %1").arg(object_name));
     }
 
-    auto* item = qobject_cast<QQuickItem*>(obj);
-    const QMetaObject* meta = obj->metaObject();
-
-    // Prefer real click() when available.
-    // If click() is missing, use a conservative fallback order that preserves
-    // existing onClicked handlers and checkable-button state updates.
-    auto okResponse = []() {
-        QJsonObject resp;
-        resp[QStringLiteral("ok")] = true;
-        return QJsonDocument(resp).toJson(QJsonDocument::Compact);
-    };
-
-    bool invoked = false;
-    int click_method_index = meta->indexOfMethod("click()");
-    if (click_method_index >= 0) {
-        invoked = meta->method(click_method_index).invoke(obj, Qt::DirectConnection);
-        if (invoked) {
-            return okResponse();
-        }
+    QByteArray response = clickObject(obj);
+    if (QJsonDocument::fromJson(response).object().contains(QStringLiteral("error"))) {
+        return errorResponse(QStringLiteral("Cannot click object: %1").arg(object_name));
     }
-
-    // If the control is checkable and click() is unavailable, try toggling
-    // first so selection state (e.g. ButtonGroup) changes under automation.
-    const bool checkable = obj->property("checkable").toBool();
-    int toggle_index = meta->indexOfMethod("toggle()");
-    if (checkable && toggle_index >= 0) {
-        invoked = meta->method(toggle_index).invoke(obj, Qt::DirectConnection);
-    }
-
-    // Invoke clicked() so QML onClicked handlers run for controls without
-    // click() support.
-    int clicked_index = meta->indexOfSignal("clicked()");
-    if (clicked_index >= 0) {
-        if (meta->method(clicked_index).invoke(obj, Qt::DirectConnection)) {
-            return okResponse();
-        }
-    }
-
-    // Last meta-object fallback for action-like objects.
-    int trigger_index = meta->indexOfMethod("trigger()");
-    if (trigger_index >= 0) {
-        if (meta->method(trigger_index).invoke(obj, Qt::DirectConnection)) {
-            return okResponse();
-        }
-    }
-
-    if (invoked) {
-        return okResponse();
-    }
-
-    // Last resort: if it's a QQuickItem, synthesize pointer events.
-    if (item) {
-        QQuickWindow* window = item->window();
-        if (window && item->width() > 0 && item->height() > 0) {
-            QPointF center = item->mapToScene(
-                QPointF(item->width() / 2.0, item->height() / 2.0));
-            QPoint pos = center.toPoint();
-
-            QMouseEvent press(QEvent::MouseButtonPress, pos, window->mapToGlobal(pos),
-                              Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
-            QMouseEvent release(QEvent::MouseButtonRelease, pos, window->mapToGlobal(pos),
-                                Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
-
-            QCoreApplication::sendEvent(window, &press);
-            QCoreApplication::sendEvent(window, &release);
-
-            QJsonObject resp;
-            resp[QStringLiteral("ok")] = true;
-            return QJsonDocument(resp).toJson(QJsonDocument::Compact);
-        }
-    }
-
-    return errorResponse(QStringLiteral("Cannot click object: %1").arg(object_name));
+    return response;
 }
 
 QByteArray TestBridge::cmdSetText(const QString& object_name, const QString& text)
@@ -578,6 +665,68 @@ QByteArray TestBridge::cmdGetText(const QString& object_name)
 
     QJsonObject resp;
     resp[QStringLiteral("text")] = text_val.toString();
+    return QJsonDocument(resp).toJson(QJsonDocument::Compact);
+}
+
+QByteArray TestBridge::cmdClickListItem(const QString& view_object_name, int row_index, const QString& delegate_child_object_name)
+{
+    if (view_object_name.isEmpty() || row_index < 0) {
+        return errorResponse(QStringLiteral("objectName and non-negative index are required"));
+    }
+
+    QObject* view_obj = findObjectByName(view_object_name);
+    if (!view_obj) {
+        return errorResponse(QStringLiteral("Object not found: %1").arg(view_object_name));
+    }
+
+    QObject* target_obj = findListItem(view_obj, row_index);
+    if (!target_obj) {
+        return errorResponse(QStringLiteral("List item not found: %1[%2]").arg(view_object_name).arg(row_index));
+    }
+
+    if (!delegate_child_object_name.isEmpty()) {
+        target_obj = findNamedObjectInSubtree(target_obj, delegate_child_object_name);
+        if (!target_obj) {
+            return errorResponse(QStringLiteral("Child object not found in list item: %1[%2].%3")
+                                     .arg(view_object_name)
+                                     .arg(row_index)
+                                     .arg(delegate_child_object_name));
+        }
+    }
+
+    QByteArray response = clickObject(target_obj);
+    if (QJsonDocument::fromJson(response).object().contains(QStringLiteral("error"))) {
+        return errorResponse(QStringLiteral("Cannot click list item: %1[%2]").arg(view_object_name).arg(row_index));
+    }
+    return response;
+}
+
+QByteArray TestBridge::cmdGetListItemProperty(const QString& view_object_name, int row_index, const QString& prop)
+{
+    if (view_object_name.isEmpty() || row_index < 0 || prop.isEmpty()) {
+        return errorResponse(QStringLiteral("objectName, non-negative index, and prop are required"));
+    }
+
+    QObject* view_obj = findObjectByName(view_object_name);
+    if (!view_obj) {
+        return errorResponse(QStringLiteral("Object not found: %1").arg(view_object_name));
+    }
+
+    QObject* item_obj = findListItem(view_obj, row_index);
+    if (!item_obj) {
+        return errorResponse(QStringLiteral("List item not found: %1[%2]").arg(view_object_name).arg(row_index));
+    }
+
+    QVariant value = item_obj->property(prop.toLatin1().constData());
+    if (!value.isValid()) {
+        return errorResponse(QStringLiteral("Property not found on list item: %1[%2].%3")
+                                 .arg(view_object_name)
+                                 .arg(row_index)
+                                 .arg(prop));
+    }
+
+    QJsonObject resp;
+    resp[QStringLiteral("value")] = QJsonValue::fromVariant(value);
     return QJsonDocument(resp).toJson(QJsonDocument::Compact);
 }
 

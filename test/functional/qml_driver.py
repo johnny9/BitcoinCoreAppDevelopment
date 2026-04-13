@@ -94,6 +94,42 @@ class QmlDriver:
             )
         return resp["text"]
 
+    def click_list_item(self, view_object_name, row_index, delegate_child_object_name=None):
+        """Click a delegate row in a view.
+
+        Args:
+            view_object_name: objectName of the view itself, for example a ListView.
+            row_index: Zero-based delegate index within that view.
+            delegate_child_object_name: Optional objectName to find inside that
+                specific delegate instance before clicking. If omitted, clicks
+                the delegate root item.
+        """
+        cmd = {"cmd": "click_list_item", "objectName": view_object_name, "index": row_index}
+        if delegate_child_object_name is not None:
+            cmd["childObjectName"] = delegate_child_object_name
+        resp = self._send(cmd)
+        if "error" in resp:
+            raise QmlDriverError(
+                f"click_list_item({view_object_name!r}, {row_index!r}, {delegate_child_object_name!r}) failed: {resp['error']}"
+            )
+
+    def get_list_item_property(self, view_object_name, row_index, prop):
+        """Return a property value from a delegate row in a view.
+
+        Args:
+            view_object_name: objectName of the view itself, for example a ListView.
+            row_index: Zero-based delegate index within that view.
+            prop: Property name to read from the delegate root item.
+        """
+        resp = self._send(
+            {"cmd": "get_list_item_property", "objectName": view_object_name, "index": row_index, "prop": prop}
+        )
+        if "error" in resp:
+            raise QmlDriverError(
+                f"get_list_item_property({view_object_name!r}, {row_index!r}, {prop!r}) failed: {resp['error']}"
+            )
+        return resp["value"]
+
     def get_property(self, object_name, prop):
         """Return an arbitrary property value from a named QML object."""
         resp = self._send(
