@@ -33,13 +33,10 @@ void NetworkStyleTests::instantiate_knownNetworks_haveExpectedNames()
     delete regtest_style;
 }
 
-int RunNetworkStyleTests(int argc, char* argv[])
-{
-    NetworkStyleTests tests;
-    return QTest::qExec(&tests, argc, argv);
-}
-
-#ifndef BITCOINQML_NO_TEST_MAIN
+#ifdef BITCOINQML_NO_TEST_MAIN
+#include <test/qt_test_registry.h>
+BITCOINQML_REGISTER_QT_TEST(NetworkStyleTests)
+#else
 QTEST_MAIN(NetworkStyleTests)
 #endif
 #include "test_networkstyle.moc"

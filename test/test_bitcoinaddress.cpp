@@ -29,13 +29,10 @@ void BitcoinAddressTests::ellipsesAddress_keepsVisiblePrefixAndSuffix()
         QString("abcd 1234 ... 5678 ijkl"));
 }
 
-int RunBitcoinAddressTests(int argc, char* argv[])
-{
-    BitcoinAddressTests tests;
-    return QTest::qExec(&tests, argc, argv);
-}
-
-#ifndef BITCOINQML_NO_TEST_MAIN
+#ifdef BITCOINQML_NO_TEST_MAIN
+#include <test/qt_test_registry.h>
+BITCOINQML_REGISTER_QT_TEST(BitcoinAddressTests)
+#else
 QTEST_MAIN(BitcoinAddressTests)
 #endif
 #include "test_bitcoinaddress.moc"

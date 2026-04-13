@@ -111,13 +111,10 @@ void WalletQmlControllerTests::externalSignerSuggestionUsesSignerName()
     QCOMPARE(controller.suggestedExternalSignerWalletName(), QString("Coldcard_Mk4"));
 }
 
-int RunWalletQmlControllerTests(int argc, char* argv[])
-{
-    WalletQmlControllerTests tests;
-    return QTest::qExec(&tests, argc, argv);
-}
-
-#ifndef BITCOINQML_NO_TEST_MAIN
+#ifdef BITCOINQML_NO_TEST_MAIN
+#include <test/qt_test_registry.h>
+BITCOINQML_REGISTER_QT_TEST(WalletQmlControllerTests)
+#else
 QTEST_MAIN(WalletQmlControllerTests)
 #endif
 #include "test_walletqmlcontroller.moc"

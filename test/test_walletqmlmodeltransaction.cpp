@@ -75,13 +75,10 @@ void WalletQmlModelTransactionTests::recipientRolesExposeFormattedAddressAndUnit
         QString("sat"));
 }
 
-int RunWalletQmlModelTransactionTests(int argc, char* argv[])
-{
-    WalletQmlModelTransactionTests tests;
-    return QTest::qExec(&tests, argc, argv);
-}
-
-#ifndef BITCOINQML_NO_TEST_MAIN
+#ifdef BITCOINQML_NO_TEST_MAIN
+#include <test/qt_test_registry.h>
+BITCOINQML_REGISTER_QT_TEST(WalletQmlModelTransactionTests)
+#else
 QTEST_MAIN(WalletQmlModelTransactionTests)
 #endif
 #include "test_walletqmlmodeltransaction.moc"

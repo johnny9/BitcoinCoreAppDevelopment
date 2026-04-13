@@ -91,13 +91,10 @@ void PeerStatsUtilTests::formatBytes()
     QCOMPARE(PeerStatsUtil::FormatBytes(2'500'000'000), QString("2 GB"));
 }
 
-int RunPeerStatsUtilTests(int argc, char* argv[])
-{
-    PeerStatsUtilTests tests;
-    return QTest::qExec(&tests, argc, argv);
-}
-
-#ifndef BITCOINQML_NO_TEST_MAIN
+#ifdef BITCOINQML_NO_TEST_MAIN
+#include <test/qt_test_registry.h>
+BITCOINQML_REGISTER_QT_TEST(PeerStatsUtilTests)
+#else
 QTEST_MAIN(PeerStatsUtilTests)
 #endif
 #include "test_peerstatsutil.moc"

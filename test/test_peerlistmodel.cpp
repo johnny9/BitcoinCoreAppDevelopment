@@ -290,13 +290,10 @@ void PeerListModelTests::sortProxySortsByRoles()
     assert_sort("subversion", [](const CNodeStats& left, const CNodeStats& right) { return left.cleanSubVer.compare(right.cleanSubVer) < 0; });
 }
 
-int RunPeerListModelTests(int argc, char* argv[])
-{
-    PeerListModelTests tests;
-    return QTest::qExec(&tests, argc, argv);
-}
-
-#ifndef BITCOINQML_NO_TEST_MAIN
+#ifdef BITCOINQML_NO_TEST_MAIN
+#include <test/qt_test_registry.h>
+BITCOINQML_REGISTER_QT_TEST(PeerListModelTests)
+#else
 QTEST_MAIN(PeerListModelTests)
 #endif
 #include "test_peerlistmodel.moc"

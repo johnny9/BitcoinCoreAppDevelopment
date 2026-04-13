@@ -483,13 +483,10 @@ void OptionsModelTests::externalSignerPathValidationAcceptsExecutablePath()
     QVERIFY(model.externalSignerPathValidationError(script_path).isEmpty());
 }
 
-int RunOptionsModelTests(int argc, char* argv[])
-{
-    OptionsModelTests tests;
-    return QTest::qExec(&tests, argc, argv);
-}
-
-#ifndef BITCOINQML_NO_TEST_MAIN
+#ifdef BITCOINQML_NO_TEST_MAIN
+#include <test/qt_test_registry.h>
+BITCOINQML_REGISTER_QT_TEST(OptionsModelTests)
+#else
 QTEST_MAIN(OptionsModelTests)
 #endif
 #include "test_options_model.moc"
