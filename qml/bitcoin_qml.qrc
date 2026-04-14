@@ -11,6 +11,7 @@
         <file>components/DeveloperOptions.qml</file>
         <file>components/ExternalPopup.qml</file>
         <file>components/FeeSelection.qml</file>
+        <file>components/MonospaceOutputView.qml</file>
         <file>components/NetworkTrafficGraph.qml</file>
         <file>components/NetworkIndicator.qml</file>
         <file>components/OptionPopup.qml</file>
