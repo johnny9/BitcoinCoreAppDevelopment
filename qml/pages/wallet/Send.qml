@@ -199,6 +199,13 @@ PageStack {
                 if (!sendPage.m_applyingUri) sendPage.checkClipboard()
             }
         }
+        // Re-sync amount text after unit flip (declarative binding breaks on edit).
+        Connections {
+            target: root.recipient.amount
+            function onDisplayChanged() {
+                amountInput.text = root.recipient.amount.display
+            }
+        }
         Connections {
             target: root.recipient
             function onLabelChanged() {
