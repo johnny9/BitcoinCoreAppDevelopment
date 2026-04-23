@@ -429,6 +429,8 @@ QByteArray TestBridge::cmdSetText(const QString& object_name, const QString& tex
         const QMetaObject* meta = obj->metaObject();
         if (int idx = meta->indexOfSignal("textEdited(QString)"); idx >= 0) {
             meta->method(idx).invoke(obj, Qt::DirectConnection, Q_ARG(QString, text));
+        } else if (int idx = meta->indexOfSignal("textEdited()"); idx >= 0) {
+            meta->method(idx).invoke(obj, Qt::DirectConnection);
         }
         if (int idx = meta->indexOfSignal("editingFinished()"); idx >= 0) {
             meta->method(idx).invoke(obj, Qt::DirectConnection);
