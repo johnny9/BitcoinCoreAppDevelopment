@@ -13,6 +13,7 @@ int RunPeerListModelTests(int argc, char* argv[]);
 int RunPeerStatsUtilTests(int argc, char* argv[]);
 int RunQmlBitcoinUnitsTests(int argc, char* argv[]);
 int RunImageProviderTests(int argc, char* argv[]);
+int RunNodeModelTests(int argc, char* argv[]);
 int RunNetworkStyleTests(int argc, char* argv[]);
 int RunQmlInitExecutorApiTests(int argc, char* argv[]);
 int RunOptionsModelTests(int argc, char* argv[]);
@@ -27,6 +28,7 @@ int main(int argc, char* argv[])
     status |= RunPeerStatsUtilTests(argc, argv);
     status |= RunQmlBitcoinUnitsTests(argc, argv);
     status |= RunImageProviderTests(argc, argv);
+    status |= RunNodeModelTests(argc, argv);
     status |= RunNetworkStyleTests(argc, argv);
     status |= RunQmlInitExecutorApiTests(argc, argv);
     status |= RunOptionsModelTests(argc, argv);
