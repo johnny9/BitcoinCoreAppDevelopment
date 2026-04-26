@@ -185,6 +185,10 @@ PageStack {
                         id: sendOptionsPopup
                         x: menuButton.x - width + menuButton.width
                         y: menuButton.y + menuButton.height
+                        onClearFormRequested: {
+                            sendOptionsPopup.close()
+                            root.wallet.recipients.clear()
+                        }
                         onImportPsbtFromFileRequested: {
                             if (psbtAutomationPathField.text.length > 0) {
                                 const automatedPath = psbtAutomationPathField.text
@@ -200,6 +204,7 @@ PageStack {
 
                 RowLayout {
                     id: selectAndAddRecipients
+                    objectName: "sendMultipleRecipientsRow"
                     Layout.fillWidth: true
                     Layout.topMargin: 10
                     Layout.bottomMargin: 10
@@ -268,6 +273,7 @@ PageStack {
                 BitcoinAddressInputField {
                     Layout.fillWidth: true
                     enabled: walletController.initialized
+                    inputObjectName: "sendAddressInput"
                     address: root.recipient.address
                     errorText: root.recipient.addressError
                 }
@@ -294,6 +300,7 @@ PageStack {
 
                         TextField {
                             id: amountInput
+                            objectName: "sendAmountInput"
                             anchors.left: amountLabel.right
                             anchors.verticalCenter: parent.verticalCenter
                             leftPadding: 0
@@ -375,6 +382,7 @@ PageStack {
                 LabeledTextInput {
                     id: label
                     Layout.fillWidth: true
+                    inputObjectName: "sendNoteInput"
                     labelText: qsTr("Note to self")
                     placeholderText: qsTr("Enter ...")
                     text: root.recipient.label
@@ -412,6 +420,7 @@ PageStack {
 
                 ContinueButton {
                     id: continueButton
+                    objectName: "sendReviewButton"
                     Layout.fillWidth: true
                     Layout.topMargin: 30
                     text: qsTr("Review")
