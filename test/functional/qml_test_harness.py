@@ -87,10 +87,11 @@ class QmlTestHarness:
     instead of launching a new one.
     """
 
-    def __init__(self, socket_path=None):
+    def __init__(self, socket_path=None, extra_args=None):
         self.external = socket_path is not None
         self.process = None
         self.driver = None
+        self.extra_args = extra_args or []
 
         if self.external:
             self.socket_path = socket_path
@@ -124,6 +125,7 @@ class QmlTestHarness:
             "-debugexclude=leveldb",
             "-nolisten",
         ]
+        args.extend(self.extra_args)
 
         print(f"Starting GUI: {' '.join(args)}")
         self.process = subprocess.Popen(
