@@ -116,7 +116,7 @@ PageStack {
                             cursorShape: Qt.PointingHandCursor
                         }
 
-                        opacity: delegate.replacedByTxid !== "" ? 0.4 : 1.0
+                        opacity: (delegate.replacedByTxid !== "" || delegate.status === Transaction.Conflicted) ? 0.4 : 1.0
 
                         onClicked: {
                             var page = stackView.push(detailsPage)
