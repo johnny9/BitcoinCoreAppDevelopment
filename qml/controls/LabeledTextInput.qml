@@ -17,6 +17,7 @@ Item {
     property alias maximumLength: input.maximumLength
     property alias cursorPosition: input.cursorPosition
     property alias inputActiveFocus: input.activeFocus
+    property alias inputObjectName: input.objectName
 
     signal iconClicked
     signal textEdited
