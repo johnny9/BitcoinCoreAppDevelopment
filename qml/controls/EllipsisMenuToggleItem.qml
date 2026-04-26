@@ -17,7 +17,6 @@ Button {
 
     id: root
     checkable: true
-    checked: optionSwitch.checked
     hoverEnabled: AppMode.isDesktop
     padding: 0
 
@@ -29,10 +28,6 @@ Button {
         enabled: false
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-    }
-
-    onClicked: {
-        optionSwitch.checked = !optionSwitch.checked
     }
 
     contentItem: RowLayout {
@@ -67,6 +62,7 @@ Button {
                 width: 38
                 height: 22
                 checked: root.checked
+                enabled: false
             }
         }
     }
