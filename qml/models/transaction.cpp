@@ -163,11 +163,11 @@ QList<QSharedPointer<Transaction>> Transaction::fromWalletTx(const interfaces::W
             const CTxOut& txout = wtx.tx->vout[i];
 
             if (fAllFromMe) {
-                // Change is only really possible if we're the sender
-                // Otherwise, someone just sent bitcoins to a change address, which should be shown
-                //if (wtx.txout_is_change[i]) {
-                //   continue;
-                //}
+                // Only hide change when this wallet is the sender. If someone sends to
+                // one of our change addresses, it is still an incoming payment.
+                if (wtx.txout_is_change[i]) {
+                    continue;
+                }
 
                 //
                 // Debit
