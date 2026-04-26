@@ -12,6 +12,7 @@ import "../../components"
 
 Page {
     id: root
+    objectName: "sendReviewPage"
     background: null
 
     property WalletQmlModel wallet: walletController.selectedWallet
@@ -24,6 +25,7 @@ Page {
     header: NavigationBar2 {
         id: navbar
         leftItem: NavButton {
+            objectName: "sendReviewBackButton"
             iconSource: "image://images/caret-left"
             text: qsTr("Back")
             onClicked: {
@@ -126,6 +128,7 @@ Page {
 
             ContinueButton {
                 id: confimationButton
+                objectName: "sendReviewSendButton"
                 Layout.fillWidth: true
                 Layout.topMargin: 30
                 text: qsTr("Send")

@@ -73,6 +73,7 @@ Page {
                 ButtonGroup.group: navigationTabs
             }
             NavigationTab {
+                objectName: "sendTabButton"
                 text: qsTr("Send")
                 property int index: 1
                 ButtonGroup.group: navigationTabs

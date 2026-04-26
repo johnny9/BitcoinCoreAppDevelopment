@@ -8,7 +8,7 @@ import QtQuick.Layouts 1.15
 import org.bitcoincore.qt 1.0
 
 Button {
-    property int bgRadius: 5
+    property int bgRadius: 0
     property color bgDefaultColor: "transparent"
     property color bgHoverColor: Theme.color.neutral2
     property color textColor: Theme.color.neutral7
@@ -19,8 +19,10 @@ Button {
     checkable: true
     checked: optionSwitch.checked
     hoverEnabled: AppMode.isDesktop
+    padding: 0
 
     implicitWidth: 280
+    implicitHeight: 33
 
     MouseArea {
         anchors.fill: parent
@@ -34,24 +36,38 @@ Button {
     }
 
     contentItem: RowLayout {
-        spacing: 7
+        spacing: 5
         anchors.fill: parent
-        anchors.centerIn: parent
-        anchors.margins: 10
-        CoreText {
-            id: buttonText
+        anchors.leftMargin: 10
+        anchors.rightMargin: 5
+
+        RowLayout {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignVCenter
-            horizontalAlignment: Text.AlignLeft
-            font.pixelSize: 15
-            text: root.text
+            spacing: 7
+
+            CoreText {
+                id: buttonText
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignVCenter
+                horizontalAlignment: Text.AlignLeft
+                font.pixelSize: 15
+                text: root.text
+            }
         }
-        OptionSwitch {
-            id: optionSwitch
+
+        Item {
             Layout.alignment: Qt.AlignVCenter
-            Layout.preferredWidth: 40
-            Layout.preferredHeight: 24
-            checked: root.checked
+            Layout.preferredWidth: 38
+            Layout.preferredHeight: 22
+
+            OptionSwitch {
+                id: optionSwitch
+                anchors.centerIn: parent
+                width: 38
+                height: 22
+                checked: root.checked
+            }
         }
     }
 

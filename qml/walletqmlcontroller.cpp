@@ -81,6 +81,7 @@ WalletQmlController::WalletQmlController(interfaces::Node& node, QObject *parent
     , m_worker(new QObject)
     , m_worker_thread(new QThread(this))
 {
+    m_empty_wallet->setNode(&m_node);
     m_worker->moveToThread(m_worker_thread);
     m_worker_thread->start();
     QTimer::singleShot(0, m_worker, []() {
@@ -143,7 +144,7 @@ void WalletQmlController::createSingleSigWallet(const QString &name, const QStri
     auto wallet{m_node.walletLoader().createWallet(wallet_name, secure_passphrase, wallet::WALLET_FLAG_DESCRIPTORS, m_warning_messages)};
     QMutexLocker locker(&m_wallets_mutex);
     if (wallet) {
-        m_selected_wallet = new WalletQmlModel(std::move(*wallet));
+        m_selected_wallet = new WalletQmlModel(std::move(*wallet), &m_node);
         m_wallets.push_back(m_selected_wallet);
         setNoWalletsFound(false);
         Q_EMIT selectedWalletChanged();
@@ -455,7 +456,7 @@ void WalletQmlController::handleLoadWallet(std::unique_ptr<interfaces::Wallet> w
         }
     }
 
-    auto wallet_model = new WalletQmlModel(std::move(wallet));
+    auto wallet_model = new WalletQmlModel(std::move(wallet), &m_node);
     wallet_model->moveToThread(this->thread());
     m_selected_wallet = wallet_model;
     m_wallets.push_back(m_selected_wallet);
@@ -477,7 +478,7 @@ void WalletQmlController::initialize()
 
     auto wallets = m_node.walletLoader().getWallets();
     for (auto& wallet : wallets) {
-        m_wallets.push_back(new WalletQmlModel(std::move(wallet)));
+        m_wallets.push_back(new WalletQmlModel(std::move(wallet), &m_node));
     }
     if (!m_wallets.empty()) {
         m_selected_wallet = m_wallets.front();
