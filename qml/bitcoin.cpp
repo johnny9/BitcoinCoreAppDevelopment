@@ -403,6 +403,8 @@ int QmlGuiMain(int argc, char* argv[])
     WalletListModel wallet_list_model{*node, nullptr};
     QObject::connect(&wallet_controller, &WalletQmlController::openWalletsChanged,
                      &wallet_list_model, &WalletListModel::setOpenWalletNames);
+    QObject::connect(&wallet_controller, &WalletQmlController::walletDisplayNamesChanged,
+                     &wallet_list_model, &WalletListModel::refreshDisplayNames);
     engine.rootContext()->setContextProperty("walletController", &wallet_controller);
     engine.rootContext()->setContextProperty("walletListModel", &wallet_list_model);
 #endif

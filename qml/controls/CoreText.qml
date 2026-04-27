@@ -8,9 +8,10 @@ import QtQuick.Controls 2.15
 Text {
     property bool bold: false
     property bool wrap: true
+    property string fontStyleName: bold ? "Semi Bold" : "Regular"
     color: enabled ? Theme.color.neutral9 : Theme.color.neutral4
-    font.family: "BitcoinCoreSans"
-    font.styleName: bold ? "Semi Bold" : "Regular"
+    font.family: "Inter"
+    font.styleName: fontStyleName
     font.pixelSize: 13
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter

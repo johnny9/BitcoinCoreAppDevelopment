@@ -9,7 +9,9 @@
 #include <common/settings.h>
 #include <node/caches.h>
 #include <kernel/caches.h>
+#include <kernel/mempool_options.h>
 #include <common/system.h>
+#include <policy/policy.h>
 #include <validation.h>
 
 #include <qml/models/settings_keys.h>
@@ -29,6 +31,9 @@ class OptionsQmlModel : public QObject
     Q_OBJECT
     Q_PROPERTY(int dbcacheSizeMiB READ dbcacheSizeMiB WRITE setDbcacheSizeMiB NOTIFY dbcacheSizeMiBChanged)
     Q_PROPERTY(bool listen READ listen WRITE setListen NOTIFY listenChanged)
+    Q_PROPERTY(int maxMempoolSizeMB READ maxMempoolSizeMB WRITE setMaxMempoolSizeMB NOTIFY maxMempoolSizeMBChanged)
+    Q_PROPERTY(int maxMaxMempoolSizeMB READ maxMaxMempoolSizeMB CONSTANT)
+    Q_PROPERTY(int minMaxMempoolSizeMB READ minMaxMempoolSizeMB CONSTANT)
     Q_PROPERTY(int maxDbcacheSizeMiB READ maxDbcacheSizeMiB CONSTANT)
     Q_PROPERTY(int minDbcacheSizeMiB READ minDbcacheSizeMiB CONSTANT)
     Q_PROPERTY(int maxScriptThreads READ maxScriptThreads CONSTANT)
@@ -61,6 +66,10 @@ public:
     void setDbcacheSizeMiB(int new_dbcache_size_mib);
     bool listen() const { return m_listen; }
     void setListen(bool new_listen);
+    int maxMempoolSizeMB() const { return m_max_mempool_size_mb; }
+    void setMaxMempoolSizeMB(int new_max_mempool_size_mb);
+    int maxMaxMempoolSizeMB() const { return m_max_max_mempool_size_mb; }
+    int minMaxMempoolSizeMB() const { return m_min_max_mempool_size_mb; }
     int maxDbcacheSizeMiB() const { return m_max_dbcache_size_mib; }
     int minDbcacheSizeMiB() const { return m_min_dbcache_size_mib; }
     int maxScriptThreads() const { return m_max_script_threads; }
@@ -123,6 +132,7 @@ public Q_SLOTS:
 Q_SIGNALS:
     void dbcacheSizeMiBChanged(int new_dbcache_size_mib);
     void listenChanged(bool new_listen);
+    void maxMempoolSizeMBChanged(int new_max_mempool_size_mb);
     void natpmpChanged(bool new_natpmp);
     void pruneChanged(bool new_prune);
     void pruneSizeGBChanged(int new_prune_size_gb);
@@ -149,6 +159,13 @@ private:
     const int m_min_dbcache_size_mib{MIN_DB_CACHE >> 20};
     const int m_max_dbcache_size_mib{MAX_COINS_DB_CACHE >> 20};
     bool m_listen;
+    int m_max_mempool_size_mb;
+    const int m_min_max_mempool_size_mb{
+        static_cast<int>((DEFAULT_CLUSTER_SIZE_LIMIT_KVB * 1000 * 40 + 999999) / 1000000)
+    };
+    const int m_max_max_mempool_size_mb{
+        sizeof(void*) <= 4 ? 500 : 99999
+    };
     const int m_max_script_threads{MAX_SCRIPTCHECK_THREADS};
     const int m_min_script_threads{-GetNumCores()};
     bool m_natpmp;

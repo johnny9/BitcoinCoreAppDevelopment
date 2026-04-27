@@ -14,11 +14,16 @@ AbstractButton {
     property alias actionItem: action_loader.sourceComponent
     property alias loadedItem: action_loader.item
     property string description
+    property color descriptionColor: Theme.color.neutral8
+    property int descriptionSize: 15
     property string errorText: ""
     property bool showErrorText: false
     property color stateColor
-    property color stateDescriptionColor
     property bool disabled: false
+    property color filledStateColor: Theme.color.neutral9
+    property color hoverStateColor: Theme.color.orangeLight1
+    property color activeStateColor: Theme.color.orange
+    property color disabledStateColor: Theme.dark ? Theme.color.neutral4 : Theme.color.neutral6
     hoverEnabled: AppMode.isDesktop
     state: "FILLED"
     onDisabledChanged: state = disabled ? "DISABLED" : "FILLED"
@@ -29,25 +34,23 @@ AbstractButton {
             PropertyChanges {
                 target: root
                 enabled: true
-                stateColor: Theme.color.neutral9
-                stateDescriptionColor: Theme.color.neutral8
+                stateColor: root.filledStateColor
             }
         },
         State {
             name: "HOVER"
-            PropertyChanges { target: root; stateColor: Theme.color.orangeLight1; stateDescriptionColor: Theme.color.neutral8 }
+            PropertyChanges { target: root; stateColor: root.hoverStateColor }
         },
         State {
             name: "ACTIVE"
-            PropertyChanges { target: root; stateColor: Theme.color.orange; stateDescriptionColor: Theme.color.neutral8 }
+            PropertyChanges { target: root; stateColor: root.activeStateColor }
         },
         State {
             name: "DISABLED"
             PropertyChanges {
                 target: root
                 enabled: false
-                stateColor: Theme.dark ? Theme.color.neutral4 : Theme.color.neutral6
-                stateDescriptionColor: Theme.dark ? Theme.color.neutral4 : Theme.color.neutral6
+                stateColor: root.disabledStateColor
             }
         }
     ]
@@ -63,7 +66,9 @@ AbstractButton {
     MouseArea {
         id: mouseArea
         anchors.fill: root
+        enabled: root.enabled
         hoverEnabled: AppMode.isDesktop
+        cursorShape: AppMode.isDesktop && root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
         onEntered: {
             if (root.state !== "DISABLED") root.state = "HOVER"
         }
@@ -94,9 +99,9 @@ AbstractButton {
             header: root.header
             headerSize: 18
             headerColor: root.stateColor
-            descriptionColor: root.stateDescriptionColor
             description: root.description
-            descriptionSize: 15
+            descriptionSize: root.descriptionSize
+            descriptionColor: root.descriptionColor
             descriptionMargin: 0
             subtext: root.showErrorText ? root.errorText : ""
             subtextColor: Theme.color.blue

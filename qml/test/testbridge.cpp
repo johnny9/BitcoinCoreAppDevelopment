@@ -13,10 +13,12 @@
 #include <QMetaMethod>
 #include <QMetaObject>
 #include <QEventLoop>
+#include <QFont>
 #include <QImage>
 #include <QPointer>
 #include <QQuickItem>
 #include <QQuickWindow>
+#include <QCloseEvent>
 #include <QScopedValueRollback>
 #include <QTimer>
 #include <QVariant>
@@ -419,6 +421,8 @@ QByteArray TestBridge::processCommand(const QByteArray& json_cmd)
         return cmdListObjects();
     } else if (cmd == QLatin1String("set_clipboard_text")) {
         return cmdSetClipboardText(obj.value(QStringLiteral("text")).toString());
+    } else if (cmd == QLatin1String("close_window")) {
+        return cmdCloseWindow();
     }
 
     return errorResponse(QStringLiteral("Unknown command: %1").arg(cmd));
@@ -473,7 +477,42 @@ QByteArray TestBridge::cmdGetProperty(const QString& object_name, const QString&
         return errorResponse(QStringLiteral("Object not found: %1").arg(object_name));
     }
 
-    QVariant value = obj->property(prop.toLatin1().constData());
+    auto resolvePropertyPath = [](QObject* target, const QString& path) -> QVariant {
+        if (!target || path.isEmpty()) return {};
+
+        const QStringList parts = path.split('.');
+        QVariant current = target->property(parts.front().toLatin1().constData());
+        if (!current.isValid()) return {};
+
+        auto fontPart = [](const QFont& font, const QString& part) -> QVariant {
+            if (part == QLatin1String("family")) return font.family();
+            if (part == QLatin1String("pixelSize")) return font.pixelSize();
+            if (part == QLatin1String("styleName")) return font.styleName();
+            if (part == QLatin1String("bold")) return font.bold();
+            return {};
+        };
+
+        for (int i = 1; i < parts.size(); ++i) {
+            const QString& part = parts.at(i);
+            if (current.canConvert<QObject*>()) {
+                QObject* nested = current.value<QObject*>();
+                if (!nested) return {};
+                current = nested->property(part.toLatin1().constData());
+            } else if (current.canConvert<QFont>()) {
+                current = fontPart(current.value<QFont>(), part);
+            } else {
+                return {};
+            }
+
+            if (!current.isValid()) {
+                return {};
+            }
+        }
+
+        return current;
+    };
+
+    QVariant value = resolvePropertyPath(obj, prop);
     if (!value.isValid()) {
         return errorResponse(QStringLiteral("Property not found: %1.%2").arg(object_name, prop));
     }
@@ -599,11 +638,46 @@ QByteArray TestBridge::cmdWaitForProperty(const QString& object_name, const QStr
         return errorResponse(QStringLiteral("objectName and prop are required"));
     }
 
+    auto resolvePropertyPath = [](QObject* target, const QString& path) -> QVariant {
+        if (!target || path.isEmpty()) return {};
+
+        const QStringList parts = path.split('.');
+        QVariant current = target->property(parts.front().toLatin1().constData());
+        if (!current.isValid()) return {};
+
+        auto fontPart = [](const QFont& font, const QString& part) -> QVariant {
+            if (part == QLatin1String("family")) return font.family();
+            if (part == QLatin1String("pixelSize")) return font.pixelSize();
+            if (part == QLatin1String("styleName")) return font.styleName();
+            if (part == QLatin1String("bold")) return font.bold();
+            return {};
+        };
+
+        for (int i = 1; i < parts.size(); ++i) {
+            const QString& part = parts.at(i);
+            if (current.canConvert<QObject*>()) {
+                QObject* nested = current.value<QObject*>();
+                if (!nested) return {};
+                current = nested->property(part.toLatin1().constData());
+            } else if (current.canConvert<QFont>()) {
+                current = fontPart(current.value<QFont>(), part);
+            } else {
+                return {};
+            }
+
+            if (!current.isValid()) {
+                return {};
+            }
+        }
+
+        return current;
+    };
+
     auto conditionMatched = [&](QVariant* out_value) {
         QObject* obj = findObjectByName(object_name);
         if (!obj) return false;
 
-        QVariant value = obj->property(prop.toLatin1().constData());
+        QVariant value = resolvePropertyPath(obj, prop);
         if (!value.isValid()) return false;
 
         bool matched = true;
@@ -809,6 +883,25 @@ QByteArray TestBridge::cmdListObjects()
 QByteArray TestBridge::cmdSetClipboardText(const QString& text)
 {
     QGuiApplication::clipboard()->setText(text);
+    QJsonObject resp;
+    resp[QStringLiteral("ok")] = true;
+    return QJsonDocument(resp).toJson(QJsonDocument::Compact);
+}
+
+QByteArray TestBridge::cmdCloseWindow()
+{
+    QQuickWindow* window = nullptr;
+    for (QObject* root : m_engine->rootObjects()) {
+        window = qobject_cast<QQuickWindow*>(root);
+        if (window) break;
+    }
+    if (!window) {
+        return errorResponse(QStringLiteral("No QQuickWindow root object found"));
+    }
+
+    QCloseEvent close_event;
+    QCoreApplication::sendEvent(window, &close_event);
+
     QJsonObject resp;
     resp[QStringLiteral("ok")] = true;
     return QJsonDocument(resp).toJson(QJsonDocument::Compact);

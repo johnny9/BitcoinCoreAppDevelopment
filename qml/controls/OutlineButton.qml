@@ -10,13 +10,16 @@ Button {
     id: root
     hoverEnabled: AppMode.isDesktop
 
-    property bool bold: true
+    property bool bold: false
     property int fontSize: 18
+    property int textFontPixelSize: fontSize
+    property string textFontStyleName: bold ? "Semi Bold" : "Medium"
 
     contentItem: CoreText {
         text: parent.text
         bold: root.bold
-        font.pixelSize: root.fontSize
+        fontStyleName: root.textFontStyleName
+        font.pixelSize: root.textFontPixelSize
         color: Theme.color.neutral9
     }
     background: Rectangle {

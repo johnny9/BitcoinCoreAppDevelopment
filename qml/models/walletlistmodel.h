@@ -31,6 +31,7 @@ public:
 
     enum Roles {
         NameRole = Qt::UserRole + 1,
+        DisplayNameRole,
         LoadStateRole,
     };
 
@@ -41,6 +42,7 @@ public:
 public Q_SLOTS:
     void listWalletDir();
     void setOpenWalletNames(const QStringList& wallet_names);
+    void refreshDisplayNames();
 
 private:
     struct Item {

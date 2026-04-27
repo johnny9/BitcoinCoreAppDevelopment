@@ -13,6 +13,8 @@ AbstractButton {
     property int iconHeight: 30
     property int iconWidth: 30
     property int textSize: 18
+    property int textFontPixelSize: textSize
+    property string textFontStyleName: "Medium"
     property url iconSource: ""
     property Rectangle iconBackground: null
     property color iconColor: enabled ? Theme.color.neutral9 : Theme.color.neutral2
@@ -93,8 +95,8 @@ AbstractButton {
                 leftPadding: button_background.active ? 0 : 20
                 contentItem: CoreText {
                     anchors.verticalCenter: parent.verticalCenter
-                    bold: true
-                    font.pixelSize: root.textSize
+                    fontStyleName: root.textFontStyleName
+                    font.pixelSize: root.textFontPixelSize
                     text: root.text
                 }
             }

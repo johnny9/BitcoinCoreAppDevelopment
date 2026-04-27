@@ -22,6 +22,12 @@
 const TranslateFn G_TRANSLATION_FUN{nullptr};
 #endif
 
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QSettings>
+#include <QTemporaryDir>
+
 namespace {
 constexpr auto NOT_INITIALIZED_ERROR{"Wallets are still loading. Try again in a moment."};
 
@@ -58,6 +64,7 @@ public:
     int handle_load_wallet_calls{0};
     int get_wallets_calls{0};
     int list_wallet_dir_calls{0};
+    std::string wallet_dir;
 
     std::function<util::Result<std::unique_ptr<interfaces::Wallet>>(const std::string&, const SecureString&, uint64_t, std::vector<bilingual_str>&)>
         create_wallet_fn = [](const std::string&, const SecureString&, uint64_t, std::vector<bilingual_str>&) {
@@ -92,7 +99,7 @@ public:
     {
         return util::Error{Untranslated("Unexpected loadWallet call")};
     }
-    std::string getWalletDir() override { return {}; }
+    std::string getWalletDir() override { return wallet_dir; }
     util::Result<std::unique_ptr<interfaces::Wallet>> restoreWallet(const fs::path&, const std::string&, std::vector<bilingual_str>&, bool) override
     {
         return util::Error{Untranslated("Unexpected restoreWallet call")};
@@ -106,7 +113,18 @@ public:
     std::vector<std::pair<std::string, std::string>> listWalletDir() override
     {
         ++list_wallet_dir_calls;
-        return wallet_dir_entries;
+        if (wallet_dir.empty()) {
+            return wallet_dir_entries;
+        }
+
+        std::vector<std::pair<std::string, std::string>> entries;
+        const QString root_dir = QString::fromStdString(wallet_dir);
+        for (const auto& [path, format] : wallet_dir_entries) {
+            if (QFileInfo::exists(QDir(root_dir).filePath(QString::fromStdString(path)))) {
+                entries.emplace_back(path, format);
+            }
+        }
+        return entries;
     }
     std::vector<std::unique_ptr<interfaces::Wallet>> getWallets() override
     {
@@ -131,6 +149,11 @@ public:
         : m_wallet_name(std::move(wallet_name)), m_state(state) {}
 
     std::string getWalletName() override { return m_wallet_name; }
+    bool private_keys_disabled{false};
+    bool external_signer{false};
+
+    bool privateKeysDisabled() override { return private_keys_disabled; }
+    bool hasExternalSigner() override { return external_signer; }
     void remove() override
     {
         if (m_state) {
@@ -171,6 +194,7 @@ private Q_SLOTS:
     void externalSignerCreationRequiresConfiguredPath();
     void externalSignerCreationRequiresExactlyOneSigner();
     void externalSignerSuggestionUsesSignerName();
+    void init();
     void createWalletBeforeInitializationReturnsFalseAndSetsError();
     void importWalletBeforeInitializationSetsLoadError();
     void migrateWalletBeforeInitializationSetsMigrationError();
@@ -181,6 +205,8 @@ private Q_SLOTS:
     void initializedControllerClosesNonSelectedWalletWithoutChangingSelection();
     void initializedControllerEmitsOpenWalletsChanged();
     void initializedControllerUnloadWalletsClearsSelectionAndOpenWallets();
+    void initializedControllerDeleteWalletRemovesStorageAndClosesWallet();
+    void initializedControllerUpdatesDisplayNameAlias();
 };
 
 void WalletQmlControllerTests::externalSignerCreationRequiresConfiguredPath()
@@ -245,6 +271,13 @@ void WalletQmlControllerTests::externalSignerSuggestionUsesSignerName()
     QVERIFY(controller.canCreateExternalSignerWallet());
     QCOMPARE(controller.externalSignerName(), QString("Coldcard Mk4"));
     QCOMPARE(controller.suggestedExternalSignerWalletName(), QString("Coldcard_Mk4"));
+}
+
+void WalletQmlControllerTests::init()
+{
+    QSettings settings;
+    settings.remove("walletDisplayNames");
+    settings.sync();
 }
 
 void WalletQmlControllerTests::createWalletBeforeInitializationReturnsFalseAndSetsError()
@@ -490,6 +523,73 @@ void WalletQmlControllerTests::initializedControllerUnloadWalletsClearsSelection
     QVERIFY(!controller.isWalletOpen("beta_wallet"));
     QCOMPARE(alpha_state.remove_calls, 0);
     QCOMPARE(beta_state.remove_calls, 0);
+}
+
+void WalletQmlControllerTests::initializedControllerDeleteWalletRemovesStorageAndClosesWallet()
+{
+    using ::testing::StrictMock;
+
+    StrictMock<MockNode> node;
+    FakeWalletLoader loader;
+    FakeWallet::State alpha_state;
+    QTemporaryDir temp_dir;
+    QVERIFY(temp_dir.isValid());
+    loader.wallet_dir = temp_dir.path().toStdString();
+    loader.wallet_dir_entries = {{"alpha_wallet", "sqlite"}};
+    loader.get_wallets_fn = [&]() {
+        std::vector<std::unique_ptr<interfaces::Wallet>> wallets;
+        wallets.emplace_back(std::make_unique<FakeWallet>("alpha_wallet", &alpha_state));
+        return wallets;
+    };
+    ExpectControllerInitialization(node, loader);
+
+    const QString wallet_dir = QDir(temp_dir.path()).filePath("alpha_wallet");
+    QVERIFY(QDir().mkpath(wallet_dir));
+    QFile marker(QDir(wallet_dir).filePath("wallet.dat"));
+    QVERIFY(marker.open(QIODevice::WriteOnly));
+    marker.write("wallet");
+    marker.close();
+
+    WalletQmlController controller(node);
+    controller.initialize();
+
+    QSignalSpy selected_spy(&controller, &WalletQmlController::selectedWalletChanged);
+    QSignalSpy open_wallets_spy(&controller, &WalletQmlController::openWalletsChanged);
+
+    QVERIFY(controller.deleteWallet("alpha_wallet"));
+
+    QCOMPARE(alpha_state.remove_calls, 1);
+    QVERIFY(!QFileInfo::exists(wallet_dir));
+    QCOMPARE(selected_spy.count(), 1);
+    QCOMPARE(open_wallets_spy.count(), 1);
+    QCOMPARE(open_wallets_spy.at(0).at(0).toStringList(), QStringList{});
+    QVERIFY(!controller.isWalletLoaded());
+    QVERIFY(controller.noWalletsFound());
+}
+
+void WalletQmlControllerTests::initializedControllerUpdatesDisplayNameAlias()
+{
+    using ::testing::StrictMock;
+
+    StrictMock<MockNode> node;
+    FakeWalletLoader loader;
+    FakeWallet::State alpha_state;
+    loader.get_wallets_fn = [&]() {
+        std::vector<std::unique_ptr<interfaces::Wallet>> wallets;
+        wallets.emplace_back(std::make_unique<FakeWallet>("alpha_wallet", &alpha_state));
+        return wallets;
+    };
+    ExpectControllerInitialization(node, loader);
+
+    WalletQmlController controller(node);
+    controller.initialize();
+
+    QSignalSpy display_name_spy(&controller, &WalletQmlController::walletDisplayNamesChanged);
+
+    QVERIFY(controller.setWalletDisplayName("alpha_wallet", "Personal"));
+    QCOMPARE(display_name_spy.count(), 1);
+    QCOMPARE(controller.walletDisplayName("alpha_wallet"), QString{"Personal"});
+    QCOMPARE(controller.selectedWallet()->displayName(), QString{"Personal"});
 }
 
 #ifdef BITCOINQML_NO_TEST_MAIN

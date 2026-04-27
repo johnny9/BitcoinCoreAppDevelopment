@@ -25,6 +25,8 @@
 #include <utility>
 #include <vector>
 
+#include <QSettings>
+
 namespace {
 using ::testing::Invoke;
 using ::testing::NiceMock;
@@ -101,7 +103,14 @@ class FakeSecurityWallet : public StubWallet
 public:
     bool encrypted{true};
     bool locked{true};
+    bool private_keys_disabled{false};
+    bool external_signer{false};
     CAmount balance{50'000};
+    int encrypt_calls{0};
+    int change_passphrase_calls{0};
+    int backup_calls{0};
+    std::string last_backup_path;
+    std::vector<std::pair<std::string, std::string>> changed_passphrases;
     int unlock_calls{0};
     int lock_calls{0};
     int commit_calls{0};
@@ -144,6 +153,14 @@ public:
             return std::nullopt;
     };
 
+    bool encryptWallet(const SecureString& passphrase) override
+    {
+        ++encrypt_calls;
+        encrypted = true;
+        locked = true;
+        unlock_passphrases.emplace_back(passphrase.begin(), passphrase.end());
+        return !passphrase.empty();
+    }
     bool isCrypted() override { return encrypted; }
     bool lock() override
     {
@@ -153,6 +170,21 @@ public:
     }
     bool unlock(const SecureString& wallet_passphrase) override { return unlock_fn(wallet_passphrase); }
     bool isLocked() override { return locked; }
+    bool changeWalletPassphrase(const SecureString& old_passphrase, const SecureString& new_passphrase) override
+    {
+        ++change_passphrase_calls;
+        changed_passphrases.emplace_back(
+            std::string(old_passphrase.begin(), old_passphrase.end()),
+            std::string(new_passphrase.begin(), new_passphrase.end()));
+        return !old_passphrase.empty() && !new_passphrase.empty() && old_passphrase == SecureString{"secret"};
+    }
+    void abortRescan() override {}
+    bool backupWallet(const std::string& path) override
+    {
+        ++backup_calls;
+        last_backup_path = path;
+        return !path.empty();
+    }
     std::string getWalletName() override { return "fake-wallet"; }
     util::Result<wallet::CreatedTransactionResult> createTransaction(const std::vector<wallet::CRecipient>& recipients,
                                                                      const wallet::CCoinControl& coin_control,
@@ -177,6 +209,8 @@ public:
     }
     CAmount getBalance() override { return balance; }
     CAmount getAvailableBalance(const wallet::CCoinControl&) override { return balance; }
+    bool privateKeysDisabled() override { return private_keys_disabled; }
+    bool hasExternalSigner() override { return external_signer; }
 };
 
 std::unique_ptr<WalletQmlModel> MakeSecurityWalletModel(FakeSecurityWallet*& wallet_out)
@@ -215,6 +249,11 @@ private Q_SLOTS:
     void scheduleFeeEstimates_usesSelectedCoinsInCoinControl();
     void scheduleFeeEstimates_debouncesRapidRestarts();
     void transactionChangedEmitsBalanceChanged();
+    void displayNameDefaultsToWalletName();
+    void detailPropertiesReflectWalletCapabilities();
+    void encryptWalletUpdatesSecurityState();
+    void changeWalletPassphraseForwardsPasswords();
+    void backupWalletForwardsPath();
     void prepareTransactionOnLockedWalletMarksUnlockNeeded();
     void sendTransactionOnLockedWalletRequiresPassword();
     void sendTransactionWithPassphraseUnlocksCommitsAndRelocks();
@@ -659,6 +698,74 @@ void WalletQmlModelTests::transactionChangedEmitsBalanceChanged()
 
     QTRY_COMPARE(balance_spy.count(), 1);
     QCOMPARE(model.balance(), QStringLiteral("75.00000000"));
+}
+
+void WalletQmlModelTests::displayNameDefaultsToWalletName()
+{
+    FakeSecurityWallet* wallet{nullptr};
+    auto model = MakeSecurityWalletModel(wallet);
+
+    QCOMPARE(model->displayName(), QString("fake-wallet"));
+    model->setDisplayName("Personal");
+    QCOMPARE(model->displayName(), QString("Personal"));
+}
+
+void WalletQmlModelTests::detailPropertiesReflectWalletCapabilities()
+{
+    FakeSecurityWallet* wallet{nullptr};
+    auto model = MakeSecurityWalletModel(wallet);
+
+    wallet->private_keys_disabled = true;
+    wallet->external_signer = true;
+    QCOMPARE(model->keyScheme(), QString("Watch-only"));
+    QCOMPARE(model->privateKeysStatus(), QString("Disabled"));
+    QCOMPARE(model->externalSignerStatus(), QString("Enabled"));
+
+    wallet->private_keys_disabled = false;
+
+    QCOMPARE(model->keyScheme(), QString("Single-key"));
+    QCOMPARE(model->privateKeysStatus(), QString("Enabled"));
+}
+
+void WalletQmlModelTests::encryptWalletUpdatesSecurityState()
+{
+    auto wallet = std::make_unique<FakeSecurityWallet>();
+    wallet->encrypted = false;
+    wallet->locked = false;
+    FakeSecurityWallet* raw_wallet = wallet.get();
+    auto model = std::make_unique<WalletQmlModel>(std::move(wallet));
+
+    QVERIFY(model->encryptWallet("secret"));
+    QCOMPARE(raw_wallet->encrypt_calls, 1);
+    QVERIFY(model->isEncrypted());
+    QVERIFY(model->isLocked());
+    QVERIFY(model->settingsError().isEmpty());
+}
+
+void WalletQmlModelTests::changeWalletPassphraseForwardsPasswords()
+{
+    FakeSecurityWallet* wallet{nullptr};
+    auto model = MakeSecurityWalletModel(wallet);
+
+    QVERIFY(model->changeWalletPassphrase("secret", "new-secret"));
+    QCOMPARE(wallet->change_passphrase_calls, 1);
+    QCOMPARE(wallet->changed_passphrases.size(), size_t{1});
+    QCOMPARE(wallet->changed_passphrases.front().first, std::string("secret"));
+    QCOMPARE(wallet->changed_passphrases.front().second, std::string("new-secret"));
+
+    QVERIFY(!model->changeWalletPassphrase("wrong", "new-secret"));
+    QCOMPARE(model->settingsError(), QString("The current wallet password was incorrect."));
+}
+
+void WalletQmlModelTests::backupWalletForwardsPath()
+{
+    FakeSecurityWallet* wallet{nullptr};
+    auto model = MakeSecurityWalletModel(wallet);
+
+    QVERIFY(model->backupWallet("/tmp/fake-wallet.bak"));
+    QCOMPARE(wallet->backup_calls, 1);
+    QCOMPARE(wallet->last_backup_path, std::string("/tmp/fake-wallet.bak"));
+    QVERIFY(model->settingsError().isEmpty());
 }
 
 void WalletQmlModelTests::prepareTransactionOnLockedWalletMarksUnlockNeeded()

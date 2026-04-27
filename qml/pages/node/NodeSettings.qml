@@ -8,28 +8,42 @@ import QtQuick.Layouts 1.15
 import org.bitcoincore.qt 1.0
 import "../../controls"
 import "../../components"
+import "../wallet"
 import "../settings"
 
 PageStack {
     signal doneClicked
+    signal selectWalletRequested
 
     property alias showDoneButton: doneButton.visible
 
     id: root
     objectName: "nodeSettingsStack"
 
+    function popToRoot() {
+        while (root.depth > 1) {
+            root.pop()
+        }
+    }
+
+    function openWalletSettings() {
+        root.popToRoot()
+        root.push(wallet_page)
+    }
+
+    function openWalletSettingsPage() {
+        const current_name = root.currentItem && root.currentItem.objectName ? root.currentItem.objectName : ""
+        if (current_name !== "walletSettingsPage") {
+            root.popToRoot()
+            root.push(wallet_settings_page)
+        }
+    }
+
     Connections {
         target: typeof walletController !== "undefined" ? walletController : null
         function onOpenWalletSettingsRequested() {
             root.openWalletSettings()
         }
-    }
-
-    function openWalletSettings() {
-        while (root.depth > 1) {
-            root.pop()
-        }
-        root.push(wallet_page)
     }
 
     initialItem: Page {
@@ -81,6 +95,23 @@ PageStack {
                 }
                 Separator { Layout.fillWidth: true }
                 Setting {
+                    id: gotoWalletManagement
+                    objectName: "settingsWalletManagement"
+                    visible: AppMode.walletEnabled
+                    Layout.fillWidth: true
+                    header: qsTr("Wallet")
+                    actionItem: CaretRightIcon {
+                        color: gotoWalletManagement.stateColor
+                    }
+                    onClicked: {
+                        root.openWalletSettingsPage()
+                    }
+                }
+                Separator {
+                    visible: gotoWalletManagement.visible
+                    Layout.fillWidth: true
+                }
+                Setting {
                     id: gotoStorage
                     Layout.fillWidth: true
                     header: qsTr("Storage")
@@ -93,20 +124,20 @@ PageStack {
                 }
                 Separator { Layout.fillWidth: true }
                 Setting {
-                    id: gotoWallet
+                    id: gotoExternalSigner
                     objectName: "settingsWallet"
                     visible: AppMode.walletEnabled
                     Layout.fillWidth: true
                     header: qsTr("External Signer")
                     actionItem: CaretRightIcon {
-                        color: gotoWallet.stateColor
+                        color: gotoExternalSigner.stateColor
                     }
                     onClicked: {
                         root.push(wallet_page)
                     }
                 }
                 Separator {
-                    visible: gotoWallet.visible
+                    visible: gotoExternalSigner.visible
                     Layout.fillWidth: true
                 }
                 Setting {
@@ -145,6 +176,19 @@ PageStack {
                     }
                     onClicked: {
                         root.push(networktraffic_page)
+                    }
+                }
+                Separator { Layout.fillWidth: true }
+                Setting {
+                    id: gotoMempoolInformation
+                    objectName: "settingsMempoolInformation"
+                    Layout.fillWidth: true
+                    header: qsTr("Mempool information")
+                    actionItem: CaretRightIcon {
+                        color: gotoMempoolInformation.stateColor
+                    }
+                    onClicked: {
+                        root.push(mempool_information_page)
                     }
                 }
                 Separator { Layout.fillWidth: true }
@@ -266,6 +310,12 @@ PageStack {
         }
     }
     Component {
+        id: mempool_information_page
+        MempoolInformationSettings {
+            onBack: root.pop()
+        }
+    }
+    Component {
         id: debug_log_page
         SettingsDebugLog {
             onBack: root.pop()
@@ -281,6 +331,29 @@ PageStack {
         id: console_page
         CommandConsole {
             onBack: root.pop()
+        }
+    }
+    Component {
+        id: wallet_settings_page
+        WalletSettings {
+            onBack: root.pop()
+            onSelectWalletRequested: root.selectWalletRequested()
+            onPasswordRequested: root.push(wallet_password_page, { "updating": walletController.selectedWallet.isEncrypted })
+            onDeleteWalletRequested: root.push(wallet_delete_page)
+        }
+    }
+    Component {
+        id: wallet_password_page
+        WalletPasswordSettings {
+            onBack: root.pop()
+            onSaved: root.pop()
+        }
+    }
+    Component {
+        id: wallet_delete_page
+        WalletDelete {
+            onBack: root.pop()
+            onDeleted: root.pop()
         }
     }
 }

@@ -30,6 +30,7 @@ NodeModel::NodeModel(interfaces::Node& node)
     ConnectToNumConnectionsChangedSignal();
     ConnectToBannedListChangedSignal();
     ConnectToSnapshotLoadProgressSignal();
+    refreshMempoolInfo();
 }
 
 void NodeModel::setBlockTipHeight(int new_height)
@@ -45,6 +46,22 @@ void NodeModel::setNumOutboundPeers(int new_num)
     if (new_num != m_num_outbound_peers) {
         m_num_outbound_peers = new_num;
         Q_EMIT numOutboundPeersChanged();
+    }
+}
+
+void NodeModel::refreshMempoolInfo()
+{
+    const int mempool_transaction_count = static_cast<int>(m_node.getMempoolSize());
+    const double mempool_usage_mb = m_node.getMempoolDynamicUsage() / 1'000'000.0;
+    const double mempool_max_usage_mb = m_node.getMempoolMaxUsage() / 1'000'000.0;
+
+    if (mempool_transaction_count != m_mempool_transaction_count ||
+        mempool_usage_mb != m_mempool_usage_mb ||
+        mempool_max_usage_mb != m_mempool_max_usage_mb) {
+        m_mempool_transaction_count = mempool_transaction_count;
+        m_mempool_usage_mb = mempool_usage_mb;
+        m_mempool_max_usage_mb = mempool_max_usage_mb;
+        Q_EMIT mempoolInfoChanged();
     }
 }
 
@@ -137,6 +154,7 @@ void NodeModel::initializeResult(bool success, interfaces::BlockAndHeaderTipInfo
     if (!success) {
         setErrorState(true);
     } else {
+        refreshMempoolInfo();
         setBlockTipHeight(tip_info.block_height);
         setVerificationProgress(tip_info.verification_progress);
         Q_EMIT setTimeRatioListInitial();

@@ -9,6 +9,7 @@ import org.bitcoincore.qt 1.0
 
 RowLayout {
     id: root
+    property int keyWidth: 125
     property alias key: keyField.contentItem
     property alias value: valueField.contentItem
     width: parent.width
@@ -16,7 +17,7 @@ RowLayout {
     spacing: 10
     Pane {
         id: keyField
-        implicitWidth: 125
+        implicitWidth: root.keyWidth
         Layout.alignment: Qt.AlignLeft
         background: null
         padding: 0

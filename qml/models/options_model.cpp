@@ -126,6 +126,8 @@ OptionsQmlModel::OptionsQmlModel(interfaces::Node& node, bool is_onboarded)
 
     m_listen = SettingToBool(m_node.getPersistentSetting("listen"), DEFAULT_LISTEN);
 
+    m_max_mempool_size_mb = SettingToInt(m_node.getPersistentSetting("maxmempool"), DEFAULT_MAX_MEMPOOL_SIZE_MB);
+
     m_natpmp = SettingToBool(m_node.getPersistentSetting("natpmp"), DEFAULT_NATPMP);
 
     int64_t prune_value{SettingToInt(m_node.getPersistentSetting("prune"), 0)};
@@ -183,6 +185,17 @@ void OptionsQmlModel::setListen(bool new_listen)
             m_node.updateRwSetting("listen", new_listen);
         }
         Q_EMIT listenChanged(new_listen);
+    }
+}
+
+void OptionsQmlModel::setMaxMempoolSizeMB(int new_max_mempool_size_mb)
+{
+    if (new_max_mempool_size_mb != m_max_mempool_size_mb) {
+        m_max_mempool_size_mb = new_max_mempool_size_mb;
+        if (m_onboarded) {
+            m_node.updateRwSetting("maxmempool", new_max_mempool_size_mb);
+        }
+        Q_EMIT maxMempoolSizeMBChanged(new_max_mempool_size_mb);
     }
 }
 

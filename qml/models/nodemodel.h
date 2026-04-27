@@ -33,6 +33,9 @@ class NodeModel : public QObject
     Q_PROPERTY(QString fullClientVersion READ fullClientVersion CONSTANT)
     Q_PROPERTY(int numOutboundPeers READ numOutboundPeers NOTIFY numOutboundPeersChanged)
     Q_PROPERTY(int maxNumOutboundPeers READ maxNumOutboundPeers CONSTANT)
+    Q_PROPERTY(int mempoolTransactionCount READ mempoolTransactionCount NOTIFY mempoolInfoChanged)
+    Q_PROPERTY(double mempoolUsageMB READ mempoolUsageMB NOTIFY mempoolInfoChanged)
+    Q_PROPERTY(double mempoolMaxUsageMB READ mempoolMaxUsageMB NOTIFY mempoolInfoChanged)
     Q_PROPERTY(int remainingSyncTime READ remainingSyncTime NOTIFY remainingSyncTimeChanged)
     Q_PROPERTY(double verificationProgress READ verificationProgress NOTIFY verificationProgressChanged)
     Q_PROPERTY(bool pause READ pause WRITE setPause NOTIFY pauseChanged)
@@ -54,6 +57,9 @@ public:
     int numOutboundPeers() const { return m_num_outbound_peers; }
     void setNumOutboundPeers(int new_num);
     int maxNumOutboundPeers() const { return m_max_num_outbound_peers; }
+    int mempoolTransactionCount() const { return m_mempool_transaction_count; }
+    double mempoolUsageMB() const { return m_mempool_usage_mb; }
+    double mempoolMaxUsageMB() const { return m_mempool_max_usage_mb; }
     int remainingSyncTime() const { return m_remaining_sync_time; }
     void setRemainingSyncTime(double new_progress);
     double verificationProgress() const { return m_verification_progress; }
@@ -77,6 +83,7 @@ public:
 
     Q_INVOKABLE float getTotalBytesReceived() const { return (float)m_node.getTotalBytesRecv(); }
     Q_INVOKABLE float getTotalBytesSent() const { return (float)m_node.getTotalBytesSent(); }
+    Q_INVOKABLE void refreshMempoolInfo();
 
     Q_INVOKABLE void startNodeInitializionThread();
     Q_INVOKABLE void requestShutdown();
@@ -97,6 +104,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void blockTipHeightChanged();
+    void mempoolInfoChanged();
     void numOutboundPeersChanged();
     void remainingSyncTimeChanged();
     void requestedInitialize();
@@ -127,6 +135,9 @@ private:
     int m_block_tip_height{0};
     int m_num_outbound_peers{0};
     static constexpr int m_max_num_outbound_peers{MAX_OUTBOUND_FULL_RELAY_CONNECTIONS + MAX_BLOCK_RELAY_ONLY_CONNECTIONS};
+    int m_mempool_transaction_count{0};
+    double m_mempool_usage_mb{0.0};
+    double m_mempool_max_usage_mb{0.0};
     int m_remaining_sync_time{0};
     double m_verification_progress{0.0};
     bool m_pause{false};

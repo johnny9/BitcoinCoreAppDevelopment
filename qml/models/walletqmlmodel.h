@@ -33,6 +33,7 @@ class WalletQmlModel : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
+    Q_PROPERTY(QString displayName READ displayName NOTIFY displayNameChanged)
     Q_PROPERTY(QString balance READ balance NOTIFY balanceChanged)
     Q_PROPERTY(qint64 balanceSatoshi READ balanceSatoshi NOTIFY balanceChanged)
     Q_PROPERTY(bool hasExternalSigner READ hasExternalSigner CONSTANT)
@@ -52,8 +53,12 @@ class WalletQmlModel : public QObject
     Q_PROPERTY(int displayUnit READ displayUnit WRITE setDisplayUnit NOTIFY displayUnitChanged)
     Q_PROPERTY(bool isEncrypted READ isEncrypted NOTIFY securityStateChanged)
     Q_PROPERTY(bool isLocked READ isLocked NOTIFY securityStateChanged)
+    Q_PROPERTY(QString keyScheme READ keyScheme CONSTANT)
+    Q_PROPERTY(QString privateKeysStatus READ privateKeysStatus CONSTANT)
+    Q_PROPERTY(QString externalSignerStatus READ externalSignerStatus CONSTANT)
     Q_PROPERTY(QString transactionError READ transactionError NOTIFY transactionErrorChanged)
     Q_PROPERTY(bool transactionNeedsUnlock READ transactionNeedsUnlock NOTIFY transactionNeedsUnlockChanged)
+    Q_PROPERTY(QString settingsError READ settingsError NOTIFY settingsErrorChanged)
 
 public:
     WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObject* parent = nullptr);
@@ -61,6 +66,8 @@ public:
     ~WalletQmlModel();
 
     QString name() const;
+    QString displayName() const;
+    void setDisplayName(const QString& display_name);
     QString balance() const;
     qint64 balanceSatoshi() const;
     bool hasExternalSigner() const { return m_wallet && m_wallet->hasExternalSigner(); }
@@ -86,6 +93,10 @@ public:
     Q_INVOKABLE QString estimatedFeeForTarget(unsigned int target_blocks) const;
     Q_INVOKABLE int feeTargetIndex(unsigned int target_blocks) const;
     Q_INVOKABLE void scheduleFeeEstimates();
+    Q_INVOKABLE bool encryptWallet(const QString& passphrase);
+    Q_INVOKABLE bool changeWalletPassphrase(const QString& old_passphrase, const QString& new_passphrase);
+    Q_INVOKABLE bool backupWallet(const QString& path);
+    Q_INVOKABLE void clearSettingsError();
     void removeWallet();
 
     std::set<interfaces::WalletTx> getWalletTxs() const;
@@ -121,11 +132,16 @@ public:
     void setDisplayUnit(int unit);
     bool isEncrypted() const { return m_is_encrypted; }
     bool isLocked() const { return m_is_locked; }
+    QString keyScheme() const;
+    QString privateKeysStatus() const;
+    QString externalSignerStatus() const;
     QString transactionError() const { return m_transaction_error; }
     bool transactionNeedsUnlock() const { return m_transaction_needs_unlock; }
+    QString settingsError() const { return m_settings_error; }
 
 Q_SIGNALS:
     void nameChanged();
+    void displayNameChanged();
     void balanceChanged();
     void currentTransactionChanged();
     void feeTargetBlocksChanged();
@@ -142,6 +158,7 @@ Q_SIGNALS:
     void securityStateChanged();
     void transactionErrorChanged();
     void transactionNeedsUnlockChanged();
+    void settingsErrorChanged();
 
 private:
     void initializeFeeEstimator();
@@ -160,6 +177,7 @@ private:
     bool unlockForAction(const std::optional<QString>& passphrase, bool& relock);
     void clearTransactionStatus();
     void setTransactionStatus(const QString& error, bool needs_unlock = false);
+    void setSettingsError(const QString& error);
 
     std::unique_ptr<interfaces::Wallet> m_wallet;
     ActivityListModel* m_activity_list_model{nullptr};
@@ -185,6 +203,8 @@ private:
     bool m_is_locked{false};
     QString m_transaction_error;
     bool m_transaction_needs_unlock{false};
+    QString m_settings_error;
+    QString m_display_name;
     std::unique_ptr<interfaces::Handler> m_handler_status_changed;
     std::unique_ptr<interfaces::Handler> m_handler_transaction_changed;
 };

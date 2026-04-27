@@ -10,6 +10,7 @@
         <file>components/BlockCounter.qml</file>
         <file>components/ConnectionOptions.qml</file>
         <file>components/ConnectionSettings.qml</file>
+        <file>components/MempoolInformationRows.qml</file>
         <file>components/DeveloperOptions.qml</file>
         <file>components/ExternalSignerReviewActions.qml</file>
         <file>components/ExternalPopup.qml</file>
@@ -39,6 +40,7 @@
         <file>controls/CoreCheckBox.qml</file>
         <file>controls/CoreText.qml</file>
         <file>controls/CoreTextField.qml</file>
+        <file>controls/EditableKeyValueRow.qml</file>
         <file>controls/ExternalLink.qml</file>
         <file>controls/FocusBorder.qml</file>
         <file>controls/GreenCheckIcon.qml</file>
@@ -77,6 +79,7 @@
         <file>pages/node/BannedPeers.qml</file>
         <file>pages/node/CommandConsole.qml</file>
         <file>pages/node/NetworkTraffic.qml</file>
+        <file>pages/node/MempoolInformationSettings.qml</file>
         <file>pages/node/NodeRunner.qml</file>
         <file>pages/node/NodeSettings.qml</file>
         <file>pages/node/Peers.qml</file>
@@ -123,6 +126,9 @@
         <file>pages/wallet/SendResult.qml</file>
         <file>pages/wallet/SendReview.qml</file>
         <file>pages/wallet/WalletBadge.qml</file>
+        <file>pages/wallet/WalletDelete.qml</file>
+        <file>pages/wallet/WalletPasswordSettings.qml</file>
+        <file>pages/wallet/WalletSettings.qml</file>
         <file>pages/wallet/WalletSelect.qml</file>
     </qresource>
     <qresource prefix="/icons">
@@ -149,6 +155,7 @@
         <file alias="console">res/icons/console.png</file>
         <file alias="cross">res/icons/cross.png</file>
         <file alias="ellipsis">res/icons/ellipsis.png</file>
+        <file alias="edit">res/icons/edit.png</file>
         <file alias="error">res/icons/error.png</file>
         <file alias="export">res/icons/export.png</file>
         <file alias="file">res/icons/file.png</file>

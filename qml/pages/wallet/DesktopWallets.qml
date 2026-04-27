@@ -24,21 +24,10 @@ Page {
     signal addWallet()
     signal sendTransaction(bool multipleRecipientsEnabled)
 
-    function handleWalletMigrationRequired(walletPath) {
-        const stackView = root.StackView.view
-        if (!stackView || stackView.currentItem !== root) {
-            return
-        }
-
-        walletSelect.close()
-        stackView.push(walletMigrationPage, { "walletPath": walletPath })
-    }
-
-    function handleWalletBadgeClicked() {
+    function toggleWalletSelection() {
         if (!walletController.initialized) {
             return
         }
-
         walletListModel.listWalletDir()
         if (walletController.noWalletsFound) {
             root.addWallet()
@@ -47,12 +36,15 @@ Page {
         }
     }
 
-    Component {
-        id: walletMigrationPage
-        ImportWalletMigration {
-            onBack: root.StackView.view.pop()
-            onCancel: root.StackView.view.pop()
-            onNext: root.StackView.view.pop()
+    function openWalletSelection() {
+        if (!walletController.initialized) {
+            return
+        }
+        walletListModel.listWalletDir()
+        if (walletController.noWalletsFound) {
+            root.addWallet()
+        } else {
+            walletSelect.open()
         }
     }
 
@@ -95,13 +87,15 @@ Page {
             objectName: "walletBadge"
             implicitWidth: 154
             implicitHeight: 46
-            text: walletController.selectedWallet.name
+            text: walletController.selectedWallet.displayName
             balance: walletController.selectedWallet.balance
             balanceSatoshi: walletController.selectedWallet.balanceSatoshi
             loading: !walletController.initialized
             noWalletLoaded: !walletController.isWalletLoaded
             noWalletsFound: walletController.noWalletsFound
-            onClicked: root.handleWalletBadgeClicked()
+            onClicked: {
+                root.toggleWalletSelection()
+            }
 
             WalletSelect {
                 id: walletSelect
@@ -226,6 +220,7 @@ Page {
         NodeSettings {
             id: nodeSettings
             showDoneButton: false
+            onSelectWalletRequested: root.openWalletSelection()
         }
     }
 

@@ -158,7 +158,11 @@ class QmlTestHarness:
         )
 
         # Connect the QmlDriver (retries internally until the socket appears).
-        self.driver = QmlDriver(self.socket_path, timeout=GUI_STARTUP_TIMEOUT)
+        try:
+            self.driver = QmlDriver(self.socket_path, timeout=GUI_STARTUP_TIMEOUT)
+        except QmlDriverError:
+            self._dump_startup_failure_context()
+            raise
         print("QmlDriver connected to test bridge.")
 
     def process_output(self):
@@ -198,6 +202,50 @@ class QmlTestHarness:
         if cleanup and self.tmpdir:
             shutil.rmtree(self.tmpdir, ignore_errors=True)
             self.tmpdir = None
+
+    def _candidate_debug_logs(self):
+        if not self.datadir:
+            return []
+        return [
+            os.path.join(self.datadir, "regtest", "debug.log"),
+            os.path.join(self.datadir, "debug.log"),
+        ]
+
+    def _dump_startup_failure_context(self):
+        print("\n--- GUI startup failure context ---", file=sys.stderr)
+        print(f"Expected test bridge socket: {self.socket_path}", file=sys.stderr)
+
+        if not self.process:
+            print("GUI process was not launched.", file=sys.stderr)
+            return
+
+        return_code = self.process.poll()
+        if return_code is None:
+            print(
+                f"GUI process is still running (pid={self.process.pid}) but the bridge socket never appeared.",
+                file=sys.stderr,
+            )
+        else:
+            print(
+                f"GUI process exited before the bridge connected with return code {return_code}.",
+                file=sys.stderr,
+            )
+            stdout, stderr = self.process.communicate(timeout=1)
+            if stdout:
+                print("\n--- GUI stdout ---", file=sys.stderr)
+                print(stdout.decode("utf-8", errors="replace"), file=sys.stderr)
+            if stderr:
+                print("\n--- GUI stderr ---", file=sys.stderr)
+                print(stderr.decode("utf-8", errors="replace"), file=sys.stderr)
+
+        for debug_log in self._candidate_debug_logs():
+            if os.path.isfile(debug_log):
+                print(f"\n--- debug.log: {debug_log} ---", file=sys.stderr)
+                with open(debug_log, "r", encoding="utf8", errors="replace") as fh:
+                    print(fh.read(), file=sys.stderr)
+                break
+        else:
+            print("\n--- debug.log not found ---", file=sys.stderr)
 
 
 def complete_onboarding(gui):

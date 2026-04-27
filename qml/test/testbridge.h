@@ -35,6 +35,7 @@
 ///   {"cmd": "save_screenshot", "path": "<png_path>"}
 ///   {"cmd": "list_objects"}
 ///   {"cmd": "set_clipboard_text", "text": "<value>"}
+///   {"cmd": "close_window"}
 class TestBridge : public QObject
 {
     Q_OBJECT
@@ -83,6 +84,7 @@ private:
     QByteArray cmdSaveScreenshot(const QString& path);
     QByteArray cmdListObjects();
     QByteArray cmdSetClipboardText(const QString& text);
+    QByteArray cmdCloseWindow();
 
     /// Build a JSON error response.
     static QByteArray errorResponse(const QString& message);

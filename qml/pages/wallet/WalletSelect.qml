@@ -83,6 +83,7 @@ Popup {
             delegate: ItemDelegate {
                 id: delegate
                 required property string name;
+                required property string displayName;
                 required property int loadState;
 
                 objectName: "walletSelectItem_" + name.replace(/[^A-Za-z0-9_]/g, "_")
@@ -109,7 +110,7 @@ Popup {
 
                     CoreText {
                         Layout.fillWidth: true
-                        text: delegate.name
+                        text: delegate.displayName
                         horizontalAlignment: Text.AlignLeft
                         verticalAlignment: Text.AlignVCenter
                         font.pixelSize: 14
