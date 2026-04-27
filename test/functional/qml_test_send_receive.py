@@ -297,7 +297,7 @@ def run_test(*, save_screenshots=False, screenshot_root=None):
             expected_total_sats=SEND_AMOUNT_SATS,
         )
 
-        gui.click("sendReviewSendButton")
+        gui.click("sendTransactionButton")
         checkpoints.checkpoint("transaction submitted from review", gui)
 
         txid = wait_for_single_mempool_tx(harness.gui_rpc_port)

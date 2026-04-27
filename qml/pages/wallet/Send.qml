@@ -371,6 +371,7 @@ PageStack {
 
                     CoreText {
                         id: title
+                        objectName: "walletSendTitle"
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
                         text: qsTr("Send bitcoin")
@@ -685,9 +686,11 @@ PageStack {
                             selectByMouse: true
                             text: root.recipient.amount.display
                             onTextChanged: {
-                                root.recipient.amount.display = text
-                                if (root.wallet) {
-                                    root.wallet.scheduleFeeEstimates()
+                                if (text !== root.recipient.amount.display) {
+                                    root.recipient.amount.display = text
+                                    if (root.wallet) {
+                                        root.wallet.scheduleFeeEstimates()
+                                    }
                                 }
                             }
                             onTextEdited: root.recipient.amount.display = text
@@ -770,6 +773,7 @@ PageStack {
                 }
 
                 LabeledTextInput {
+                    objectName: "sendNoteInput"
                     id: label
                     objectName: "sendNoteField"
                     inputObjectName: "sendNoteInput"
@@ -856,9 +860,22 @@ PageStack {
                         && (!root.wallet || !root.wallet.customFeeEnabled || root.wallet.customFeeRateValid)
                     onClicked: {
                         if (root.wallet.prepareTransaction()) {
-                            root.transactionPrepared(settings.multipleRecipientsEnabled);
+                            root.transactionPrepared(settings.multipleRecipientsEnabled)
+                        } else if (root.wallet.transactionNeedsUnlock) {
+                            reviewPassphrasePopup.errorText = ""
+                            reviewPassphrasePopup.open()
                         }
                     }
+                }
+
+                CoreText {
+                    objectName: "sendReviewErrorText"
+                    Layout.fillWidth: true
+                    visible: text.length > 0 && !root.wallet.transactionNeedsUnlock
+                    text: root.wallet.transactionError
+                    color: Theme.color.red
+                    font.pixelSize: 15
+                    wrapMode: Text.WordWrap
                 }
             }
         }
@@ -928,6 +945,32 @@ PageStack {
         id: coinSelectionPage
         CoinSelection {
             onDone: root.pop()
+        }
+    }
+
+    WalletPassphrasePopup {
+        id: reviewPassphrasePopup
+        parent: Overlay.overlay
+        width: Math.min(420, root.width - 40)
+        popupObjectName: "reviewPassphrasePopup"
+        passphraseFieldObjectName: "reviewPassphraseField"
+        errorTextObjectName: "reviewPassphraseErrorText"
+        cancelButtonObjectName: "reviewPassphraseCancelButton"
+        confirmButtonObjectName: "reviewPassphraseConfirmButton"
+        titleText: qsTr("Enter wallet password")
+        descriptionText: qsTr("This wallet needs to create a change address before the transaction review can be shown.")
+        confirmText: qsTr("Unlock and continue")
+        busyConfirmText: qsTr("Unlocking...")
+        onSubmitted: (passphrase) => {
+            reviewPassphrasePopup.busy = true
+            if (root.wallet.prepareTransactionWithPassphrase(passphrase)) {
+                reviewPassphrasePopup.busy = false
+                reviewPassphrasePopup.close()
+                root.transactionPrepared(settings.multipleRecipientsEnabled)
+                return
+            }
+            reviewPassphrasePopup.busy = false
+            reviewPassphrasePopup.errorText = root.wallet.transactionError
         }
     }
 }

@@ -115,7 +115,7 @@ Page {
             Layout.leftMargin: 20
             Layout.rightMargin: 20
             Layout.alignment: Qt.AlignCenter
-            enabled: !walletController.walletLoadInProgress
+            enabled: walletController.initialized && !walletController.walletLoadInProgress
             text: walletController.walletLoadInProgress ? qsTr("Importing...") : qsTr("Choose a wallet file")
             onClicked: {
                 if (automationPathField.text.length > 0) {

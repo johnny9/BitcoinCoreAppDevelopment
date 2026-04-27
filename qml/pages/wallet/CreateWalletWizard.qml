@@ -87,6 +87,7 @@ PageStack {
                 Layout.rightMargin: Layout.leftMargin
                 Layout.bottomMargin: 20
                 Layout.alignment: Qt.AlignCenter
+                enabled: walletController.initialized
                 text: qsTr("Create wallet")
                 onClicked: {
                     root.push(intro)
@@ -99,6 +100,7 @@ PageStack {
                 Layout.leftMargin: 20
                 Layout.rightMargin: Layout.leftMargin
                 Layout.alignment: Qt.AlignCenter
+                enabled: walletController.initialized
                 text: qsTr("Import wallet")
                 borderColor: Theme.color.neutral6
                 borderHoverColor: Theme.color.orangeLight1

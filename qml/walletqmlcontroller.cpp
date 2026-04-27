@@ -106,6 +106,11 @@ WalletQmlController::~WalletQmlController()
 
 void WalletQmlController::setSelectedWallet(QString path)
 {
+    if (!m_initialized) {
+        setWalletLoadError(tr("Wallets are still loading. Try again in a moment."));
+        return;
+    }
+
     if (!m_wallets.empty()) {
         for (WalletQmlModel* wallet : m_wallets) {
             if (wallet->name() == path) {
@@ -141,9 +146,14 @@ void WalletQmlController::unloadWallets()
 
 bool WalletQmlController::createSingleSigWallet(const QString &name, const QString &passphrase)
 {
+    clearWalletCreateStatus();
     clearWalletLoadStatus();
     clearWalletMigrationStatus();
     m_warning_messages.clear();
+    if (!m_initialized) {
+        setWalletCreateError(tr("Wallets are still loading. Try again in a moment."));
+        return false;
+    }
     const SecureString secure_passphrase{passphrase.toStdString()};
     const std::string wallet_name{name.toStdString()};
     auto wallet{m_node.walletLoader().createWallet(wallet_name, secure_passphrase, wallet::WALLET_FLAG_DESCRIPTORS, m_warning_messages)};
@@ -154,12 +164,12 @@ bool WalletQmlController::createSingleSigWallet(const QString &name, const QStri
         m_wallets.push_back(m_selected_wallet);
         setWalletLoaded(true);
         setNoWalletsFound(false);
+        setWalletLoaded(true);
         Q_EMIT selectedWalletChanged();
         return true;
     } else {
-        m_error_message = util::ErrorString(wallet);
-        const QString error = QString::fromStdString(m_error_message.translated);
-        setWalletLoadError(error.isEmpty() ? tr("Wallet creation failed.") : error);
+        const bilingual_str error = util::ErrorString(wallet);
+        setWalletCreateError(QString::fromStdString(error.translated.empty() ? error.original : error.translated));
         return false;
     }
 }
@@ -233,7 +243,16 @@ bool WalletQmlController::createExternalSignerWallet(const QString& name)
 
 void WalletQmlController::importWallet(const QString& path)
 {
+    if (!m_initialized) {
+        setWalletLoadError(tr("Wallets are still loading. Try again in a moment."));
+        return;
+    }
     startWalletImport(path);
+}
+
+void WalletQmlController::clearWalletCreateStatus()
+{
+    setWalletCreateError(QString());
 }
 
 void WalletQmlController::clearWalletLoadStatus()
@@ -243,9 +262,13 @@ void WalletQmlController::clearWalletLoadStatus()
     setWalletLoadWarnings(QString());
 }
 
-void WalletQmlController::migrateWallet(const QString& path)
+void WalletQmlController::migrateWallet(const QString& path, const QString& passphrase)
 {
-    startWalletMigration(path);
+    if (!m_initialized) {
+        setWalletMigrationError(tr("Wallets are still loading. Try again in a moment."));
+        return;
+    }
+    startWalletMigration(path, passphrase);
 }
 
 void WalletQmlController::clearWalletMigrationStatus()
@@ -682,7 +705,7 @@ void WalletQmlController::startWalletLoad(const QString& path)
     });
 }
 
-void WalletQmlController::startWalletMigration(const QString& path)
+void WalletQmlController::startWalletMigration(const QString& path, const QString& passphrase)
 {
     clearWalletLoadStatus();
     clearWalletMigrationStatus();
@@ -702,9 +725,9 @@ void WalletQmlController::startWalletMigration(const QString& path)
 
     setWalletMigrationInProgress(true);
 
-    QTimer::singleShot(0, m_worker, [this, wallet_reference]() {
-        const SecureString empty_passphrase;
-        auto result = m_node.walletLoader().migrateWallet(wallet_reference.toStdString(), empty_passphrase);
+    QTimer::singleShot(0, m_worker, [this, wallet_reference, passphrase]() {
+        const SecureString secure_passphrase{passphrase.toStdString()};
+        auto result = m_node.walletLoader().migrateWallet(wallet_reference.toStdString(), secure_passphrase);
 
         if (!result) {
             const QString error = QString::fromStdString(util::ErrorString(result).translated);
@@ -722,6 +745,14 @@ void WalletQmlController::startWalletMigration(const QString& path)
             Q_EMIT walletMigrationSucceeded();
         });
     });
+}
+
+void WalletQmlController::setWalletCreateError(const QString& error)
+{
+    if (m_wallet_create_error != error) {
+        m_wallet_create_error = error;
+        Q_EMIT walletCreateErrorChanged();
+    }
 }
 
 void WalletQmlController::setWalletLoadInProgress(bool in_progress)

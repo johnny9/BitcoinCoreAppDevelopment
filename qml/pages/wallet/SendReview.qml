@@ -114,23 +114,66 @@ Page {
                 Layout.fillWidth: true
                 Layout.topMargin: 30
                 onSendRequested: {
-                    root.wallet.sendTransaction()
-                    root.transactionSent()
+                    if (root.wallet.sendTransaction()) {
+                        root.transactionSent()
+                    }
                 }
             }
 
             ContinueButton {
                 id: confirmationButton
-                objectName: "sendReviewSendButton"
+                objectName: "sendTransactionButton"
                 visible: !root.wallet || !root.wallet.hasExternalSigner
                 Layout.fillWidth: true
                 Layout.topMargin: 30
                 text: qsTr("Send")
                 onClicked: {
-                    root.wallet.sendTransaction()
-                    root.transactionSent()
+                    if (root.wallet.isEncrypted && root.wallet.isLocked) {
+                        sendPassphrasePopup.errorText = ""
+                        sendPassphrasePopup.open()
+                        return
+                    }
+                    if (root.wallet.sendTransaction()) {
+                        root.transactionSent()
+                    }
                 }
             }
+
+            CoreText {
+                objectName: "sendTransactionErrorText"
+                Layout.fillWidth: true
+                visible: text.length > 0
+                text: root.wallet.transactionError
+                color: Theme.color.red
+                font.pixelSize: 15
+                wrapMode: Text.WordWrap
+            }
+        }
+    }
+
+    WalletPassphrasePopup {
+        id: sendPassphrasePopup
+        parent: Overlay.overlay
+        width: Math.min(420, root.width - 40)
+        popupObjectName: "sendPassphrasePopup"
+        passphraseFieldObjectName: "sendPassphraseField"
+        errorTextObjectName: "sendPassphraseErrorText"
+        cancelButtonObjectName: "sendPassphraseCancelButton"
+        confirmButtonObjectName: "sendPassphraseConfirmButton"
+        titleText: qsTr("Enter wallet password")
+        descriptionText: qsTr("Enter your wallet password to sign and send this transaction.")
+        confirmText: qsTr("Sign and send")
+        busyConfirmText: qsTr("Signing...")
+        onSubmitted: (passphrase) => {
+            sendPassphrasePopup.busy = true
+            if (root.wallet.sendTransactionWithPassphrase(passphrase)) {
+                sendPassphrasePopup.busy = false
+                sendPassphrasePopup.close()
+                root.transactionSent()
+                return
+            }
+            sendPassphrasePopup.busy = false
+            sendPassphrasePopup.errorText = root.wallet.transactionError
         }
     }
 }

@@ -21,6 +21,7 @@
 #include <wallet/coincontrol.h>
 
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include <QHash>
@@ -49,6 +50,10 @@ class WalletQmlModel : public QObject
     Q_PROPERTY(int feeEstimateRevision READ feeEstimateRevision NOTIFY feeEstimateRevisionChanged)
     Q_PROPERTY(bool isWalletLoaded READ isWalletLoaded NOTIFY walletIsLoadedChanged)
     Q_PROPERTY(int displayUnit READ displayUnit WRITE setDisplayUnit NOTIFY displayUnitChanged)
+    Q_PROPERTY(bool isEncrypted READ isEncrypted NOTIFY securityStateChanged)
+    Q_PROPERTY(bool isLocked READ isLocked NOTIFY securityStateChanged)
+    Q_PROPERTY(QString transactionError READ transactionError NOTIFY transactionErrorChanged)
+    Q_PROPERTY(bool transactionNeedsUnlock READ transactionNeedsUnlock NOTIFY transactionNeedsUnlockChanged)
 
 public:
     WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObject* parent = nullptr);
@@ -73,8 +78,10 @@ public:
     bool feeEstimatePending() const { return m_fee_estimate_pending; }
     int feeEstimateRevision() const { return m_fee_estimate_revision; }
     Q_INVOKABLE bool prepareTransaction();
+    Q_INVOKABLE bool prepareTransactionWithPassphrase(const QString& passphrase);
     Q_INVOKABLE void approveExternalSignerTransaction();
-    Q_INVOKABLE void sendTransaction();
+    Q_INVOKABLE bool sendTransaction();
+    Q_INVOKABLE bool sendTransactionWithPassphrase(const QString& passphrase);
     Q_INVOKABLE QString newAddress(QString label);
     Q_INVOKABLE QString estimatedFeeForTarget(unsigned int target_blocks) const;
     Q_INVOKABLE int feeTargetIndex(unsigned int target_blocks) const;
@@ -111,6 +118,10 @@ public:
     void setWalletLoaded(bool loaded);
     int displayUnit() const { return m_display_unit; }
     void setDisplayUnit(int unit);
+    bool isEncrypted() const { return m_is_encrypted; }
+    bool isLocked() const { return m_is_locked; }
+    QString transactionError() const { return m_transaction_error; }
+    bool transactionNeedsUnlock() const { return m_transaction_needs_unlock; }
 
 Q_SIGNALS:
     void nameChanged();
@@ -127,6 +138,9 @@ Q_SIGNALS:
     void displayUnitChanged(int unit);
     void externalSignerApprovalSucceeded();
     void externalSignerApprovalFailed(const QString& message, bool signerNotFound);
+    void securityStateChanged();
+    void transactionErrorChanged();
+    void transactionNeedsUnlockChanged();
 
 private:
     void initializeFeeEstimator();
@@ -137,6 +151,14 @@ private:
     void clearFeeEstimates();
     QString ensurePreviewChangeAddress();
     unsigned int nextPaymentRequestId() const;
+    void subscribeToWalletSignals();
+    void unsubscribeFromWalletSignals();
+    void refreshSecurityState();
+    bool prepareTransactionInternal(const std::optional<QString>& passphrase);
+    bool sendTransactionInternal(const std::optional<QString>& passphrase);
+    bool unlockForAction(const std::optional<QString>& passphrase, bool& relock);
+    void clearTransactionStatus();
+    void setTransactionStatus(const QString& error, bool needs_unlock = false);
 
     std::unique_ptr<interfaces::Wallet> m_wallet;
     ActivityListModel* m_activity_list_model{nullptr};
@@ -158,6 +180,10 @@ private:
     bool m_fee_estimate_pending{false};
     bool m_is_wallet_loaded{false};
     int m_display_unit{0};
+    bool m_is_encrypted{false};
+    bool m_is_locked{false};
+    QString m_transaction_error;
+    bool m_transaction_needs_unlock{false};
     std::unique_ptr<interfaces::Handler> m_handler_status_changed;
     std::unique_ptr<interfaces::Handler> m_handler_transaction_changed;
 };

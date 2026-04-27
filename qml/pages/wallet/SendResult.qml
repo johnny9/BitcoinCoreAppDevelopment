@@ -13,6 +13,7 @@ import "../../components"
 
 Popup {
     id: root
+    objectName: "sendResultPopup"
     modal: true
     anchors.centerIn: parent
     Overlay.modal: Rectangle {
