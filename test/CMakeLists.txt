@@ -12,6 +12,7 @@ endif()
 add_executable(bitcoinqml_unit_tests
   test_unit_tests_main.cpp
   test_blockclockdial.cpp
+  test_bitcoinuri.cpp
   test_bitcoinamount.cpp
   test_desktoptrayiconcontroller.cpp
   test_desktopwindowbehaviormodel.cpp
@@ -26,6 +27,7 @@ add_executable(bitcoinqml_unit_tests
   test_banlistmodel.cpp
   test_display_settings.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../bitcoin/src/util/chaintype.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../qml/models/bitcoinuri.cpp
 )
 
 target_compile_definitions(bitcoinqml_unit_tests

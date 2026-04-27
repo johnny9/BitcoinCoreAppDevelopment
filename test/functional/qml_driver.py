@@ -105,7 +105,16 @@ class QmlDriver:
             )
         return resp["value"]
 
-    def wait_for_property(self, object_name, prop, predicate_or_value, timeout_ms=5000):
+    def wait_for_property(
+        self,
+        object_name,
+        prop,
+        predicate_or_value=None,
+        timeout_ms=5000,
+        value=None,
+        contains=None,
+        nonEmpty=False,
+    ):
         """Poll get_property until the condition is met or timeout expires.
 
         Args:
@@ -114,15 +123,24 @@ class QmlDriver:
             predicate_or_value: A callable predicate(value)->bool, or an exact
                 value to compare against (equality check).
             timeout_ms: Maximum wait time in milliseconds.
+            value: Expected value. Supported for tests that use keyword style.
+            contains: If set, the property's string value must contain this substring.
+            nonEmpty: If True, the property's string value must be non-empty.
 
         Returns the value that satisfied the condition.
         Raises QmlDriverError if the timeout expires.
         """
-        predicate = (
-            predicate_or_value
-            if callable(predicate_or_value)
-            else lambda v: v == predicate_or_value
-        )
+        expected = value if value is not None else predicate_or_value
+        if contains is not None:
+            predicate = lambda v: contains in str(v)
+        elif nonEmpty:
+            predicate = lambda v: bool(v)
+        elif callable(expected):
+            predicate = expected
+        elif expected is None:
+            predicate = lambda v: v is not None
+        else:
+            predicate = lambda v: v == expected
         deadline = time.time() + timeout_ms / 1000
         while time.time() < deadline:
             try:
@@ -173,6 +191,27 @@ class QmlDriver:
                 f"save_screenshot({path!r}) failed: {resp['error']}"
             )
         return resp
+
+    def set_clipboard_text(self, text):
+        """Set the system clipboard to the given text string."""
+        resp = self._send({"cmd": "set_clipboard_text", "text": text})
+        if "error" in resp:
+            raise QmlDriverError(f"set_clipboard_text failed: {resp['error']}")
+
+    def simulate_drop(self, object_name, text=None, urls=None):
+        """Simulate a drag-drop onto a named QML DropArea.
+
+        Pass text= for a text/plain drop or urls= (list of URL strings) for a
+        text/uri-list drop (e.g. file:// URLs).
+        """
+        cmd = {"cmd": "simulate_drop", "objectName": object_name}
+        if urls is not None:
+            cmd["urls"] = urls
+        else:
+            cmd["text"] = text or ""
+        resp = self._send(cmd)
+        if "error" in resp:
+            raise QmlDriverError(f"simulate_drop({object_name!r}) failed: {resp['error']}")
 
     def settle(self, timeout_ms=5000, stack_view_names=("mainPageStack", "createWalletWizard")):
         """Wait for relevant StackView transitions to finish.

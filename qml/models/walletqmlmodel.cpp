@@ -255,6 +255,7 @@ std::unique_ptr<interfaces::Handler> WalletQmlModel::handleTransactionChanged(Tr
     return m_wallet->handleTransactionChanged(converted_fn);
 }
 
+
 bool WalletQmlModel::prepareTransaction()
 {
     if (!m_wallet || !m_send_recipients || m_send_recipients->recipients().empty()) {

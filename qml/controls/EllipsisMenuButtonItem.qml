@@ -1,4 +1,4 @@
-// Copyright (c) 2025 The Bitcoin Core developers
+// Copyright (c) 2026 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -8,32 +8,20 @@ import QtQuick.Layouts 1.15
 import org.bitcoincore.qt 1.0
 
 Button {
+    id: root
+
     property int bgRadius: 5
     property color bgDefaultColor: "transparent"
-
-    id: root
-    checkable: true
-    checked: optionSwitch.checked
     hoverEnabled: AppMode.isDesktop
 
     implicitWidth: 280
     implicitHeight: 44
 
-    MouseArea {
-        anchors.fill: parent
-        enabled: false
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-    }
-
-    onClicked: {
-        optionSwitch.checked = !optionSwitch.checked
-    }
+    HoverHandler { cursorShape: Qt.PointingHandCursor }
 
     contentItem: RowLayout {
         spacing: 7
         anchors.fill: parent
-        anchors.centerIn: parent
         anchors.margins: 10
         CoreText {
             id: buttonText
@@ -42,13 +30,6 @@ Button {
             horizontalAlignment: Text.AlignLeft
             font.pixelSize: 15
             text: root.text
-        }
-        OptionSwitch {
-            id: optionSwitch
-            Layout.alignment: Qt.AlignVCenter
-            Layout.preferredWidth: 40
-            Layout.preferredHeight: 24
-            checked: root.checked
         }
     }
 

@@ -12,6 +12,7 @@ import "../settings"
 
 Page {
     id: root
+    objectName: "createWalletName"
     signal back
     signal next
     property string walletName: ""
@@ -44,6 +45,7 @@ Page {
 
         CoreTextField {
             id: walletNameInput
+            objectName: "walletNameInput"
             focus: true
             Layout.fillWidth: true
             Layout.leftMargin: 20
@@ -57,6 +59,7 @@ Page {
 
         ContinueButton {
             id: continueButton
+            objectName: "createWalletNameContinueButton"
             Layout.preferredWidth: Math.min(300, parent.width - 2 * Layout.leftMargin)
             Layout.leftMargin: 20
             Layout.rightMargin: 20

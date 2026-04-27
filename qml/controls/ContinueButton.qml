@@ -20,12 +20,13 @@ Button {
     property color borderHoverColor: "transparent"
     property color borderPressedColor: "transparent"
     property bool bold: true
+    property int fontSize: 18
 
     contentItem: CoreText {
         text: parent.text
         color: root.textColor
         bold: root.bold
-        font.pixelSize: 18
+        font.pixelSize: root.fontSize
     }
     background: Rectangle {
         id: bg

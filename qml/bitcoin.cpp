@@ -31,6 +31,7 @@
 #include <qml/models/activitylistmodel.h>
 #include <qml/models/banlistmodel.h>
 #include <qml/models/bitcoinaddress.h>
+#include <qml/models/bitcoinurimodel.h>
 #include <qml/models/chainmodel.h>
 #include <qml/models/debuglogmodel.h>
 #include <qml/models/networktraffictower.h>
@@ -393,6 +394,11 @@ int QmlGuiMain(int argc, char* argv[])
     OptionsQmlModel options_model(*node, !need_onboarding.toBool());
     engine.rootContext()->setContextProperty("optionsModel", &options_model);
     engine.rootContext()->setContextProperty("needOnboarding", need_onboarding);
+#ifdef ENABLE_TEST_AUTOMATION
+    engine.rootContext()->setContextProperty("testAutomationEnabled", true);
+#else
+    engine.rootContext()->setContextProperty("testAutomationEnabled", false);
+#endif
 
     // -lang CLI flag overrides the persisted setting (bitcoin-qt compatibility).
     // Must be after gArgs.ParseParameters() and after setupChainQSettings() so
@@ -415,6 +421,7 @@ int QmlGuiMain(int argc, char* argv[])
         engine.retranslate();
     });
     Clipboard clipboard;
+    BitcoinUriModel bitcoin_uri_model;
 
     desktop_tray_icon_controller.setBasePixmap(QPixmap(":/icons/bitcoin-circle"));
     desktop_tray_icon_controller.setIsDark(QSettings().value("dark", true).toBool());
@@ -429,6 +436,7 @@ int QmlGuiMain(int argc, char* argv[])
 
     qmlRegisterSingletonInstance<AppMode>("org.bitcoincore.qt", 1, 0, "AppMode", &app_mode);
     qmlRegisterSingletonInstance<Clipboard>("org.bitcoincore.qt", 1, 0, "Clipboard", &clipboard);
+    qmlRegisterSingletonInstance<BitcoinUriModel>("org.bitcoincore.qt", 1, 0, "BitcoinUri", &bitcoin_uri_model);
     qmlRegisterType<BlockClockDial>("org.bitcoincore.qt", 1, 0, "BlockClockDial");
     qmlRegisterType<LineGraph>("org.bitcoincore.qt", 1, 0, "LineGraph");
     qmlRegisterUncreatableType<PeerDetailsModel>("org.bitcoincore.qt", 1, 0, "PeerDetailsModel", "");

@@ -11,11 +11,12 @@ Button {
     hoverEnabled: AppMode.isDesktop
 
     property bool bold: true
+    property int fontSize: 18
 
     contentItem: CoreText {
         text: parent.text
         bold: root.bold
-        font.pixelSize: 18
+        font.pixelSize: root.fontSize
         color: Theme.color.neutral9
     }
     background: Rectangle {

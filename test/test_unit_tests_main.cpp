@@ -8,6 +8,7 @@
 
 const TranslateFn G_TRANSLATION_FUN{nullptr};
 
+int RunBitcoinUriTests(int argc, char* argv[]);
 int RunBitcoinAmountTests(int argc, char* argv[]);
 int RunBlockClockDialTests(int argc, char* argv[]);
 int RunDesktopTrayIconControllerTests(int argc, char* argv[]);
@@ -28,6 +29,7 @@ int main(int argc, char* argv[])
     QApplication app(argc, argv);
 
     int status = 0;
+    status |= RunBitcoinUriTests(argc, argv);
     status |= RunBitcoinAmountTests(argc, argv);
     status |= RunBlockClockDialTests(argc, argv);
     status |= RunDesktopTrayIconControllerTests(argc, argv);
