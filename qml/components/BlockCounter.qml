@@ -17,7 +17,7 @@ Label {
     padding: 16
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
-    font.family: "Inter"
+    font.family: "BitcoinCoreSans"
     font.styleName: "Semi Bold"
     font.pixelSize: 20
     text: blockHeight

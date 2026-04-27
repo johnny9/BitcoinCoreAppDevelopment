@@ -19,6 +19,9 @@ Popup {
         color: Qt.rgba(0.25, 0.25, 0.25, 0.9)
     }
 
+    property string descriptionText: qsTr("Based on your selected fee, it should be confirmed within the next 10 minutes.")
+    property string actionText: qsTr("Close window")
+
     background: Rectangle {
         anchors.centerIn: parent
         width: columnLayout.width + 40
@@ -65,7 +68,7 @@ Popup {
             Layout.alignment: Qt.AlignHCenter
             Layout.maximumWidth: 350
             color: Theme.color.neutral7
-            text: qsTr("Based on your selected fee, it should be confirmed within the next 10 minutes.")
+            text: root.descriptionText
             font.pixelSize: 18
         }
 
@@ -74,7 +77,7 @@ Popup {
             Layout.leftMargin: 20
             Layout.rightMargin: Layout.leftMargin
             Layout.alignment: Qt.AlignCenter
-            text: qsTr("Close window")
+            text: root.actionText
             borderColor: Theme.color.neutral6
             borderHoverColor: Theme.color.neutral9
             borderPressedColor: Theme.color.neutral9

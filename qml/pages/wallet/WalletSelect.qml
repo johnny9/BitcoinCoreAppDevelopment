@@ -67,6 +67,7 @@ Popup {
         }
 
         ListView {
+            objectName: "walletSelectList"
             Layout.preferredWidth: 220
             Layout.preferredHeight: Math.min(listView.count * 34, 300)
             id: listView

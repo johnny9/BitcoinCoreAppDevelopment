@@ -151,10 +151,10 @@ void QmlInitExecutorApiTests::shutdownEmitsRunawayExceptionOnFailure()
     QCOMPARE(runaway_spy.takeFirst().at(0).toString(), QString{"Translated shutdown failure"});
 }
 
-int RunQmlInitExecutorApiTests(int argc, char* argv[])
-{
-    QmlInitExecutorApiTests tc;
-    return QTest::qExec(&tc, argc, argv);
-}
-
+#ifdef BITCOINQML_NO_TEST_MAIN
+#include <test/qt_test_registry.h>
+BITCOINQML_REGISTER_QT_TEST(QmlInitExecutorApiTests)
+#else
+QTEST_MAIN(QmlInitExecutorApiTests)
+#endif
 #include <test_qmlinitexecutor_api.moc>

@@ -128,6 +128,28 @@ def write_datadir(datadir, rpc_port, p2p_port, extra_lines=None):
                 conf.write(f"{line}\n")
 
 
+def update_settings_json(datadir, updates):
+    settings_dir = os.path.join(datadir, "regtest")
+    if not os.path.isdir(settings_dir):
+        settings_dir = datadir
+    os.makedirs(settings_dir, exist_ok=True)
+    settings_path = os.path.join(settings_dir, "settings.json")
+    settings = {}
+    if os.path.exists(settings_path):
+        with open(settings_path, "r", encoding="utf8") as settings_file:
+            settings = json.load(settings_file)
+
+    for key, value in updates.items():
+        if value is None:
+            settings.pop(key, None)
+        else:
+            settings[key] = value
+
+    with open(settings_path, "w", encoding="utf8") as settings_file:
+        json.dump(settings, settings_file, indent=4, sort_keys=True)
+        settings_file.write("\n")
+
+
 class WalletFlowHarness:
     """Launches a source bitcoind and the QML GUI with isolated datadirs."""
 
@@ -135,7 +157,7 @@ class WalletFlowHarness:
         self.name = name
         self.port_offset = port_offset
         self.gui_binary = find_gui_binary()
-        self.bitcoind_binary = find_bitcoind()
+        self.bitcoind_binary = None
         self.tmpdir = tempfile.mkdtemp(prefix=f"{name}_")
         self.socket_path = os.path.join(self.tmpdir, "test_bridge.sock")
         self.gui_datadir = os.path.join(self.tmpdir, "gui_node")
@@ -156,11 +178,17 @@ class WalletFlowHarness:
         return os.path.join(self.gui_datadir, "regtest", "wallets")
 
     @property
+    def gui_settings_path(self):
+        return os.path.join(self.gui_datadir, "regtest", "settings.json")
+
+    @property
     def source_wallets_path(self):
         return os.path.join(self.source_datadir, "regtest", "wallets")
 
     def start_source_node(self, extra_args=None, binary=None):
-        args = [binary or self.bitcoind_binary, f"-datadir={self.source_datadir}"]
+        bitcoind_binary = binary or self.bitcoind_binary or find_bitcoind()
+        self.bitcoind_binary = bitcoind_binary
+        args = [bitcoind_binary, f"-datadir={self.source_datadir}"]
         if extra_args:
             args.extend(extra_args)
         self.source_process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -179,7 +207,7 @@ class WalletFlowHarness:
                 self.source_process.wait()
         self.source_process = None
 
-    def start_gui(self, reset_gui_settings=False):
+    def start_gui(self, reset_gui_settings=False, extra_args=None, cwd=None):
         env = dict(os.environ)
         env["QT_QPA_PLATFORM"] = "offscreen"
         args = [
@@ -194,11 +222,18 @@ class WalletFlowHarness:
         ]
         if reset_gui_settings:
             args.insert(3, "-resetguisettings")
-        self.gui_process = subprocess.Popen(args, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if extra_args:
+            args.extend(extra_args)
+        self.gui_process = subprocess.Popen(
+            args,
+            env=env,
+            cwd=cwd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
         self.driver = QmlDriver(self.socket_path, timeout=GUI_STARTUP_TIMEOUT)
 
-    def stop(self):
-        self.stop_source_node()
+    def stop_gui(self):
         if self.gui_process and self.gui_process.poll() is None:
             self.gui_process.send_signal(signal.SIGTERM)
             try:
@@ -210,6 +245,17 @@ class WalletFlowHarness:
         if self.driver:
             self.driver.close()
             self.driver = None
+
+    def restart_gui(self, reset_gui_settings=False, extra_args=None, cwd=None):
+        self.stop_gui()
+        self.start_gui(reset_gui_settings=reset_gui_settings, extra_args=extra_args, cwd=cwd)
+
+    def update_gui_settings(self, updates):
+        update_settings_json(self.gui_datadir, updates)
+
+    def stop(self):
+        self.stop_source_node()
+        self.stop_gui()
         if os.getenv("KEEP_QML_TEST_TMPDIR") == "1":
             print(f"Preserving test directory: {self.tmpdir}")
         else:

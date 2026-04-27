@@ -170,7 +170,7 @@ Page {
                     anchors.right: copyIcon.left
                     anchors.top: addressLabel.bottom
                     leftPadding: 0
-                    font.family: "Inter"
+                    font.family: "Roboto Mono"
                     font.styleName: "Regular"
                     font.pixelSize: 18
                     horizontalAlignment: Text.AlignLeft

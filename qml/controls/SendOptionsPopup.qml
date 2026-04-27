@@ -47,12 +47,14 @@ OptionPopup {
 
         EllipsisMenuToggleItem {
             id: coinControlToggle
+            objectName: "sendOptionsCoinControlToggle"
             Layout.fillWidth: true
             text: qsTr("Enable Coin control")
         }
 
         EllipsisMenuToggleItem {
             id: multipleRecipientsToggle
+            objectName: "sendOptionsMultipleRecipientsToggle"
             Layout.fillWidth: true
             text: qsTr("Multiple Recipients")
         }

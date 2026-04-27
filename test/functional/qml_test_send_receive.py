@@ -81,9 +81,9 @@ class CheckpointRecorder:
 
 
 def assert_review_values(gui, *, expected_fee_sats, expected_amount_sats, expected_total_sats):
-    review_amount_text = gui.get_text("sendReviewAmountValue")
-    review_fee_text = gui.get_text("sendReviewFeeValue")
-    review_total_text = gui.get_text("sendReviewTotalValue")
+    review_amount_text = gui.get_text("sendReviewAmountField")
+    review_fee_text = gui.get_text("sendReviewFeeField")
+    review_total_text = gui.get_text("sendReviewTotalField")
 
     review_amount_sats = sat_text_to_sats(review_amount_text)
     review_fee_sats = sat_text_to_sats(review_fee_text)
@@ -216,13 +216,13 @@ def run_test(*, save_screenshots=False, screenshot_root=None):
         )
         checkpoints.checkpoint("gui wallet funded", gui)
 
-        gui.click("walletSendTabButton")
-        gui.wait_for_page("walletSendPage", timeout_ms=10000)
+        gui.click("desktopWalletsSendTab")
+        gui.wait_for_page("sendPage", timeout_ms=10000)
         checkpoints.checkpoint("send page opened", gui)
 
         gui.set_text("sendAddressInput", receiver_address)
         gui.set_text("sendAmountInput", SEND_AMOUNT)
-        gui.wait_for_property("sendContinueButton", "enabled", True, timeout_ms=20000)
+        gui.wait_for_property("sendReviewButton", "enabled", True, timeout_ms=20000)
         checkpoints.checkpoint("send form populated", gui)
 
         gui.wait_for_property("feeSelectionControl", "selectedLabel", DEFAULT_FEE_LABEL, timeout_ms=5000)
@@ -251,8 +251,8 @@ def run_test(*, save_screenshots=False, screenshot_root=None):
         assert estimated_fee_sats > 0, f"Expected a positive estimated fee, got {estimated_fee_text!r}"
 
         gui.wait_for_property("feeSelectionControl", "includeFeeInAmount", False, timeout_ms=5000)
-        gui.click("sendContinueButton")
-        gui.wait_for_page("walletSendReviewPage", timeout_ms=10000)
+        gui.click("sendReviewButton")
+        gui.wait_for_page("sendReviewPage", timeout_ms=10000)
         checkpoints.checkpoint("review page with include-fee off", gui)
         assert_review_values(
             gui,
@@ -262,8 +262,8 @@ def run_test(*, save_screenshots=False, screenshot_root=None):
         )
 
         gui.click("sendReviewBackButton")
-        gui.wait_for_page("walletSendPage", timeout_ms=10000)
-        gui.wait_for_property("sendContinueButton", "enabled", True, timeout_ms=10000)
+        gui.wait_for_page("sendPage", timeout_ms=10000)
+        gui.wait_for_property("sendReviewButton", "enabled", True, timeout_ms=10000)
         checkpoints.checkpoint("returned to send page", gui)
 
         gui.click("feeSelectionDropdownButton")
@@ -287,8 +287,8 @@ def run_test(*, save_screenshots=False, screenshot_root=None):
             f"{estimated_fee_with_subtract_text!r}"
         )
 
-        gui.click("sendContinueButton")
-        gui.wait_for_page("walletSendReviewPage", timeout_ms=10000)
+        gui.click("sendReviewButton")
+        gui.wait_for_page("sendReviewPage", timeout_ms=10000)
         checkpoints.checkpoint("review page with include-fee on", gui)
         assert_review_values(
             gui,

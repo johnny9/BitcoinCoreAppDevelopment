@@ -74,13 +74,10 @@ void BitcoinAmountTests::flipUnit_changesLabelAndDisplaySignal()
     QVERIFY(spy.count() >= 1);
 }
 
-int RunBitcoinAmountTests(int argc, char* argv[])
-{
-    BitcoinAmountTests tests;
-    return QTest::qExec(&tests, argc, argv);
-}
-
-#ifndef BITCOINQML_NO_TEST_MAIN
+#ifdef BITCOINQML_NO_TEST_MAIN
+#include <test/qt_test_registry.h>
+BITCOINQML_REGISTER_QT_TEST(BitcoinAmountTests)
+#else
 QTEST_MAIN(BitcoinAmountTests)
 #endif
 #include "test_bitcoinamount.moc"

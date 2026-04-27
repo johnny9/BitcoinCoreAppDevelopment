@@ -58,6 +58,7 @@ Page {
         target: walletController
         function onOpenWalletSettingsRequested() {
             settingsTabButton.checked = true
+            nodeSettings.openWalletSettings()
         }
         function onWalletMigrationRequired(walletPath) {
             root.handleWalletMigrationRequired(walletPath)
@@ -94,19 +95,19 @@ Page {
             visible: walletController.isWalletLoaded
             NavigationTab {
                 id: activityTabButton
-                objectName: "walletActivityTabButton"
+                objectName: "desktopWalletsActivityTab"
                 text: qsTr("Activity")
                 property int index: 0
                 ButtonGroup.group: navigationTabs
             }
             NavigationTab {
-                objectName: "walletSendTabButton"
+                objectName: "desktopWalletsSendTab"
                 text: qsTr("Send")
                 property int index: 1
                 ButtonGroup.group: navigationTabs
             }
             NavigationTab {
-                objectName: "walletReceiveTabButton"
+                objectName: "desktopWalletsReceiveTab"
                 text: qsTr("Receive")
                 property int index: 2
                 ButtonGroup.group: navigationTabs
@@ -160,6 +161,7 @@ Page {
             }
             NavigationTab {
                 id: settingsTabButton
+                objectName: "desktopWalletSettingsTabButton"
                 iconSource: "image://images/gear-outline"
                 iconColor: Theme.color.neutral7
                 Layout.preferredWidth: 30
@@ -198,6 +200,7 @@ Page {
             }
         }
         NodeSettings {
+            id: nodeSettings
             showDoneButton: false
         }
     }

@@ -45,12 +45,14 @@ class OptionsQmlModel : public QObject
     Q_PROPERTY(QString proxyAddress READ proxyAddress WRITE setProxyAddress NOTIFY proxyAddressChanged)
     Q_PROPERTY(bool torEnabled READ torEnabled WRITE setTorEnabled NOTIFY torEnabledChanged)
     Q_PROPERTY(QString torAddress READ torAddress WRITE setTorAddress NOTIFY torAddressChanged)
+    Q_PROPERTY(QString externalSignerPath READ externalSignerPath WRITE setExternalSignerPath NOTIFY externalSignerPathChanged)
     Q_PROPERTY(bool proxySettingsDirty READ proxySettingsDirty NOTIFY proxySettingsDirtyChanged)
     Q_PROPERTY(QString language READ language WRITE setLanguage NOTIFY languageChanged)
     Q_PROPERTY(QString languageSummary READ languageSummary NOTIFY languageChanged)
     Q_PROPERTY(QStringList availableLanguages READ availableLanguages CONSTANT)
     Q_PROPERTY(int displayUnit READ displayUnit WRITE setDisplayUnit NOTIFY displayUnitChanged)
     Q_PROPERTY(QString displayUnitLabel READ displayUnitLabel NOTIFY displayUnitChanged)
+    Q_PROPERTY(bool walletSettingsDirty READ walletSettingsDirty NOTIFY walletSettingsDirtyChanged)
 
 public:
     explicit OptionsQmlModel(interfaces::Node& node, bool is_onboarded);
@@ -79,6 +81,7 @@ public:
     QUrl getDefaultDataDirectory();
     Q_INVOKABLE bool setCustomDataDirArgs(QString path);
     Q_INVOKABLE QString getCustomDataDirString();
+    Q_INVOKABLE QString externalSignerPathValidationError(const QString& path) const;
     bool proxyEnabled() const { return m_proxy_enabled; }
     void setProxyEnabled(bool enabled);
     QString proxyAddress() const { return m_proxy_address; }
@@ -87,6 +90,8 @@ public:
     void setTorEnabled(bool enabled);
     QString torAddress() const { return m_tor_address; }
     void setTorAddress(const QString& address);
+    QString externalSignerPath() const { return m_external_signer_path; }
+    void setExternalSignerPath(const QString& path);
     bool proxySettingsDirty() const {
         if (!m_onboarded) return false;
         if (m_proxy_enabled != m_initial_proxy_enabled) return true;
@@ -104,6 +109,10 @@ public:
     void setDisplayUnit(int new_display_unit);
     QString displayUnitLabel() const;
     Q_INVOKABLE QString displayUnitLabelForAmount(qint64 satoshi) const;
+    bool walletSettingsDirty() const {
+        if (!m_onboarded) return false;
+        return m_external_signer_path != m_initial_external_signer_path;
+    }
 
 public Q_SLOTS:
     void setCustomDataDirString(const QString &new_custom_datadir_string) {
@@ -125,9 +134,11 @@ Q_SIGNALS:
     void proxyAddressChanged(QString address);
     void torEnabledChanged(bool enabled);
     void torAddressChanged(QString address);
+    void externalSignerPathChanged(QString path);
     void proxySettingsDirtyChanged();
     void languageChanged();
     void displayUnitChanged(int new_display_unit);
+    void walletSettingsDirtyChanged();
 
 private:
     interfaces::Node& m_node;
@@ -151,6 +162,7 @@ private:
     QString m_proxy_address;
     bool m_tor_enabled;
     QString m_tor_address;
+    QString m_external_signer_path;
     bool m_initial_proxy_enabled;
     QString m_initial_proxy_address;
     bool m_initial_tor_enabled;
@@ -158,6 +170,7 @@ private:
     QString m_language;
     QStringList m_available_languages;
     int m_display_unit{0};
+    QString m_initial_external_signer_path;
 
     common::SettingsValue pruneSetting() const;
     void buildAvailableLanguages();

@@ -4,23 +4,17 @@
 
 #include <QApplication>
 
+#include <chainparams.h>
+#include <test/qt_test_registry.h>
 #include <util/translation.h>
 
 const TranslateFn G_TRANSLATION_FUN{nullptr};
 
 int RunBitcoinUriTests(int argc, char* argv[]);
-int RunBitcoinAmountTests(int argc, char* argv[]);
 int RunBlockClockDialTests(int argc, char* argv[]);
 int RunDesktopTrayIconControllerTests(int argc, char* argv[]);
 int RunDesktopWindowBehaviorModelTests(int argc, char* argv[]);
-int RunPeerListModelTests(int argc, char* argv[]);
-int RunPeerStatsUtilTests(int argc, char* argv[]);
-int RunQmlBitcoinUnitsTests(int argc, char* argv[]);
-int RunImageProviderTests(int argc, char* argv[]);
 int RunNodeModelTests(int argc, char* argv[]);
-int RunNetworkStyleTests(int argc, char* argv[]);
-int RunQmlInitExecutorApiTests(int argc, char* argv[]);
-int RunOptionsModelTests(int argc, char* argv[]);
 int RunBanListModelTests(int argc, char* argv[]);
 int RunDisplaySettingsTests(int argc, char* argv[]);
 int RunWalletQmlModelTests(int argc, char* argv[]);
@@ -28,24 +22,21 @@ int RunWalletQmlModelTests(int argc, char* argv[]);
 int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
+    SelectParams(ChainType::REGTEST);
 
     int status = 0;
     status |= RunBitcoinUriTests(argc, argv);
-    status |= RunBitcoinAmountTests(argc, argv);
     status |= RunBlockClockDialTests(argc, argv);
     status |= RunDesktopTrayIconControllerTests(argc, argv);
     status |= RunDesktopWindowBehaviorModelTests(argc, argv);
-    status |= RunPeerListModelTests(argc, argv);
-    status |= RunPeerStatsUtilTests(argc, argv);
-    status |= RunQmlBitcoinUnitsTests(argc, argv);
-    status |= RunImageProviderTests(argc, argv);
     status |= RunNodeModelTests(argc, argv);
-    status |= RunNetworkStyleTests(argc, argv);
-    status |= RunQmlInitExecutorApiTests(argc, argv);
-    status |= RunOptionsModelTests(argc, argv);
     status |= RunBanListModelTests(argc, argv);
     status |= RunDisplaySettingsTests(argc, argv);
     status |= RunWalletQmlModelTests(argc, argv);
+
+    for (const auto& test : qttestregistry::SortedEntries()) {
+        status |= test.run(argc, argv);
+    }
 
     return status;
 }

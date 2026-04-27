@@ -9,6 +9,7 @@ import QtQuick.Layouts 1.15
 Item {
     property alias labelText: label.text
     property alias text: input.text
+    property alias inputObjectName: input.objectName
     property alias placeholderText: input.placeholderText
     property alias iconSource: icon.source
     property alias customIcon: iconContainer.data
@@ -42,7 +43,7 @@ Item {
         anchors.right: iconContainer.left
         anchors.verticalCenter: parent.verticalCenter
         leftPadding: 0
-        font.family: "Inter"
+        font.family: "BitcoinCoreSans"
         font.styleName: "Regular"
         font.pixelSize: 18
         color: Theme.color.neutral9

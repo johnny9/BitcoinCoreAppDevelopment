@@ -85,7 +85,7 @@ Item {
     Label {
         id: mainText
         anchors.centerIn: dial
-        font.family: "Inter"
+        font.family: "BitcoinCoreSans"
         font.styleName: "Semi Bold"
         font.pixelSize: dial.width * (4/25)
         color: Theme.color.neutral9
@@ -100,7 +100,7 @@ Item {
         anchors.top: mainText.bottom
         property bool estimating: root.estimating
         anchors.horizontalCenter: root.horizontalCenter
-        font.family: "Inter"
+        font.family: "BitcoinCoreSans"
         font.styleName: "Semi Bold"
         font.pixelSize: dial.width * (9/100)
         color: Theme.color.neutral4

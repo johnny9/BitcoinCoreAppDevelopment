@@ -12,7 +12,7 @@ import "../settings"
 
 Page {
     id: root
-    objectName: "createWalletBackup"
+    objectName: "createWalletBackupPage"
     signal back
     signal next
     background: null
@@ -63,6 +63,7 @@ Page {
         }
 
         ContinueButton {
+            objectName: "createWalletBackupViewFileButton"
             Layout.preferredWidth: Math.min(300, parent.width - 2 * Layout.leftMargin)
             Layout.topMargin: 30
             Layout.leftMargin: 20

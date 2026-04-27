@@ -25,6 +25,7 @@
 #include <wallet/wallet.h>
 
 #include <functional>
+#include <optional>
 
 class StubWallet : public interfaces::Wallet
 {
@@ -44,7 +45,7 @@ public:
     bool isSpendable(const CTxDestination&) override { return false; }
     bool setAddressBook(const CTxDestination&, const std::string&, const std::optional<wallet::AddressPurpose>&) override { return false; }
     bool delAddressBook(const CTxDestination&) override { return false; }
-    bool getAddress(const CTxDestination&, std::string*, wallet::isminetype*, wallet::AddressPurpose*) override { return false; }
+    bool getAddress(const CTxDestination&, std::string*, wallet::AddressPurpose*) override { return false; }
     std::vector<interfaces::WalletAddress> getAddresses() override { return {}; }
     std::vector<std::string> getAddressReceiveRequests() override { return {}; }
     bool setAddressReceiveRequest(const CTxDestination&, const std::string&, const std::string&) override { return false; }
@@ -53,7 +54,7 @@ public:
     bool unlockCoin(const COutPoint&) override { return false; }
     bool isLockedCoin(const COutPoint&) override { return false; }
     void listLockedCoins(std::vector<COutPoint>&) override {}
-    util::Result<CTransactionRef> createTransaction(const std::vector<wallet::CRecipient>&, const wallet::CCoinControl&, bool, int&, CAmount&) override { return util::Error{Untranslated("not implemented")}; }
+    util::Result<wallet::CreatedTransactionResult> createTransaction(const std::vector<wallet::CRecipient>&, const wallet::CCoinControl&, bool, std::optional<unsigned int>) override { return util::Error{Untranslated("not implemented")}; }
     void commitTransaction(CTransactionRef, interfaces::WalletValueMap, interfaces::WalletOrderForm) override {}
     bool transactionCanBeAbandoned(const Txid&) override { return false; }
     bool abandonTransaction(const Txid&) override { return false; }
@@ -71,10 +72,10 @@ public:
     bool tryGetBalances(interfaces::WalletBalances&, uint256&) override { return false; }
     CAmount getBalance() override { return 0; }
     CAmount getAvailableBalance(const wallet::CCoinControl&) override { return 0; }
-    wallet::isminetype txinIsMine(const CTxIn&) override { return wallet::ISMINE_NO; }
-    wallet::isminetype txoutIsMine(const CTxOut&) override { return wallet::ISMINE_NO; }
-    CAmount getDebit(const CTxIn&, wallet::isminefilter) override { return 0; }
-    CAmount getCredit(const CTxOut&, wallet::isminefilter) override { return 0; }
+    bool txinIsMine(const CTxIn&) override { return false; }
+    bool txoutIsMine(const CTxOut&) override { return false; }
+    CAmount getDebit(const CTxIn&) override { return 0; }
+    CAmount getCredit(const CTxOut&) override { return 0; }
     CoinsList listCoins() override { return {}; }
     std::vector<interfaces::WalletTxOut> getCoins(const std::vector<COutPoint>&) override { return {}; }
     CAmount getRequiredFee(unsigned int) override { return 0; }
@@ -99,21 +100,20 @@ public:
 class MockWallet : public StubWallet
 {
 public:
-    std::function<util::Result<CTransactionRef>(const std::vector<wallet::CRecipient>&, const wallet::CCoinControl&, bool, int&, CAmount&)> createTransactionHandler;
+    std::function<util::Result<wallet::CreatedTransactionResult>(const std::vector<wallet::CRecipient>&, const wallet::CCoinControl&, bool, std::optional<unsigned int>)> createTransactionHandler;
 
     util::Result<CTxDestination> getNewDestination(const OutputType type, const std::string& label) override
     {
         return getNewDestinationValue(type, label);
     }
 
-    util::Result<CTransactionRef> createTransaction(const std::vector<wallet::CRecipient>& recipients,
+    util::Result<wallet::CreatedTransactionResult> createTransaction(const std::vector<wallet::CRecipient>& recipients,
         const wallet::CCoinControl& coin_control,
         bool sign,
-        int& change_pos,
-        CAmount& fee) override
+        std::optional<unsigned int> change_pos) override
     {
         if (createTransactionHandler) {
-            return createTransactionHandler(recipients, coin_control, sign, change_pos, fee);
+            return createTransactionHandler(recipients, coin_control, sign, change_pos);
         }
         return util::Error{Untranslated("no createTransactionHandler installed")};
     }

@@ -18,6 +18,20 @@ PageStack {
     id: root
     objectName: "nodeSettingsStack"
 
+    Connections {
+        target: typeof walletController !== "undefined" ? walletController : null
+        function onOpenWalletSettingsRequested() {
+            root.openWalletSettings()
+        }
+    }
+
+    function openWalletSettings() {
+        while (root.depth > 1) {
+            root.pop()
+        }
+        root.push(wallet_page)
+    }
+
     initialItem: Page {
         background: null
         header: NavigationBar2 {
@@ -78,6 +92,23 @@ PageStack {
                     }
                 }
                 Separator { Layout.fillWidth: true }
+                Setting {
+                    id: gotoWallet
+                    objectName: "settingsWallet"
+                    visible: AppMode.walletEnabled
+                    Layout.fillWidth: true
+                    header: qsTr("External Signer")
+                    actionItem: CaretRightIcon {
+                        color: gotoWallet.stateColor
+                    }
+                    onClicked: {
+                        root.push(wallet_page)
+                    }
+                }
+                Separator {
+                    visible: gotoWallet.visible
+                    Layout.fillWidth: true
+                }
                 Setting {
                     id: gotoConnection
                     objectName: "settingsConnection"
@@ -183,6 +214,12 @@ PageStack {
     Component {
         id: storage_page
         SettingsStorage {
+            onBack: root.pop()
+        }
+    }
+    Component {
+        id: wallet_page
+        SettingsWallet {
             onBack: root.pop()
         }
     }

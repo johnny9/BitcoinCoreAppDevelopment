@@ -43,7 +43,7 @@ ColumnLayout {
             anchors.verticalCenter: parent.verticalCenter
             leftPadding: 0
             enabled: root.enabled
-            font.family: "Inter"
+            font.family: "BitcoinCoreSans"
             font.styleName: "Regular"
             font.pixelSize: 18
             color: Theme.color.neutral9

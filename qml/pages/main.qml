@@ -145,6 +145,7 @@ ApplicationWindow {
         OnboardingWizard {
             onFinished: {
                 optionsModel.onboard()
+                nodeModel.startNodeInitializionThread()
                 if (AppMode.walletEnabled && AppMode.isDesktop) {
                     // Start the node initialization before the wallet wizard is shown.
                     // DesktopWallets is pushed behind the wizard (lazy-loaded by StackView),
@@ -195,6 +196,11 @@ ApplicationWindow {
                 main.pop()
             }
             onTransactionSent: {
+                const externalSignerWallet = walletController.selectedWallet.hasExternalSigner
+                sendResult.descriptionText = externalSignerWallet
+                    ? qsTr("Approved on external signer. It should be confirmed within the next 10 minutes.")
+                    : qsTr("Based on your selected fee, it should be confirmed within the next 10 minutes.")
+                sendResult.actionText = externalSignerWallet ? qsTr("Done") : qsTr("Close window")
                 walletController.selectedWallet.recipients.clear()
                 main.pop()
                 sendResult.open()
@@ -209,6 +215,11 @@ ApplicationWindow {
                 main.pop()
             }
             onTransactionSent: {
+                const externalSignerWallet = walletController.selectedWallet.hasExternalSigner
+                sendResult.descriptionText = externalSignerWallet
+                    ? qsTr("Approved on external signer. It should be confirmed within the next 10 minutes.")
+                    : qsTr("Based on your selected fee, it should be confirmed within the next 10 minutes.")
+                sendResult.actionText = externalSignerWallet ? qsTr("Done") : qsTr("Close window")
                 walletController.selectedWallet.recipients.clear()
                 main.pop()
                 sendResult.open()

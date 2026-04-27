@@ -34,13 +34,18 @@ class WalletQmlController : public QObject
     Q_PROPERTY(QString walletMigrationError READ walletMigrationError NOTIFY walletMigrationErrorChanged)
     Q_PROPERTY(QString lastImportedWalletName READ lastImportedWalletName NOTIFY lastImportedWalletInfoChanged)
     Q_PROPERTY(QString lastImportedWalletKeyScheme READ lastImportedWalletKeyScheme NOTIFY lastImportedWalletInfoChanged)
+    Q_PROPERTY(bool canCreateExternalSignerWallet READ canCreateExternalSignerWallet NOTIFY externalSignerStatusChanged)
+    Q_PROPERTY(QString externalSignerName READ externalSignerName NOTIFY externalSignerStatusChanged)
+    Q_PROPERTY(QString externalSignerError READ externalSignerError NOTIFY externalSignerStatusChanged)
+    Q_PROPERTY(QString suggestedExternalSignerWalletName READ suggestedExternalSignerWalletName NOTIFY externalSignerStatusChanged)
 
 public:
     explicit WalletQmlController(interfaces::Node& node, QObject *parent = nullptr);
     ~WalletQmlController();
 
     Q_INVOKABLE void setSelectedWallet(QString path);
-    Q_INVOKABLE void createSingleSigWallet(const QString &name, const QString &passphrase);
+    Q_INVOKABLE bool createSingleSigWallet(const QString &name, const QString &passphrase);
+    Q_INVOKABLE bool createExternalSignerWallet(const QString& name);
     Q_INVOKABLE void importWallet(const QString& path);
     Q_INVOKABLE void clearWalletLoadStatus();
     Q_INVOKABLE void migrateWallet(const QString& path);
@@ -48,6 +53,7 @@ public:
     Q_INVOKABLE QString normalizeWalletPath(const QString& path) const;
     Q_INVOKABLE bool walletPathExists(const QString& path) const;
     Q_INVOKABLE void requestOpenWalletSettings();
+    Q_INVOKABLE void refreshExternalSignerStatus();
 
     WalletQmlModel* selectedWallet() const;
     void unloadWallets();
@@ -66,6 +72,10 @@ public:
     QString walletMigrationError() const { return m_wallet_migration_error; }
     QString lastImportedWalletName() const { return m_last_imported_wallet_name; }
     QString lastImportedWalletKeyScheme() const { return m_last_imported_wallet_key_scheme; }
+    bool canCreateExternalSignerWallet() const { return m_external_signer_path_configured && m_external_signer_count == 1; }
+    QString externalSignerName() const { return m_external_signer_name; }
+    QString externalSignerError() const { return m_external_signer_error; }
+    QString suggestedExternalSignerWalletName() const { return m_suggested_external_signer_wallet_name; }
 
 Q_SIGNALS:
     void selectedWalletChanged();
@@ -84,6 +94,7 @@ Q_SIGNALS:
     void walletMigrationFailed();
     void lastImportedWalletInfoChanged();
     void openWalletSettingsRequested();
+    void externalSignerStatusChanged();
 
 public Q_SLOTS:
     void initialize();
@@ -110,6 +121,8 @@ private:
     void setWalletMigrationError(const QString& error);
     void setLastImportedWalletInfo(const QString& wallet_name, const QString& key_scheme);
     void clearLastImportedWalletInfo();
+    QString makeSuggestedExternalSignerWalletName(const QString& signer_name) const;
+    void setExternalSignerStatus(bool path_configured, int signer_count, const QString& signer_name, const QString& error);
 
     bool m_initialized{false};
     interfaces::Node& m_node;
@@ -131,6 +144,11 @@ private:
     QString m_wallet_migration_error;
     QString m_last_imported_wallet_name;
     QString m_last_imported_wallet_key_scheme;
+    bool m_external_signer_path_configured{false};
+    int m_external_signer_count{0};
+    QString m_external_signer_name;
+    QString m_external_signer_error;
+    QString m_suggested_external_signer_wallet_name;
 
     bilingual_str m_error_message;
     std::vector<bilingual_str> m_warning_messages;

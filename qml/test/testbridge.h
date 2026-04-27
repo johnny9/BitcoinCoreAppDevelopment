@@ -30,6 +30,8 @@
 ///   {"cmd": "wait_for_page", "page": "<objectName>", "timeout": <ms>}
 ///   {"cmd": "wait_for_property", "objectName": "<name>", "prop": "<property>", ...}
 ///   {"cmd": "get_text", "objectName": "<name>"}
+///   {"cmd": "click_list_item", "objectName": "<view>", "index": <zero-based-row>, "childObjectName": "<optional-delegate-child>"}
+///   {"cmd": "get_list_item_property", "objectName": "<view>", "index": <zero-based-row>, "prop": "<delegate-root-property>"}
 ///   {"cmd": "save_screenshot", "path": "<png_path>"}
 ///   {"cmd": "list_objects"}
 ///   {"cmd": "set_clipboard_text", "text": "<value>"}
@@ -57,6 +59,8 @@ private:
 
     /// Find a QObject by objectName, searching the entire QML tree.
     QObject* findObjectByName(const QString& name) const;
+    QObject* findNamedObjectInSubtree(QObject* root, const QString& name) const;
+    QObject* findListItem(QObject* view_obj, int row) const;
     QObject* resolveCurrentLeafItem(QObject* item) const;
 
     /// Recursively collect all named objects from the QML tree.
@@ -74,6 +78,8 @@ private:
     QByteArray cmdWaitForPage(const QString& page_name, int timeout_ms);
     QByteArray cmdWaitForProperty(const QString& object_name, const QString& prop, int timeout_ms, const QJsonValue& expected, bool has_expected, const QString& contains, bool non_empty);
     QByteArray cmdGetText(const QString& object_name);
+    QByteArray cmdClickListItem(const QString& view_object_name, int row_index, const QString& delegate_child_object_name);
+    QByteArray cmdGetListItemProperty(const QString& view_object_name, int row_index, const QString& prop);
     QByteArray cmdSaveScreenshot(const QString& path);
     QByteArray cmdListObjects();
     QByteArray cmdSetClipboardText(const QString& text);

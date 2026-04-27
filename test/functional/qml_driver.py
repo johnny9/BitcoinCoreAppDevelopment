@@ -94,6 +94,42 @@ class QmlDriver:
             )
         return resp["text"]
 
+    def click_list_item(self, view_object_name, row_index, delegate_child_object_name=None):
+        """Click a delegate row in a view.
+
+        Args:
+            view_object_name: objectName of the view itself, for example a ListView.
+            row_index: Zero-based delegate index within that view.
+            delegate_child_object_name: Optional objectName to find inside that
+                specific delegate instance before clicking. If omitted, clicks
+                the delegate root item.
+        """
+        cmd = {"cmd": "click_list_item", "objectName": view_object_name, "index": row_index}
+        if delegate_child_object_name is not None:
+            cmd["childObjectName"] = delegate_child_object_name
+        resp = self._send(cmd)
+        if "error" in resp:
+            raise QmlDriverError(
+                f"click_list_item({view_object_name!r}, {row_index!r}, {delegate_child_object_name!r}) failed: {resp['error']}"
+            )
+
+    def get_list_item_property(self, view_object_name, row_index, prop):
+        """Return a property value from a delegate row in a view.
+
+        Args:
+            view_object_name: objectName of the view itself, for example a ListView.
+            row_index: Zero-based delegate index within that view.
+            prop: Property name to read from the delegate root item.
+        """
+        resp = self._send(
+            {"cmd": "get_list_item_property", "objectName": view_object_name, "index": row_index, "prop": prop}
+        )
+        if "error" in resp:
+            raise QmlDriverError(
+                f"get_list_item_property({view_object_name!r}, {row_index!r}, {prop!r}) failed: {resp['error']}"
+            )
+        return resp["value"]
+
     def get_property(self, object_name, prop):
         """Return an arbitrary property value from a named QML object."""
         resp = self._send(
@@ -181,10 +217,16 @@ class QmlDriver:
         return resp["objects"]
 
     def save_screenshot(self, path):
-        """Save a screenshot of the current QML window to a PNG file."""
+        """Save a screenshot of the current QML window to a PNG file.
+
+        Screenshots are intended to capture stable checkpoint states, so wait
+        for the relevant StackView transitions to finish before asking the test
+        bridge to render the window contents.
+        """
         directory = os.path.dirname(path)
         if directory:
             os.makedirs(directory, exist_ok=True)
+        self.settle()
         resp = self._send({"cmd": "save_screenshot", "path": path})
         if "error" in resp:
             raise QmlDriverError(
@@ -213,14 +255,18 @@ class QmlDriver:
         if "error" in resp:
             raise QmlDriverError(f"simulate_drop({object_name!r}) failed: {resp['error']}")
 
-    def settle(self, timeout_ms=5000, stack_view_names=("mainPageStack", "createWalletWizard")):
+    def settle(
+        self,
+        timeout_ms=5000,
+        stack_view_names=("mainPageStack", "createWalletWizard", "nodeSettingsStack"),
+    ):
         """Wait for relevant StackView transitions to finish.
 
         The wallet flow transitions run through the app's main page stack and,
-        once opened, the nested create-wallet wizard stack. Waiting for their
-        `busy` property to become false is more reliable than sleeping.
-        Missing stack views are ignored so this remains safe before nested
-        flows have been created.
+        once opened, the nested create-wallet wizard stack and settings stack.
+        Waiting for their `busy` property to become false is more reliable than
+        sleeping. Missing stack views are ignored so this remains safe before
+        nested flows have been created.
         """
         deadline = time.time() + (timeout_ms / 1000)
         last_busy = {}

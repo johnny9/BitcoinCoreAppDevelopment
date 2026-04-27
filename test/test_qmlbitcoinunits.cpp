@@ -42,13 +42,10 @@ void QmlBitcoinUnitsTests::format_sat_noDecimals()
     QCOMPARE(QmlBitcoinUnits::format(QmlBitcoinUnits::Unit::SAT, 123), QString("123"));
 }
 
-int RunQmlBitcoinUnitsTests(int argc, char* argv[])
-{
-    QmlBitcoinUnitsTests tests;
-    return QTest::qExec(&tests, argc, argv);
-}
-
-#ifndef BITCOINQML_NO_TEST_MAIN
+#ifdef BITCOINQML_NO_TEST_MAIN
+#include <test/qt_test_registry.h>
+BITCOINQML_REGISTER_QT_TEST(QmlBitcoinUnitsTests)
+#else
 QTEST_MAIN(QmlBitcoinUnitsTests)
 #endif
 #include "test_qmlbitcoinunits.moc"

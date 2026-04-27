@@ -12,11 +12,21 @@ import "../../components"
 
 Page {
     id: root
-    objectName: "walletMultipleSendReviewPage"
+    objectName: "multipleSendReviewPage"
     background: null
 
     property WalletQmlModel wallet: walletController.selectedWallet
     property WalletQmlModelTransaction transaction: walletController.selectedWallet.currentTransaction
+    readonly property int recipientCount: root.wallet ? root.wallet.recipients.count : 0
+    readonly property string recipientCountText: recipientCount === 1
+        ? qsTr("There is 1 recipient.")
+        : qsTr("There are %1 recipients.").arg(recipientCount)
+    property string recipient0AddressText: wallet.recipients.addressTextAt(0)
+    property string recipient0FullAddressText: wallet.recipients.fullAddressTextAt(0)
+    property string recipient0AmountText: wallet.recipients.amountTextAt(0)
+    property string recipient1AddressText: wallet.recipients.addressTextAt(1)
+    property string recipient1FullAddressText: wallet.recipients.fullAddressTextAt(1)
+    property string recipient1AmountText: wallet.recipients.amountTextAt(1)
 
     signal finished()
     signal back()
@@ -25,8 +35,9 @@ Page {
     header: NavigationBar2 {
         id: navbar
         leftItem: NavButton {
+            objectName: "multipleSendReviewBackButton"
             iconSource: "image://images/caret-left"
-            text: qsTr("Back")
+            text: root.wallet && root.wallet.hasExternalSigner ? qsTr("Edit") : qsTr("Back")
             onClicked: {
                 root.back()
             }
@@ -46,106 +57,219 @@ Page {
 
             spacing: 15
 
-            CoreText {
-                id: title
+            ColumnLayout {
                 Layout.topMargin: 30
-                Layout.bottomMargin: 15
-                text: qsTr("Transaction details")
-                font.pixelSize: 21
-                bold: true
+                Layout.fillWidth: true
+                spacing: 5
+
+                CoreText {
+                    id: title
+                    Layout.fillWidth: true
+                    text: qsTr("Review transaction")
+                    horizontalAlignment: Text.AlignLeft
+                    font.pixelSize: 21
+                    bold: true
+                }
+
+                CoreText {
+                    objectName: "multipleSendReviewRecipientCountText"
+                    Layout.fillWidth: true
+                    text: root.recipientCountText
+                    horizontalAlignment: Text.AlignLeft
+                    font.pixelSize: 13
+                    color: Theme.color.neutral7
+                }
+            }
+
+            Separator {
+                Layout.fillWidth: true
             }
 
             ListView {
                 id: inputsList
+                objectName: "multipleSendReviewRecipientsList"
                 Layout.fillWidth: true
                 Layout.preferredHeight: contentHeight
                 model: root.wallet.recipients
+                clip: true
+                interactive: false
+
                 delegate: Item {
                     id: delegate
-                    height: 55
+                    implicitHeight: delegateColumn.implicitHeight
+                    height: implicitHeight
                     width: ListView.view.width
 
                     required property string address;
                     required property string label;
                     required property string amount;
+                    required property string formattedAddress;
+                    required property string amountUnitLabel;
+                    property bool expanded: false
+                    readonly property bool expandable: formattedAddress.length > 0
+                    readonly property string primaryText: label.length > 0 ? label : address
+                    readonly property string secondaryText: expanded ? formattedAddress : ""
+                    readonly property bool secondaryVisible: secondaryText.length > 0
 
-                    RowLayout {
-                        spacing: 10
-                        anchors.fill: parent
-                        CoreText {
-                            Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                            Layout.fillWidth: true
-                            horizontalAlignment: Text.AlignLeft
-                            text: label == "" ? address : label
-                            font.pixelSize: 18
-                            elide: Text.ElideMiddle
-                        }
-
-                        CoreText {
-                            Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-                            text: amount + (optionsModel.displayUnit === 1 ? " sats" : " ₿")
-                            font.pixelSize: 18
+                    function click() {
+                        if (expandable) {
+                            expanded = !expanded
                         }
                     }
 
-                    Separator {
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.bottom: parent.bottom
-                        color: Theme.color.neutral3
+                    onExpandableChanged: {
+                        if (!expandable) {
+                            expanded = false
+                        }
+                    }
+
+                    Column {
+                        id: delegateColumn
+                        width: parent.width
+                        spacing: 0
+
+                        Item {
+                            width: 1
+                            height: 15
+                        }
+
+                        RowLayout {
+                            width: parent.width
+                            spacing: 10
+
+                            CoreText {
+                                objectName: "multipleSendReviewRecipient" + index + "PrimaryText"
+                                Layout.fillWidth: true
+                                Layout.preferredWidth: 0
+                                horizontalAlignment: Text.AlignLeft
+                                verticalAlignment: Text.AlignTop
+                                wrap: false
+                                elide: Text.ElideRight
+                                text: primaryText
+                                font.pixelSize: 15
+                                color: Theme.color.neutral9
+
+                                HoverHandler {
+                                    enabled: delegate.expandable
+                                    cursorShape: Qt.PointingHandCursor
+                                }
+
+                                TapHandler {
+                                    enabled: delegate.expandable
+                                    onTapped: delegate.expanded = !delegate.expanded
+                                }
+                            }
+
+                            Item {
+                                id: amountDisplay
+                                objectName: "multipleSendReviewRecipient" + index + "Amount"
+                                property string text: amountUnitLabel.length > 0 ? amount + " " + amountUnitLabel : amount
+                                implicitWidth: amountRow.implicitWidth
+                                implicitHeight: amountRow.implicitHeight
+                                Layout.alignment: Qt.AlignRight | Qt.AlignTop
+
+                                RowLayout {
+                                    id: amountRow
+                                    anchors.fill: parent
+                                    spacing: 5
+
+                                    CoreText {
+                                        text: amount
+                                        font.pixelSize: 15
+                                        wrap: false
+                                        color: Theme.color.neutral9
+                                    }
+
+                                    CoreText {
+                                        visible: amountUnitLabel.length > 0
+                                        text: amountUnitLabel
+                                        font.pixelSize: 15
+                                        wrap: false
+                                        color: Theme.color.neutral9
+                                    }
+                                }
+                            }
+                        }
+
+                        Item {
+                            width: 1
+                            height: 10
+                            visible: secondaryText.length > 0
+                        }
+
+                        TextArea {
+                            objectName: "multipleSendReviewRecipient" + index + "SecondaryText"
+                            width: parent.width
+                            visible: secondaryText.length > 0
+                            readOnly: true
+                            selectByMouse: true
+                            text: secondaryText
+                            wrapMode: Text.WordWrap
+                            leftPadding: 0
+                            topPadding: 0
+                            rightPadding: 0
+                            bottomPadding: 0
+                            height: visible ? Math.max(contentHeight, 21) : 0
+                            font.family: "BitcoinCoreSans"
+                            font.styleName: "Regular"
+                            font.pixelSize: 15
+                            color: Theme.color.neutral9
+                            background: Item {}
+                        }
+
+                        Item {
+                            width: 1
+                            height: 15
+                            visible: index < ListView.view.count - 1
+                        }
+
+                        Separator {
+                            width: parent.width
+                            visible: index < ListView.view.count - 1
+                        }
                     }
                 }
             }
 
-            RowLayout {
-                Layout.topMargin: 20
-                CoreText {
-                    text: qsTr("Total amount")
-                    font.pixelSize: 20
-                    color: Theme.color.neutral9
-                    horizontalAlignment: Text.AlignLeft
-                }
-                Item {
-                    Layout.fillWidth: true
-                }
-                CoreText {
-                    objectName: "multipleSendReviewTotalValue"
-                    text: root.transaction.total
-                    font.pixelSize: 20
-                    color: Theme.color.neutral9
-                }
+            BitcoinAmountDisplayField {
+                objectName: "multipleSendReviewFeeField"
+                Layout.topMargin: 10
+                labelText: qsTr("Fee")
+                labelPixelSize: 15
+                labelColor: Theme.color.neutral7
+                amountText: root.transaction ? root.transaction.feeAmount.display : ""
+                unitText: root.transaction ? root.transaction.feeAmount.unitLabel : ""
             }
 
             Separator {
                 Layout.fillWidth: true
-                color: Theme.color.neutral3
             }
 
-            RowLayout {
-                CoreText {
-                    text: qsTr("Fee")
-                    font.pixelSize: 18
-                    Layout.preferredWidth: 110
-                    horizontalAlignment: Text.AlignLeft
-                }
-                Item {
-                    Layout.fillWidth: true
-                }
-                CoreText {
-                    objectName: "multipleSendReviewFeeValue"
-                    text: root.transaction.fee
-                    font.pixelSize: 15
-                }
+            BitcoinAmountDisplayField {
+                objectName: "multipleSendReviewTotalField"
+                labelWidth: 130
+                labelText: qsTr("Total amount")
+                amountText: root.transaction ? root.transaction.totalAmount.display : ""
+                unitText: root.transaction ? root.transaction.totalAmount.unitLabel : ""
             }
 
-            Separator {
+            ExternalSignerReviewActions {
+                visible: root.wallet && root.wallet.hasExternalSigner
+                wallet: root.wallet
+                buttonObjectName: "multipleSendReviewExternalSignerButton"
+                statusObjectName: "multipleSendReviewStatusText"
                 Layout.fillWidth: true
-                color: Theme.color.neutral3
+                Layout.topMargin: 30
+                onSendRequested: {
+                    root.wallet.sendTransaction()
+                    root.transactionSent()
+                }
             }
 
             ContinueButton {
                 id: confirmationButton
                 objectName: "multipleSendReviewSendButton"
+                visible: !root.wallet || !root.wallet.hasExternalSigner
                 Layout.fillWidth: true
                 Layout.topMargin: 30
                 text: qsTr("Send")

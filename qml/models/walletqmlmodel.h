@@ -12,9 +12,12 @@
 #include <qml/models/sendrecipientslistmodel.h>
 #include <qml/models/walletqmlmodeltransaction.h>
 
+#include <common/args.h>
+#include <common/settings.h>
 #include <consensus/amount.h>
 #include <interfaces/handler.h>
 #include <interfaces/wallet.h>
+#include <univalue.h>
 #include <wallet/coincontrol.h>
 
 #include <memory>
@@ -31,6 +34,7 @@ class WalletQmlModel : public QObject
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
     Q_PROPERTY(QString balance READ balance NOTIFY balanceChanged)
     Q_PROPERTY(qint64 balanceSatoshi READ balanceSatoshi NOTIFY balanceChanged)
+    Q_PROPERTY(bool hasExternalSigner READ hasExternalSigner CONSTANT)
     Q_PROPERTY(ActivityListModel* activityListModel READ activityListModel CONSTANT)
     Q_PROPERTY(CoinsListModel* coinsListModel READ coinsListModel CONSTANT)
     Q_PROPERTY(SendRecipientsListModel* recipients READ sendRecipientList CONSTANT)
@@ -54,6 +58,7 @@ public:
     QString name() const;
     QString balance() const;
     qint64 balanceSatoshi() const;
+    bool hasExternalSigner() const { return m_wallet && m_wallet->hasExternalSigner(); }
     Q_INVOKABLE void commitPaymentRequest();
 
     ActivityListModel* activityListModel() const { return m_activity_list_model; }
@@ -68,6 +73,7 @@ public:
     bool feeEstimatePending() const { return m_fee_estimate_pending; }
     int feeEstimateRevision() const { return m_fee_estimate_revision; }
     Q_INVOKABLE bool prepareTransaction();
+    Q_INVOKABLE void approveExternalSignerTransaction();
     Q_INVOKABLE void sendTransaction();
     Q_INVOKABLE QString newAddress(QString label);
     Q_INVOKABLE QString estimatedFeeForTarget(unsigned int target_blocks) const;
@@ -84,6 +90,8 @@ public:
 
     using TransactionChangedFn = std::function<void(const uint256& txid, ChangeType status)>;
     virtual std::unique_ptr<interfaces::Handler> handleTransactionChanged(TransactionChangedFn fn);
+    using StatusChangedFn = std::function<void()>;
+    virtual std::unique_ptr<interfaces::Handler> handleStatusChanged(StatusChangedFn fn);
 
     interfaces::Wallet::CoinsList listCoins() const;
     bool lockCoin(const COutPoint& output);
@@ -117,6 +125,8 @@ Q_SIGNALS:
     void feeEstimateRevisionChanged();
     void walletIsLoadedChanged();
     void displayUnitChanged(int unit);
+    void externalSignerApprovalSucceeded();
+    void externalSignerApprovalFailed(const QString& message, bool signerNotFound);
 
 private:
     void initializeFeeEstimator();
@@ -148,6 +158,8 @@ private:
     bool m_fee_estimate_pending{false};
     bool m_is_wallet_loaded{false};
     int m_display_unit{0};
+    std::unique_ptr<interfaces::Handler> m_handler_status_changed;
+    std::unique_ptr<interfaces::Handler> m_handler_transaction_changed;
 };
 
 #endif // BITCOIN_QML_MODELS_WALLETQMLMODEL_H

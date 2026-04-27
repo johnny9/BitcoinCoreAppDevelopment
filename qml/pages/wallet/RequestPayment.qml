@@ -76,7 +76,7 @@ Page {
                         anchors.left: amountLabel.right
                         anchors.verticalCenter: parent.verticalCenter
                         leftPadding: 0
-                        font.family: "Inter"
+                        font.family: "BitcoinCoreSans"
                         font.styleName: "Regular"
                         font.pixelSize: 18
                         color: Theme.color.neutral9
@@ -233,6 +233,8 @@ Page {
                             anchors.fill: parent
                             anchors.leftMargin: 5
                             horizontalAlignment: Text.AlignLeft
+                            font.family: "Roboto Mono"
+                            font.styleName: "Regular"
                             font.pixelSize: 18
                             wrapMode: Text.WordWrap
                             text: root.request ? root.request.addressFormatted : ""

@@ -13,11 +13,14 @@ add_executable(bitcoinqml_unit_tests
   test_unit_tests_main.cpp
   test_blockclockdial.cpp
   test_bitcoinuri.cpp
+  test_bitcoinaddress.cpp
   test_bitcoinamount.cpp
   test_desktoptrayiconcontroller.cpp
   test_desktopwindowbehaviormodel.cpp
   test_peerlistmodel.cpp
   test_peerstatsutil.cpp
+  test_walletqmlmodel.cpp
+  test_walletqmlmodeltransaction.cpp
   test_qmlbitcoinunits.cpp
   test_imageprovider.cpp
   test_nodemodel.cpp
@@ -26,7 +29,7 @@ add_executable(bitcoinqml_unit_tests
   test_options_model.cpp
   test_banlistmodel.cpp
   test_display_settings.cpp
-  test_walletqmlmodel.cpp
+  test_walletqmlcontroller.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../bitcoin/src/util/chaintype.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../qml/models/bitcoinuri.cpp
 )

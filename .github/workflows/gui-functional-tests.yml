@@ -99,6 +99,7 @@ jobs:
           export BITCOIND_LEGACY="${GITHUB_WORKSPACE}/releases/v${LEGACY_BITCOIND_VERSION}/bin/bitcoind"
           python3 test/functional/qml_test_bridge_sanity.py
           python3 test/functional/qml_test_onboarding.py
+          python3 test/functional/qml_test_external_signer.py
           python3 test/functional/qml_test_peers.py
           python3 test/functional/qml_test_proxy.py
           python3 test/functional/qml_test_debug_log.py

@@ -91,34 +91,34 @@ def create_wallet_via_gui(gui, wallet_name=WALLET_NAME):
     """
     gui.wait_for_page("createWalletWizard", timeout_ms=15000)
     gui.click("createWalletButton")
-    gui.wait_for_page("createWalletIntro", timeout_ms=5000)
-    gui.click("createWalletIntroButton")
-    gui.wait_for_page("createWalletName", timeout_ms=5000)
-    gui.set_text("walletNameInput", wallet_name)
+    gui.wait_for_page("createWalletIntroPage", timeout_ms=5000)
+    gui.click("createWalletIntroStartButton")
+    gui.wait_for_page("createWalletNamePage", timeout_ms=5000)
+    gui.set_text("createWalletNameInput", wallet_name)
     gui.click("createWalletNameContinueButton")
-    gui.wait_for_page("createWalletPassword", timeout_ms=5000)
+    gui.wait_for_page("createWalletPasswordPage", timeout_ms=5000)
     # The wallet loader is not ready until node initialization completes.
     # Poll get_property in a short loop; wait_for_property would exceed the
     # 30-second socket timeout before the node is ready.
-    _poll_enabled(gui, "createWalletSkipPasswordButton", timeout=90)
+    _poll_enabled(gui, "createWalletPasswordSkipButton", timeout=90)
     # Skip password — creates wallet immediately with no passphrase.
-    gui.click("createWalletSkipPasswordButton")
+    gui.click("createWalletPasswordSkipButton")
     # Wallet creation happens asynchronously; wait generously for confirmation page.
-    gui.wait_for_page("createWalletConfirm", timeout_ms=30000)
-    gui.click("createWalletConfirmButton")
-    gui.wait_for_page("createWalletBackup", timeout_ms=5000)
+    gui.wait_for_page("createWalletConfirmPage", timeout_ms=30000)
+    gui.click("createWalletConfirmNextButton")
+    gui.wait_for_page("createWalletBackupPage", timeout_ms=5000)
     gui.click("createWalletBackupDoneButton")
 
 
 def navigate_to_send(gui):
     """Click the Send tab and wait for the Send page to appear."""
-    gui.click("walletSendTabButton")
+    gui.click("desktopWalletsSendTab")
     gui.wait_for_page("walletSendPage", timeout_ms=15000)
 
 
 def open_send_options(gui):
     """Open the Send options (ellipsis) popup."""
-    gui.click("sendOptionsMenuButton")
+    gui.click("sendOptionsButton")
     gui.wait_for_property("sendOptionsPopup", "opened", timeout_ms=5000, value=True)
 
 

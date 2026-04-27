@@ -13,12 +13,14 @@
 #include <qml/models/walletqmlmodeltransaction.h>
 
 #include <chainparams.h>
+#include <common/messages.h>
 #include <consensus/amount.h>
 #include <interfaces/wallet.h>
 #include <key_io.h>
 #include <addresstype.h>
 #include <outputtype.h>
 #include <policy/feerate.h>
+#include <psbt.h>
 #include <qml/bitcoinunits.h>
 #include <serialize.h>
 #include <streams.h>
@@ -27,6 +29,7 @@
 #include <wallet/wallet.h>
 
 #include <QDateTime>
+#include <QDebug>
 #include <QMetaObject>
 #include <QRegularExpression>
 
@@ -253,6 +256,16 @@ WalletQmlModel::WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObje
     m_send_recipients = new SendRecipientsListModel(this);
     m_current_payment_request = new PaymentRequest(this);
     initializeFeeEstimator();
+    m_handler_status_changed = handleStatusChanged([this] {
+        QMetaObject::invokeMethod(this, [this] {
+            Q_EMIT balanceChanged();
+        });
+    });
+    m_handler_transaction_changed = handleTransactionChanged([this](const uint256&, ChangeType) {
+        QMetaObject::invokeMethod(this, [this] {
+            Q_EMIT balanceChanged();
+        });
+    });
 }
 
 WalletQmlModel::WalletQmlModel(QObject* parent)
@@ -646,6 +659,14 @@ void WalletQmlModel::clearFeeEstimates()
     }
 }
 
+std::unique_ptr<interfaces::Handler> WalletQmlModel::handleStatusChanged(StatusChangedFn fn)
+{
+    if (!m_wallet) {
+        return nullptr;
+    }
+    return m_wallet->handleStatusChanged(fn);
+}
+
 bool WalletQmlModel::prepareTransaction()
 {
     if (!m_wallet || !m_send_recipients || m_send_recipients->recipients().empty()) {
@@ -687,7 +708,8 @@ bool WalletQmlModel::prepareTransaction()
         return false;
     }
 
-    const auto& result = m_wallet->createTransaction(*vec_send, coin_control, true, std::nullopt);
+    const bool sign = !m_wallet->privateKeysDisabled();
+    const auto& result = m_wallet->createTransaction(*vec_send, coin_control, sign, std::nullopt);
     if (result) {
         if (m_current_transaction) {
             delete m_current_transaction;
@@ -697,13 +719,78 @@ bool WalletQmlModel::prepareTransaction()
         m_current_transaction->setWtx(newTx);
         m_current_transaction->setTransactionFee(result->fee);
         m_current_transaction->setDisplayUnit(m_display_unit);
-        if (subtract_fee_from_amount && result->change_pos.has_value()) {
-            m_current_transaction->reassignAmounts(*result->change_pos);
+        if (subtract_fee_from_amount) {
+            m_current_transaction->reassignAmounts(result->change_pos.has_value()
+                ? static_cast<int>(*result->change_pos)
+                : -1);
         }
         Q_EMIT currentTransactionChanged();
         return true;
     } else {
         return false;
+    }
+}
+
+void WalletQmlModel::approveExternalSignerTransaction()
+{
+    if (!m_wallet || !m_current_transaction || !m_wallet->hasExternalSigner()) {
+        Q_EMIT externalSignerApprovalFailed(tr("External signer not available."), true);
+        return;
+    }
+
+    CTransactionRef& current_tx = m_current_transaction->getWtx();
+    if (!current_tx) {
+        Q_EMIT externalSignerApprovalFailed(tr("Couldn't prepare transaction for external signing."), false);
+        return;
+    }
+
+    try {
+        CMutableTransaction mtx{*current_tx};
+        PartiallySignedTransaction psbtx(mtx);
+        bool complete = false;
+
+        const auto draft_err = m_wallet->fillPSBT(std::nullopt, /*sign=*/false, /*bip32derivs=*/true,
+            /*n_signed=*/nullptr, psbtx, complete);
+        if (draft_err || complete) {
+            const QString message = draft_err
+                ? QString::fromStdString(common::PSBTErrorString(*draft_err).translated)
+                : tr("Couldn't prepare transaction for external signing.");
+            Q_EMIT externalSignerApprovalFailed(message, draft_err && *draft_err == common::PSBTError::EXTERNAL_SIGNER_NOT_FOUND);
+            return;
+        }
+
+        const auto sign_err = m_wallet->fillPSBT(std::nullopt, /*sign=*/true, /*bip32derivs=*/true,
+            /*n_signed=*/nullptr, psbtx, complete);
+        if (sign_err) {
+            const bool signer_not_found = *sign_err == common::PSBTError::EXTERNAL_SIGNER_NOT_FOUND;
+            QString message;
+            switch (*sign_err) {
+            case common::PSBTError::EXTERNAL_SIGNER_NOT_FOUND:
+                message = tr("External signer not found. Connect one device and try again.");
+                break;
+            case common::PSBTError::EXTERNAL_SIGNER_FAILED:
+                message = tr("External signer failed to sign. Try again.");
+                break;
+            default:
+                message = QString::fromStdString(common::PSBTErrorString(*sign_err).translated);
+                break;
+            }
+            Q_EMIT externalSignerApprovalFailed(message, signer_not_found);
+            return;
+        }
+
+        complete = FinalizeAndExtractPSBT(psbtx, mtx);
+        if (!complete) {
+            Q_EMIT externalSignerApprovalFailed(
+                QString::fromStdString(common::PSBTErrorString(common::PSBTError::INCOMPLETE).translated),
+                false);
+            return;
+        }
+
+        m_current_transaction->setWtx(MakeTransactionRef(mtx));
+        Q_EMIT externalSignerApprovalSucceeded();
+    } catch (const std::runtime_error& err) {
+        Q_EMIT externalSignerApprovalFailed(QString::fromStdString(err.what()), false);
     }
 }
 
