@@ -86,6 +86,7 @@ sudo apt install \
   qml6-module-qtquick-templates \
   qml6-module-qtquick-window \
   qml6-module-qtqml \
+  qml6-module-qtqml-workerscript \
   libgl-dev \
   libqrencode-dev
 ```
