@@ -34,6 +34,7 @@ int RunWalletListModelTests(int argc, char* argv[]);
 int RunWalletQmlModelTests(int argc, char* argv[]);
 int RunReceiveRequestHistoryModelTests(int argc, char* argv[]);
 int RunBumpTransactionModelTests(int argc, char* argv[]);
+int RunTransactionTests(int argc, char* argv[]);
 
 int main(int argc, char* argv[])
 {
@@ -53,6 +54,7 @@ int main(int argc, char* argv[])
     status |= RunWalletQmlModelTests(argc, argv);
     status |= RunReceiveRequestHistoryModelTests(argc, argv);
     status |= RunBumpTransactionModelTests(argc, argv);
+    status |= RunTransactionTests(argc, argv);
 
     for (const auto& test : qttestregistry::SortedEntries()) {
         status |= test.run(argc, argv);
