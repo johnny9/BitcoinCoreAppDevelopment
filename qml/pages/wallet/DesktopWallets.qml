@@ -22,10 +22,45 @@ Page {
     signal addWallet()
     signal sendTransaction(bool multipleRecipientsEnabled)
 
+    function handleWalletMigrationRequired(walletPath) {
+        const stackView = root.StackView.view
+        if (!stackView || stackView.currentItem !== root) {
+            return
+        }
+
+        walletSelect.close()
+        stackView.push(walletMigrationPage, { "walletPath": walletPath })
+    }
+
+    function handleWalletBadgeClicked() {
+        if (!walletController.initialized) {
+            return
+        }
+
+        walletListModel.listWalletDir()
+        if (walletController.noWalletsFound) {
+            root.addWallet()
+        } else {
+            walletSelect.opened ? walletSelect.close() : walletSelect.open()
+        }
+    }
+
+    Component {
+        id: walletMigrationPage
+        ImportWalletMigration {
+            onBack: root.StackView.view.pop()
+            onCancel: root.StackView.view.pop()
+            onNext: root.StackView.view.pop()
+        }
+    }
+
     Connections {
         target: walletController
         function onOpenWalletSettingsRequested() {
             settingsTabButton.checked = true
+        }
+        function onWalletMigrationRequired(walletPath) {
+            root.handleWalletMigrationRequired(walletPath)
         }
     }
 
@@ -41,17 +76,7 @@ Page {
             loading: !walletController.initialized
             noWalletLoaded: !walletController.isWalletLoaded
             noWalletsFound: walletController.noWalletsFound
-
-            onClicked: {
-                if (walletController.initialized) {
-                    walletListModel.listWalletDir()
-                    if (walletController.noWalletsFound) {
-                        root.addWallet()
-                    } else {
-                        walletSelect.opened ? walletSelect.close() : walletSelect.open()
-                    }
-                }
-            }
+            onClicked: root.handleWalletBadgeClicked()
 
             WalletSelect {
                 id: walletSelect

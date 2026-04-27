@@ -12,6 +12,7 @@ import "../../controls"
 
 Button {
     id: root
+    objectName: "walletBadge"
 
     property color bgActiveColor: Theme.color.neutral2
     property color textColor: Theme.color.neutral7

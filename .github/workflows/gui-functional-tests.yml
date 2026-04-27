@@ -16,6 +16,8 @@ on:
 jobs:
   qml-functional-tests:
     runs-on: ubuntu-24.04
+    env:
+      LEGACY_BITCOIND_VERSION: "28.0"
 
     steps:
       - name: Checkout
@@ -27,7 +29,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            build-essential cmake pkgconf python3 \
+            build-essential cmake curl pkgconf python3 \
             libevent-dev libboost-dev libsqlite3-dev libgl-dev libqrencode-dev \
             qt6-qpa-plugins \
             qt6-base-dev qt6-tools-dev qt6-l10n-tools qt6-tools-dev-tools \
@@ -36,6 +38,47 @@ jobs:
             qml6-module-qtquick qml6-module-qtquick-window \
             qml6-module-qtquick-layouts qml6-module-qtquick-controls \
             qml6-module-qtquick-dialogs qml6-module-qtquick-templates
+
+      - name: Restore legacy bitcoind cache
+        uses: actions/cache/restore@v4
+        id: legacy-bitcoind-cache
+        with:
+          path: releases/v${{ env.LEGACY_BITCOIND_VERSION }}
+          key: ${{ runner.os }}-legacy-bitcoind-v${{ env.LEGACY_BITCOIND_VERSION }}
+
+      - name: Install legacy bitcoind
+        run: |
+          archive="bitcoin-${LEGACY_BITCOIND_VERSION}-x86_64-linux-gnu.tar.gz"
+          base_url="https://bitcoincore.org/bin/bitcoin-core-${LEGACY_BITCOIND_VERSION}"
+          legacy_dir="${GITHUB_WORKSPACE}/releases/v${LEGACY_BITCOIND_VERSION}"
+
+          mkdir -p "${legacy_dir}"
+
+          if [ ! -x "${legacy_dir}/bin/bitcoind" ]; then
+            workdir="$(mktemp -d)"
+            trap 'rm -rf "${workdir}"' EXIT
+
+            curl -fsSLo "${workdir}/${archive}" "${base_url}/${archive}"
+            curl -fsSLo "${workdir}/SHA256SUMS" "${base_url}/SHA256SUMS"
+            (
+              cd "${workdir}"
+              grep " ${archive}$" "SHA256SUMS" | sha256sum -c -
+            )
+
+            tar -xzf "${workdir}/${archive}" \
+              --strip-components=1 \
+              -C "${legacy_dir}" \
+              "bitcoin-${LEGACY_BITCOIND_VERSION}/bin"
+          fi
+
+          "${legacy_dir}/bin/bitcoind" --version | head -n 1
+
+      - name: Save legacy bitcoind cache
+        uses: actions/cache/save@v4
+        if: github.event_name != 'pull_request' && steps.legacy-bitcoind-cache.outputs.cache-hit != 'true'
+        with:
+          path: releases/v${{ env.LEGACY_BITCOIND_VERSION }}
+          key: ${{ runner.os }}-legacy-bitcoind-v${{ env.LEGACY_BITCOIND_VERSION }}
 
       - name: Configure
         run: |
@@ -53,6 +96,7 @@ jobs:
           QT_QUICK_BACKEND: software
           LIBGL_ALWAYS_SOFTWARE: "1"
         run: |
+          export BITCOIND_LEGACY="${GITHUB_WORKSPACE}/releases/v${LEGACY_BITCOIND_VERSION}/bin/bitcoind"
           python3 test/functional/qml_test_bridge_sanity.py
           python3 test/functional/qml_test_onboarding.py
           python3 test/functional/qml_test_peers.py
@@ -60,3 +104,5 @@ jobs:
           python3 test/functional/qml_test_debug_log.py
           python3 test/functional/qml_test_settings_display.py
           python3 test/functional/qml_test_tray.py
+          python3 test/functional/qml_test_wallet_migration.py
+          python3 test/functional/qml_test_wallet_restore.py
