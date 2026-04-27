@@ -20,6 +20,7 @@ class SendRecipient : public QObject
     Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY labelChanged)
     Q_PROPERTY(QString message READ message WRITE setMessage NOTIFY messageChanged)
     Q_PROPERTY(BitcoinAmount* amount READ amount CONSTANT)
+    Q_PROPERTY(bool subtractFeeFromAmount READ subtractFeeFromAmount WRITE setSubtractFeeFromAmount NOTIFY subtractFeeFromAmountChanged)
 
     Q_PROPERTY(QString addressError READ addressError NOTIFY addressErrorChanged)
     Q_PROPERTY(QString amountError READ amountError NOTIFY amountErrorChanged)
@@ -47,6 +48,7 @@ public:
     CAmount cAmount() const;
 
     bool subtractFeeFromAmount() const;
+    void setSubtractFeeFromAmount(bool subtract);
 
     bool isValid() const;
 
@@ -58,6 +60,7 @@ Q_SIGNALS:
     void amountErrorChanged();
     void labelChanged();
     void messageChanged();
+    void subtractFeeFromAmountChanged();
     void isValidChanged();
 
 private:

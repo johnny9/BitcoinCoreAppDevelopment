@@ -20,7 +20,10 @@
 #include <memory>
 #include <vector>
 
+#include <QHash>
 #include <QObject>
+#include <QThread>
+#include <QTimer>
 
 class WalletQmlModel : public QObject
 {
@@ -34,6 +37,12 @@ class WalletQmlModel : public QObject
     Q_PROPERTY(PaymentRequest* currentPaymentRequest READ currentPaymentRequest CONSTANT)
     Q_PROPERTY(WalletQmlModelTransaction* currentTransaction READ currentTransaction NOTIFY currentTransactionChanged)
     Q_PROPERTY(unsigned int targetBlocks READ feeTargetBlocks WRITE setFeeTargetBlocks NOTIFY feeTargetBlocksChanged)
+    Q_PROPERTY(QString estimatedFee READ estimatedFee NOTIFY estimatedFeeChanged)
+    Q_PROPERTY(bool customFeeEnabled READ customFeeEnabled WRITE setCustomFeeEnabled NOTIFY customFeeEnabledChanged)
+    Q_PROPERTY(QString customFeeRate READ customFeeRate WRITE setCustomFeeRate NOTIFY customFeeRateChanged)
+    Q_PROPERTY(bool customFeeRateValid READ customFeeRateValid NOTIFY customFeeRateValidChanged)
+    Q_PROPERTY(bool feeEstimatePending READ feeEstimatePending NOTIFY feeEstimatePendingChanged)
+    Q_PROPERTY(int feeEstimateRevision READ feeEstimateRevision NOTIFY feeEstimateRevisionChanged)
     Q_PROPERTY(bool isWalletLoaded READ isWalletLoaded NOTIFY walletIsLoadedChanged)
     Q_PROPERTY(int displayUnit READ displayUnit WRITE setDisplayUnit NOTIFY displayUnitChanged)
 
@@ -52,9 +61,18 @@ public:
     SendRecipientsListModel* sendRecipientList() const { return m_send_recipients; }
     PaymentRequest* currentPaymentRequest() const { return m_current_payment_request; }
     WalletQmlModelTransaction* currentTransaction() const { return m_current_transaction; }
+    QString estimatedFee() const;
+    bool customFeeEnabled() const { return m_custom_fee_enabled; }
+    QString customFeeRate() const { return m_custom_fee_rate; }
+    bool customFeeRateValid() const;
+    bool feeEstimatePending() const { return m_fee_estimate_pending; }
+    int feeEstimateRevision() const { return m_fee_estimate_revision; }
     Q_INVOKABLE bool prepareTransaction();
     Q_INVOKABLE void sendTransaction();
     Q_INVOKABLE QString newAddress(QString label);
+    Q_INVOKABLE QString estimatedFeeForTarget(unsigned int target_blocks) const;
+    Q_INVOKABLE int feeTargetIndex(unsigned int target_blocks) const;
+    Q_INVOKABLE void scheduleFeeEstimates();
 
     std::set<interfaces::WalletTx> getWalletTxs() const;
     interfaces::WalletTx getWalletTx(const uint256& hash) const;
@@ -78,6 +96,8 @@ public:
     std::vector<COutPoint> listSelectedCoins() const;
     unsigned int feeTargetBlocks() const;
     void setFeeTargetBlocks(unsigned int target_blocks);
+    void setCustomFeeEnabled(bool enabled);
+    void setCustomFeeRate(const QString& fee_rate);
 
     bool isWalletLoaded() const { return m_is_wallet_loaded; }
     void setWalletLoaded(bool loaded);
@@ -89,10 +109,23 @@ Q_SIGNALS:
     void balanceChanged();
     void currentTransactionChanged();
     void feeTargetBlocksChanged();
+    void estimatedFeeChanged();
+    void customFeeEnabledChanged();
+    void customFeeRateChanged();
+    void customFeeRateValidChanged();
+    void feeEstimatePendingChanged();
+    void feeEstimateRevisionChanged();
     void walletIsLoadedChanged();
     void displayUnitChanged(int unit);
 
 private:
+    void initializeFeeEstimator();
+    void requestFeeEstimatesNow();
+    void applyFeeEstimates(const QHash<unsigned int, QString>& estimates,
+                           const QString& custom_estimate,
+                           quint64 request_id);
+    void clearFeeEstimates();
+    QString ensurePreviewChangeAddress();
     unsigned int nextPaymentRequestId() const;
 
     std::unique_ptr<interfaces::Wallet> m_wallet;
@@ -102,6 +135,17 @@ private:
     PaymentRequest* m_current_payment_request{nullptr};
     WalletQmlModelTransaction* m_current_transaction{nullptr};
     wallet::CCoinControl m_coin_control;
+    QObject* m_fee_estimation_worker{nullptr};
+    QThread* m_fee_estimation_thread{nullptr};
+    QTimer* m_fee_estimation_timer{nullptr};
+    QHash<unsigned int, QString> m_fee_estimates;
+    QString m_custom_fee_estimate;
+    QString m_custom_fee_rate;
+    QString m_preview_change_address;
+    quint64 m_fee_estimate_request_id{0};
+    int m_fee_estimate_revision{0};
+    bool m_custom_fee_enabled{false};
+    bool m_fee_estimate_pending{false};
     bool m_is_wallet_loaded{false};
     int m_display_unit{0};
 };

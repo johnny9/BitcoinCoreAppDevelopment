@@ -1,4 +1,4 @@
-// Copyright (c) 2024-2026 The Bitcoin Core developers
+// Copyright (c) 2024 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -13,6 +13,7 @@ import "../../components"
 
 PageStack {
     id: root
+    objectName: "walletSendPage"
     vertical: true
 
     property WalletQmlModel wallet: walletController.selectedWallet
@@ -42,11 +43,22 @@ PageStack {
     }
 
     Connections {
-        target: root.wallet.recipients
+        target: root.wallet ? root.wallet.recipients : null
         function onListCleared() {
             settings.multipleRecipientsEnabled = false
+            if (root.wallet) {
+                root.wallet.scheduleFeeEstimates()
+            }
+        }
+        function onCountChanged() {
+            if (root.wallet) {
+                root.wallet.scheduleFeeEstimates()
+            }
         }
         function onCurrentRecipientChanged() {
+            if (root.wallet) {
+                root.wallet.scheduleFeeEstimates()
+            }
             sendPage.paymentRequestStatus = ""
             sendPage.paymentRequestIsError = false
             sendPage.paymentRequestMessage = ""
@@ -58,6 +70,15 @@ PageStack {
         property: "unit"
         value: optionsModel.displayUnit
         when: root.recipient !== null
+    }
+
+    Connections {
+        target: root.wallet ? root.wallet.coinsListModel : null
+        function onSelectedCoinsCountChanged() {
+            if (root.wallet) {
+                root.wallet.scheduleFeeEstimates()
+            }
+        }
     }
 
     initialItem: Page {
@@ -334,7 +355,7 @@ PageStack {
 
             ColumnLayout {
                 id: columnLayout
-                width: 450
+                width: 520
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 spacing: 10
@@ -600,9 +621,12 @@ PageStack {
                 BitcoinAddressInputField {
                     objectName: "sendAddressInput"
                     Layout.fillWidth: true
+                    inputObjectName: "sendAddressInput"
                     enabled: walletController.initialized
                     address: root.recipient.address
                     errorText: root.recipient.addressError
+                    onTextChanged: if (root.wallet) root.wallet.scheduleFeeEstimates()
+                    onEditingFinished: if (root.wallet) root.wallet.scheduleFeeEstimates()
                 }
 
                 Separator {
@@ -640,11 +664,25 @@ PageStack {
                             placeholderText: root.recipient.amount.unit === BitcoinAmount.SAT ? "0" : "0.00000000"
                             selectByMouse: true
                             text: root.recipient.amount.display
+                            onTextChanged: {
+                                root.recipient.amount.display = text
+                                if (root.wallet) {
+                                    root.wallet.scheduleFeeEstimates()
+                                }
+                            }
                             onTextEdited: root.recipient.amount.display = text
-                            onEditingFinished: root.recipient.amount.format()
+                            onEditingFinished: {
+                                root.recipient.amount.format()
+                                if (root.wallet) {
+                                    root.wallet.scheduleFeeEstimates()
+                                }
+                            }
                             onActiveFocusChanged: {
                                 if (!activeFocus) {
                                     root.recipient.amount.format()
+                                    if (root.wallet) {
+                                        root.wallet.scheduleFeeEstimates()
+                                    }
                                 }
                             }
                             validator: RegularExpressionValidator {
@@ -708,7 +746,7 @@ PageStack {
 
                 LabeledTextInput {
                     id: label
-                    objectName: "sendNoteInput"
+                    inputObjectName: "sendNoteInput"
                     Layout.fillWidth: true
                     labelText: qsTr("Note to self")
                     placeholderText: qsTr("Enter ...")
@@ -739,18 +777,57 @@ PageStack {
                 FeeSelection {
                     id: feeSelection
                     Layout.fillWidth: true
+                    walletModel: root.wallet
+                    includeFeeInAmount: root.recipient ? root.recipient.subtractFeeFromAmount : false
+                    currentTarget: root.wallet ? root.wallet.targetBlocks : 2
 
-                    onFeeChanged: {
+                    onFeeChanged: function(target) {
                         root.wallet.targetBlocks = target
                     }
+
+                    onIncludeFeeInAmountToggled: function(checked) {
+                        if (root.recipient && root.recipient.subtractFeeFromAmount !== checked) {
+                            root.recipient.subtractFeeFromAmount = checked
+                            if (root.wallet) {
+                                root.wallet.scheduleFeeEstimates()
+                            }
+                        }
+                    }
+                }
+
+                RowLayout {
+                    objectName: "sendFeeIncludedNote"
+                    Layout.fillWidth: true
+                    visible: root.recipient && root.recipient.subtractFeeFromAmount
+
+                    Icon {
+                        source: "image://images/check"
+                        size: 18
+                        color: Theme.color.green
+                    }
+
+                    CoreText {
+                        objectName: "sendFeeIncludedNoteText"
+                        Layout.fillWidth: true
+                        text: qsTr("Fees are included in the amount")
+                        font.pixelSize: 15
+                        color: Theme.color.neutral7
+                        horizontalAlignment: Text.AlignLeft
+                    }
+                }
+
+                Separator {
+                    Layout.fillWidth: true
                 }
 
                 ContinueButton {
                     id: continueButton
+                    objectName: "sendContinueButton"
                     Layout.fillWidth: true
                     Layout.topMargin: 30
                     text: qsTr("Review")
                     enabled: root.recipient.isValid
+                        && (!root.wallet || !root.wallet.customFeeEnabled || root.wallet.customFeeRateValid)
                     onClicked: {
                         if (root.wallet.prepareTransaction()) {
                             root.transactionPrepared(settings.multipleRecipientsEnabled);

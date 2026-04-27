@@ -5,26 +5,210 @@
 
 #include <qml/models/walletqmlmodel.h>
 
+#include <qml/bitcoinamount.h>
 #include <qml/models/activitylistmodel.h>
 #include <qml/models/paymentrequest.h>
 #include <qml/models/sendrecipient.h>
 #include <qml/models/sendrecipientslistmodel.h>
 #include <qml/models/walletqmlmodeltransaction.h>
 
+#include <chainparams.h>
 #include <consensus/amount.h>
 #include <interfaces/wallet.h>
 #include <key_io.h>
 #include <addresstype.h>
 #include <outputtype.h>
+#include <policy/feerate.h>
 #include <qml/bitcoinunits.h>
 #include <serialize.h>
 #include <streams.h>
+#include <util/threadnames.h>
 #include <wallet/coincontrol.h>
 #include <wallet/wallet.h>
 
 #include <QDateTime>
+#include <QMetaObject>
+#include <QRegularExpression>
+
+#include <array>
+#include <optional>
 
 namespace {
+constexpr unsigned int DEFAULT_STANDARD_FEE_TARGET{2};
+constexpr int FEE_ESTIMATE_DEBOUNCE_MS{250};
+constexpr unsigned int FEE_RATE_BASIS_VBYTES{1000};
+constexpr std::array<unsigned int, 3> STANDARD_FEE_TARGETS{1, DEFAULT_STANDARD_FEE_TARGET, 6};
+const QRegularExpression CUSTOM_FEE_RATE_PATTERN{QStringLiteral(R"(^[0-9]+(?:\.[0-9]{0,3})?$)")};
+
+int FallbackFeeMultiplier(const unsigned int target)
+{
+    for (size_t i = 0; i < STANDARD_FEE_TARGETS.size(); ++i) {
+        if (STANDARD_FEE_TARGETS[i] == target) {
+            return static_cast<int>(STANDARD_FEE_TARGETS.size() - i);
+        }
+    }
+
+    return 1;
+}
+
+QString FormatFeeEstimate(CAmount amount)
+{
+    BitcoinAmount bitcoin_amount;
+    bitcoin_amount.setSatoshi(amount);
+    return bitcoin_amount.toDisplay() + QStringLiteral(" ") + bitcoin_amount.unitLabel();
+}
+
+std::optional<CAmount> ParseCustomFeeRatePerKvB(const QString& custom_fee_rate)
+{
+    const QString trimmed = custom_fee_rate.trimmed();
+    if (trimmed.isEmpty() || !CUSTOM_FEE_RATE_PATTERN.match(trimmed).hasMatch()) {
+        return std::nullopt;
+    }
+
+    const QStringList parts = trimmed.split('.');
+    bool whole_ok{false};
+    const CAmount whole_part{parts.at(0).toLongLong(&whole_ok)};
+    if (!whole_ok) {
+        return std::nullopt;
+    }
+
+    QString fractional_part = parts.size() == 2 ? parts.at(1) : QString{};
+    while (fractional_part.size() < 3) {
+        fractional_part += QLatin1Char{'0'};
+    }
+
+    bool fractional_ok{false};
+    const CAmount fractional_value{
+        fractional_part.isEmpty() ? 0 : fractional_part.toLongLong(&fractional_ok)};
+    if (!fractional_part.isEmpty() && !fractional_ok) {
+        return std::nullopt;
+    }
+
+    const CAmount fee_rate_per_kvb = (whole_part * FEE_RATE_BASIS_VBYTES) + fractional_value;
+    if (fee_rate_per_kvb <= 0) {
+        return std::nullopt;
+    }
+
+    return fee_rate_per_kvb;
+}
+
+void ApplyPreviewChangeDestination(wallet::CCoinControl& coin_control, const QString& preview_change_address)
+{
+    if (preview_change_address.isEmpty()) {
+        return;
+    }
+
+    const CTxDestination change_destination = DecodeDestination(preview_change_address.toStdString());
+    if (IsValidDestination(change_destination)) {
+        coin_control.destChange = change_destination;
+    }
+}
+
+void ApplyRegtestStaticFeeOverride(wallet::CCoinControl& coin_control)
+{
+    if (Params().GetChainType() != ChainType::REGTEST) {
+        return;
+    }
+
+    // Regtest commonly runs without fee estimation, so use a fixed static fee
+    // rate instead of target-based estimation.
+    coin_control.m_confirm_target.reset();
+    coin_control.m_feerate = CFeeRate{wallet::DEFAULT_TRANSACTION_MINFEE};
+}
+
+std::optional<CAmount> TryPreviewFee(interfaces::Wallet& wallet,
+                                     const std::vector<wallet::CRecipient>& recipients,
+                                     const wallet::CCoinControl& coin_control)
+{
+    const auto result = wallet.createTransaction(recipients, coin_control, /*sign=*/false, std::nullopt);
+    if (!result) {
+        return std::nullopt;
+    }
+
+    return result->fee;
+}
+
+std::optional<QString> EstimatePreviewFee(interfaces::Wallet& wallet,
+                                          const std::vector<wallet::CRecipient>& recipients,
+                                          const wallet::CCoinControl& base_coin_control,
+                                          const QString& preview_change_address,
+                                          const unsigned int target)
+{
+    wallet::CCoinControl coin_control{base_coin_control};
+    coin_control.m_feerate.reset();
+    coin_control.m_confirm_target = target;
+    ApplyPreviewChangeDestination(coin_control, preview_change_address);
+    ApplyRegtestStaticFeeOverride(coin_control);
+
+    if (const auto fee = TryPreviewFee(wallet, recipients, coin_control)) {
+        return FormatFeeEstimate(*fee);
+    }
+
+    if (Params().GetChainType() == ChainType::REGTEST) {
+        return std::nullopt;
+    }
+
+    const CAmount required_fee_per_k = wallet.getRequiredFee(FEE_RATE_BASIS_VBYTES);
+    if (required_fee_per_k <= 0) {
+        return std::nullopt;
+    }
+
+    wallet::CCoinControl fallback_coin_control{coin_control};
+    fallback_coin_control.m_confirm_target.reset();
+    // Keep fallback previews distinct across presets even when the backend can
+    // only provide a minimum required feerate.
+    fallback_coin_control.m_feerate = CFeeRate{required_fee_per_k * FallbackFeeMultiplier(target)};
+
+    if (const auto fee = TryPreviewFee(wallet, recipients, fallback_coin_control)) {
+        return FormatFeeEstimate(*fee);
+    }
+
+    return std::nullopt;
+}
+
+std::optional<QString> EstimateCustomPreviewFee(interfaces::Wallet& wallet,
+                                                const std::vector<wallet::CRecipient>& recipients,
+                                                const wallet::CCoinControl& base_coin_control,
+                                                const QString& preview_change_address,
+                                                const CAmount fee_rate_per_kvb)
+{
+    wallet::CCoinControl coin_control{base_coin_control};
+    coin_control.m_confirm_target.reset();
+    coin_control.m_feerate = CFeeRate{fee_rate_per_kvb};
+    ApplyPreviewChangeDestination(coin_control, preview_change_address);
+
+    if (const auto fee = TryPreviewFee(wallet, recipients, coin_control)) {
+        return FormatFeeEstimate(*fee);
+    }
+
+    return std::nullopt;
+}
+
+std::optional<std::vector<wallet::CRecipient>> BuildRecipients(const SendRecipientsListModel& recipients)
+{
+    std::vector<wallet::CRecipient> vec_send;
+    vec_send.reserve(recipients.recipients().size());
+
+    for (auto* recipient : recipients.recipients()) {
+        if (recipient == nullptr || !recipient->isValid()) {
+            return std::nullopt;
+        }
+
+        const CTxDestination destination = DecodeDestination(recipient->address()->address().toStdString());
+        if (!IsValidDestination(destination)) {
+            return std::nullopt;
+        }
+
+        vec_send.push_back({destination, recipient->cAmount(), recipient->subtractFeeFromAmount()});
+    }
+
+    if (vec_send.empty()) {
+        return std::nullopt;
+    }
+
+    return vec_send;
+}
+
 struct QmlReceiveRequestRecipient
 {
     static constexpr int CURRENT_VERSION{1};
@@ -68,6 +252,7 @@ WalletQmlModel::WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObje
     m_coins_list_model = new CoinsListModel(this);
     m_send_recipients = new SendRecipientsListModel(this);
     m_current_payment_request = new PaymentRequest(this);
+    initializeFeeEstimator();
 }
 
 WalletQmlModel::WalletQmlModel(QObject* parent)
@@ -77,10 +262,19 @@ WalletQmlModel::WalletQmlModel(QObject* parent)
     m_coins_list_model = new CoinsListModel(this);
     m_send_recipients = new SendRecipientsListModel(this);
     m_current_payment_request = new PaymentRequest(this);
+    initializeFeeEstimator();
 }
 
 WalletQmlModel::~WalletQmlModel()
 {
+    if (m_fee_estimation_timer) {
+        m_fee_estimation_timer->stop();
+    }
+    if (m_fee_estimation_thread) {
+        m_fee_estimation_thread->quit();
+        m_fee_estimation_thread->wait();
+    }
+    delete m_fee_estimation_worker;
     delete m_activity_list_model;
     delete m_coins_list_model;
     delete m_send_recipients;
@@ -88,6 +282,22 @@ WalletQmlModel::~WalletQmlModel()
     if (m_current_transaction) {
         delete m_current_transaction;
     }
+}
+
+void WalletQmlModel::initializeFeeEstimator()
+{
+    m_fee_estimation_worker = new QObject;
+    m_fee_estimation_thread = new QThread(this);
+    m_fee_estimation_worker->moveToThread(m_fee_estimation_thread);
+    m_fee_estimation_thread->start();
+    QTimer::singleShot(0, m_fee_estimation_worker, []() {
+        util::ThreadRename("qml-fee-est");
+    });
+
+    m_fee_estimation_timer = new QTimer(this);
+    m_fee_estimation_timer->setSingleShot(true);
+    m_fee_estimation_timer->setInterval(FEE_ESTIMATE_DEBOUNCE_MS);
+    connect(m_fee_estimation_timer, &QTimer::timeout, this, &WalletQmlModel::requestFeeEstimatesNow);
 }
 
 QString WalletQmlModel::balance() const
@@ -107,6 +317,40 @@ qint64 WalletQmlModel::balanceSatoshi() const
         return 0;
     }
     return m_wallet->getBalance();
+}
+
+QString WalletQmlModel::estimatedFee() const
+{
+    if (m_custom_fee_enabled) {
+        return customFeeRateValid() ? m_custom_fee_estimate : QString{};
+    }
+    return estimatedFeeForTarget(feeTargetBlocks());
+}
+
+bool WalletQmlModel::customFeeRateValid() const
+{
+    return ParseCustomFeeRatePerKvB(m_custom_fee_rate).has_value();
+}
+
+QString WalletQmlModel::estimatedFeeForTarget(const unsigned int target_blocks) const
+{
+    const QString estimate = m_fee_estimates.value(target_blocks);
+    if (!estimate.isEmpty()) {
+        return estimate;
+    }
+
+    return {};
+}
+
+int WalletQmlModel::feeTargetIndex(const unsigned int target_blocks) const
+{
+    for (size_t i = 0; i < STANDARD_FEE_TARGETS.size(); ++i) {
+        if (STANDARD_FEE_TARGETS[i] == target_blocks) {
+            return static_cast<int>(i);
+        }
+    }
+
+    return 1;
 }
 
 QString WalletQmlModel::name() const
@@ -255,6 +499,152 @@ std::unique_ptr<interfaces::Handler> WalletQmlModel::handleTransactionChanged(Tr
     return m_wallet->handleTransactionChanged(converted_fn);
 }
 
+void WalletQmlModel::scheduleFeeEstimates()
+{
+    if (m_fee_estimation_timer == nullptr) {
+        return;
+    }
+
+    if (!m_wallet || !m_send_recipients) {
+        clearFeeEstimates();
+        return;
+    }
+
+    m_fee_estimation_timer->start();
+}
+
+QString WalletQmlModel::ensurePreviewChangeAddress()
+{
+    if (!m_wallet || !m_preview_change_address.isEmpty()) {
+        return m_preview_change_address;
+    }
+
+    const auto destination = m_wallet->getNewDestination(m_wallet->getDefaultAddressType(), "qml-fee-preview");
+    if (!destination) {
+        return {};
+    }
+
+    m_preview_change_address = QString::fromStdString(EncodeDestination(destination.value()));
+    return m_preview_change_address;
+}
+
+void WalletQmlModel::requestFeeEstimatesNow()
+{
+    if (!m_wallet || !m_send_recipients) {
+        clearFeeEstimates();
+        return;
+    }
+
+    const auto recipients = BuildRecipients(*m_send_recipients);
+    if (!recipients.has_value()) {
+        clearFeeEstimates();
+        return;
+    }
+
+    const quint64 request_id = ++m_fee_estimate_request_id;
+    const QString preview_change_address = ensurePreviewChangeAddress();
+    const wallet::CCoinControl base_coin_control{m_coin_control};
+    const bool custom_fee_enabled{m_custom_fee_enabled};
+    const std::optional<CAmount> custom_fee_rate_per_kvb{
+        ParseCustomFeeRatePerKvB(m_custom_fee_rate)};
+    interfaces::Wallet* const wallet = m_wallet.get();
+
+    if (!m_fee_estimate_pending) {
+        m_fee_estimate_pending = true;
+        Q_EMIT feeEstimatePendingChanged();
+        ++m_fee_estimate_revision;
+        Q_EMIT feeEstimateRevisionChanged();
+    }
+
+    QTimer::singleShot(0, m_fee_estimation_worker, [this, request_id, recipients = *recipients, base_coin_control, preview_change_address, custom_fee_enabled, custom_fee_rate_per_kvb, wallet]() {
+        QHash<unsigned int, QString> estimates;
+        QString custom_estimate;
+
+        for (const unsigned int target : STANDARD_FEE_TARGETS) {
+            if (const auto estimate = EstimatePreviewFee(*wallet,
+                                                         recipients,
+                                                         base_coin_control,
+                                                         preview_change_address,
+                                                         target)) {
+                estimates.insert(target, *estimate);
+            }
+        }
+
+        if (custom_fee_enabled && custom_fee_rate_per_kvb.has_value()) {
+            if (const auto estimate = EstimateCustomPreviewFee(*wallet,
+                                                               recipients,
+                                                               base_coin_control,
+                                                               preview_change_address,
+                                                               *custom_fee_rate_per_kvb)) {
+                custom_estimate = *estimate;
+            }
+        }
+
+        QMetaObject::invokeMethod(this, [this, estimates, custom_estimate, request_id]() {
+            applyFeeEstimates(estimates, custom_estimate, request_id);
+        }, Qt::QueuedConnection);
+    });
+}
+
+void WalletQmlModel::applyFeeEstimates(const QHash<unsigned int, QString>& estimates,
+                                       const QString& custom_estimate,
+                                       const quint64 request_id)
+{
+    if (request_id != m_fee_estimate_request_id) {
+        return;
+    }
+
+    bool estimates_changed{m_fee_estimates != estimates};
+    bool custom_estimate_changed{m_custom_fee_estimate != custom_estimate};
+    if (estimates_changed) {
+        m_fee_estimates = estimates;
+    }
+    if (custom_estimate_changed) {
+        m_custom_fee_estimate = custom_estimate;
+    }
+    if (estimates_changed || custom_estimate_changed) {
+        Q_EMIT estimatedFeeChanged();
+    }
+
+    bool pending_changed{m_fee_estimate_pending};
+    if (pending_changed) {
+        m_fee_estimate_pending = false;
+        Q_EMIT feeEstimatePendingChanged();
+    }
+
+    if (estimates_changed || custom_estimate_changed || pending_changed) {
+        ++m_fee_estimate_revision;
+        Q_EMIT feeEstimateRevisionChanged();
+    }
+}
+
+void WalletQmlModel::clearFeeEstimates()
+{
+    ++m_fee_estimate_request_id;
+
+    bool estimates_changed{!m_fee_estimates.isEmpty()};
+    bool custom_estimate_changed{!m_custom_fee_estimate.isEmpty()};
+    if (estimates_changed) {
+        m_fee_estimates.clear();
+    }
+    if (custom_estimate_changed) {
+        m_custom_fee_estimate.clear();
+    }
+    if (estimates_changed || custom_estimate_changed) {
+        Q_EMIT estimatedFeeChanged();
+    }
+
+    bool pending_changed{m_fee_estimate_pending};
+    if (pending_changed) {
+        m_fee_estimate_pending = false;
+        Q_EMIT feeEstimatePendingChanged();
+    }
+
+    if (estimates_changed || custom_estimate_changed || pending_changed) {
+        ++m_fee_estimate_revision;
+        Q_EMIT feeEstimateRevisionChanged();
+    }
+}
 
 bool WalletQmlModel::prepareTransaction()
 {
@@ -262,14 +652,34 @@ bool WalletQmlModel::prepareTransaction()
         return false;
     }
 
-    std::vector<wallet::CRecipient> vecSend;
+    const auto vec_send = BuildRecipients(*m_send_recipients);
+    if (!vec_send.has_value()) {
+        return false;
+    }
+
     CAmount total = 0;
-    for (auto* recipient : m_send_recipients->recipients()) {
-        CTxDestination destination = DecodeDestination(recipient->address()->address().toStdString());
-        wallet::CRecipient c_recipient = {destination, recipient->cAmount(), recipient->subtractFeeFromAmount()};
-        m_coin_control.m_feerate = CFeeRate(1000);
-        vecSend.push_back(c_recipient);
-        total += recipient->cAmount();
+    bool subtract_fee_from_amount = false;
+    for (const auto& recipient : *vec_send) {
+        total += recipient.nAmount;
+        if (recipient.fSubtractFeeFromAmount) {
+            subtract_fee_from_amount = true;
+        }
+    }
+
+    wallet::CCoinControl coin_control{m_coin_control};
+    if (m_custom_fee_enabled) {
+        const auto custom_fee_rate_per_kvb = ParseCustomFeeRatePerKvB(m_custom_fee_rate);
+        if (!custom_fee_rate_per_kvb.has_value()) {
+            return false;
+        }
+        coin_control.m_confirm_target.reset();
+        coin_control.m_feerate = CFeeRate{*custom_fee_rate_per_kvb};
+    } else {
+        coin_control.m_feerate.reset();
+        if (!coin_control.m_confirm_target.has_value()) {
+            coin_control.m_confirm_target = DEFAULT_STANDARD_FEE_TARGET;
+        }
+        ApplyRegtestStaticFeeOverride(coin_control);
     }
 
     CAmount balance = m_wallet->getBalance();
@@ -277,16 +687,19 @@ bool WalletQmlModel::prepareTransaction()
         return false;
     }
 
-    const auto& res = m_wallet->createTransaction(vecSend, m_coin_control, true, std::nullopt);
-    if (res) {
+    const auto& result = m_wallet->createTransaction(*vec_send, coin_control, true, std::nullopt);
+    if (result) {
         if (m_current_transaction) {
             delete m_current_transaction;
         }
-        CTransactionRef newTx = res->tx;
+        const CTransactionRef& newTx = result->tx;
         m_current_transaction = new WalletQmlModelTransaction(m_send_recipients, this);
         m_current_transaction->setWtx(newTx);
-        m_current_transaction->setTransactionFee(res->fee);
+        m_current_transaction->setTransactionFee(result->fee);
         m_current_transaction->setDisplayUnit(m_display_unit);
+        if (subtract_fee_from_amount && result->change_pos.has_value()) {
+            m_current_transaction->reassignAmounts(*result->change_pos);
+        }
         Q_EMIT currentTransactionChanged();
         return true;
     } else {
@@ -353,11 +766,13 @@ void WalletQmlModel::listLockedCoins(std::vector<COutPoint>& outputs)
 void WalletQmlModel::selectCoin(const COutPoint& output)
 {
     m_coin_control.Select(output);
+    scheduleFeeEstimates();
 }
 
 void WalletQmlModel::unselectCoin(const COutPoint& output)
 {
     m_coin_control.UnSelect(output);
+    scheduleFeeEstimates();
 }
 
 bool WalletQmlModel::isSelectedCoin(const COutPoint& output)
@@ -372,7 +787,7 @@ std::vector<COutPoint> WalletQmlModel::listSelectedCoins() const
 
 unsigned int WalletQmlModel::feeTargetBlocks() const
 {
-    return m_coin_control.m_confirm_target.value_or(wallet::DEFAULT_TX_CONFIRM_TARGET);
+    return m_coin_control.m_confirm_target.value_or(DEFAULT_STANDARD_FEE_TARGET);
 }
 
 void WalletQmlModel::setFeeTargetBlocks(unsigned int target_blocks)
@@ -380,6 +795,8 @@ void WalletQmlModel::setFeeTargetBlocks(unsigned int target_blocks)
     if (m_coin_control.m_confirm_target != target_blocks) {
         m_coin_control.m_confirm_target = target_blocks;
         Q_EMIT feeTargetBlocksChanged();
+        Q_EMIT estimatedFeeChanged();
+        scheduleFeeEstimates();
     }
 }
 
@@ -396,4 +813,34 @@ void WalletQmlModel::setDisplayUnit(int unit)
         Q_EMIT balanceChanged();
         Q_EMIT displayUnitChanged(unit);
     }
+}
+
+void WalletQmlModel::setCustomFeeEnabled(const bool enabled)
+{
+    if (m_custom_fee_enabled != enabled) {
+        m_custom_fee_enabled = enabled;
+        Q_EMIT customFeeEnabledChanged();
+        Q_EMIT estimatedFeeChanged();
+        scheduleFeeEstimates();
+    }
+}
+
+void WalletQmlModel::setCustomFeeRate(const QString& fee_rate)
+{
+    const QString trimmed_fee_rate = fee_rate.trimmed();
+    const bool was_valid = customFeeRateValid();
+
+    if (m_custom_fee_rate == trimmed_fee_rate) {
+        return;
+    }
+
+    m_custom_fee_rate = trimmed_fee_rate;
+    m_custom_fee_estimate.clear();
+
+    Q_EMIT customFeeRateChanged();
+    if (was_valid != customFeeRateValid()) {
+        Q_EMIT customFeeRateValidChanged();
+    }
+    Q_EMIT estimatedFeeChanged();
+    scheduleFeeEstimates();
 }

@@ -80,10 +80,34 @@ void WalletQmlModelTransaction::setTransactionFee(const CAmount& newFee)
     if (m_fee != newFee) {
         m_fee = newFee;
         Q_EMIT feeChanged();
+        Q_EMIT totalChanged();
     }
 }
 
 CAmount WalletQmlModelTransaction::getTotalTransactionAmount() const
 {
     return m_amount + m_fee;
+}
+
+void WalletQmlModelTransaction::reassignAmounts(int nChangePosRet)
+{
+    const CTransaction* wallet_transaction = m_wtx.get();
+    if (!wallet_transaction) {
+        return;
+    }
+
+    CAmount reassigned_amount = 0;
+    for (size_t recipient_index = 0; recipient_index < wallet_transaction->vout.size(); ++recipient_index) {
+        if (static_cast<int>(recipient_index) == nChangePosRet) {
+            continue;
+        }
+
+        reassigned_amount += wallet_transaction->vout[recipient_index].nValue;
+    }
+
+    if (m_amount != reassigned_amount) {
+        m_amount = reassigned_amount;
+        Q_EMIT amountChanged();
+        Q_EMIT totalChanged();
+    }
 }

@@ -112,7 +112,7 @@ def create_wallet_via_gui(gui, wallet_name=WALLET_NAME):
 
 def navigate_to_send(gui):
     """Click the Send tab and wait for the Send page to appear."""
-    gui.click("walletSendTab")
+    gui.click("walletSendTabButton")
     gui.wait_for_page("walletSendPage", timeout_ms=15000)
 
 

@@ -12,6 +12,7 @@ import "../../components"
 
 Page {
     id: root
+    objectName: "walletSendReviewPage"
     background: null
 
     property WalletQmlModel wallet: walletController.selectedWallet
@@ -24,6 +25,7 @@ Page {
     header: NavigationBar2 {
         id: navbar
         leftItem: NavButton {
+            objectName: "sendReviewBackButton"
             iconSource: "image://images/caret-left"
             text: qsTr("Back")
             onClicked: {
@@ -62,6 +64,7 @@ Page {
                     color: Theme.color.neutral7
                 }
                 CoreText {
+                    objectName: "sendReviewAddressValue"
                     text: root.transaction.address
                     font.pixelSize: 15
                     color: Theme.color.neutral9
@@ -76,6 +79,7 @@ Page {
                     color: Theme.color.neutral7
                 }
                 CoreText {
+                    objectName: "sendReviewNoteValue"
                     text: root.transaction.label
                     font.pixelSize: 15
                     color: Theme.color.neutral9
@@ -90,6 +94,7 @@ Page {
                     color: Theme.color.neutral7
                 }
                 CoreText {
+                    objectName: "sendReviewAmountValue"
                     text: root.transaction.amount
                     font.pixelSize: 15
                     color: Theme.color.neutral9
@@ -104,6 +109,7 @@ Page {
                     color: Theme.color.neutral7
                 }
                 CoreText {
+                    objectName: "sendReviewFeeValue"
                     text: root.transaction.fee
                     font.pixelSize: 15
                     color: Theme.color.neutral9
@@ -118,6 +124,7 @@ Page {
                     color: Theme.color.neutral7
                 }
                 CoreText {
+                    objectName: "sendReviewTotalValue"
                     text: root.transaction.total
                     font.pixelSize: 15
                     color: Theme.color.neutral9
@@ -125,7 +132,8 @@ Page {
             }
 
             ContinueButton {
-                id: confimationButton
+                id: confirmationButton
+                objectName: "sendReviewSendButton"
                 Layout.fillWidth: true
                 Layout.topMargin: 30
                 text: qsTr("Send")

@@ -12,6 +12,7 @@ import "../../components"
 
 Page {
     id: root
+    objectName: "walletMultipleSendReviewPage"
     background: null
 
     property WalletQmlModel wallet: walletController.selectedWallet
@@ -108,6 +109,7 @@ Page {
                     Layout.fillWidth: true
                 }
                 CoreText {
+                    objectName: "multipleSendReviewTotalValue"
                     text: root.transaction.total
                     font.pixelSize: 20
                     color: Theme.color.neutral9
@@ -130,6 +132,7 @@ Page {
                     Layout.fillWidth: true
                 }
                 CoreText {
+                    objectName: "multipleSendReviewFeeValue"
                     text: root.transaction.fee
                     font.pixelSize: 15
                 }
@@ -142,6 +145,7 @@ Page {
 
             ContinueButton {
                 id: confirmationButton
+                objectName: "multipleSendReviewSendButton"
                 Layout.fillWidth: true
                 Layout.topMargin: 30
                 text: qsTr("Send")

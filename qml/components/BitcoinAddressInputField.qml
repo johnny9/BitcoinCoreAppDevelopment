@@ -15,8 +15,10 @@ ColumnLayout {
     property var address
     property string errorText: ""
     property string labelText: qsTr("Send to")
+    property string inputObjectName: ""
     property bool enabled: true
 
+    signal textChanged()
     signal editingFinished()
 
     Layout.fillWidth: true
@@ -40,6 +42,7 @@ ColumnLayout {
 
         TextArea {
             id: addressInput
+            objectName: root.inputObjectName
             anchors.left: label.right
             anchors.right: parent.right
             anchors.top: parent.top
@@ -64,6 +67,7 @@ ColumnLayout {
                 if (root.address) {
                     cursorPosition = root.address.setAddress(text, cursorPosition)
                 }
+                root.textChanged()
             }
 
             onEditingFinished: {
