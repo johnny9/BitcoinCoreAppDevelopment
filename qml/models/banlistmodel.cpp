@@ -24,12 +24,12 @@ int BanListModel::rowCount(const QModelIndex& parent) const
 QVariant BanListModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid() || index.row() >= m_ban_list.size()) return {};
-    const CCombinedBan& entry = m_ban_list.at(index.row());
+    const BanListEntry& entry = m_ban_list.at(index.row());
     switch (static_cast<BanRoles>(role)) {
     case BanRoles::AddressRole:
         return QString::fromStdString(entry.subnet.ToString());
     case BanRoles::BanUntilRole: {
-        QDateTime dt = QDateTime::fromSecsSinceEpoch(entry.banEntry.nBanUntil);
+        QDateTime dt = QDateTime::fromSecsSinceEpoch(entry.ban_entry.nBanUntil);
         return QLocale::system().toString(dt, QStringLiteral("MMMM d, yyyy h:mm AP"));
     }
     }

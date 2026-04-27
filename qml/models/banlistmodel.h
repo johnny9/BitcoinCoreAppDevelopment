@@ -5,12 +5,19 @@
 #ifndef BITCOIN_QML_MODELS_BANLISTMODEL_H
 #define BITCOIN_QML_MODELS_BANLISTMODEL_H
 
-#include <qt/bantablemodel.h>
+#include <net_types.h>
+#include <netaddress.h>
 
 #include <QAbstractListModel>
 #include <QList>
 
 namespace interfaces { class Node; }
+
+struct BanListEntry
+{
+    CSubNet subnet;
+    CBanEntry ban_entry;
+};
 
 class BanListModel : public QAbstractListModel
 {
@@ -41,7 +48,7 @@ Q_SIGNALS:
 
 private:
     interfaces::Node& m_node;
-    QList<CCombinedBan> m_ban_list;
+    QList<BanListEntry> m_ban_list;
 };
 
 #endif // BITCOIN_QML_MODELS_BANLISTMODEL_H
