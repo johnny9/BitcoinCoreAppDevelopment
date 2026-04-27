@@ -5,6 +5,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Dialogs
 import Qt.labs.settings 1.0
 import org.bitcoincore.qt 1.0
 
@@ -333,6 +334,88 @@ PageStack {
             }
         }
 
+        function handlePsbtImportResult(mode) {
+            sendOptionsPopup.close()
+            if (mode === "single-review" || mode === "multiple-review") {
+                const multipleRecipientsEnabled = mode === "multiple-review"
+                settings.multipleRecipientsEnabled = multipleRecipientsEnabled
+                root.transactionPrepared(multipleRecipientsEnabled)
+            } else if (mode === "unsupported") {
+                unsupportedPsbtPopup.message = root.wallet.importedPsbtError.length > 0
+                    ? root.wallet.importedPsbtError
+                    : qsTr("This PSBT is not supported yet.")
+                unsupportedPsbtPopup.open()
+            }
+        }
+
+        FileDialog {
+            id: psbtOpenDialog
+            title: qsTr("Import PSBT")
+            fileMode: FileDialog.OpenFile
+            nameFilters: [qsTr("Partially Signed Bitcoin Transactions (*.psbt)"), qsTr("All files (*)")]
+            onAccepted: sendPage.handlePsbtImportResult(root.wallet.importPsbtFromFile(selectedFile.toString()))
+        }
+
+        // Kept hidden so functional tests can inject a PSBT path until the
+        // native file dialog is automatable through the QML test bridge.
+        TextField {
+            id: psbtAutomationPathField
+            objectName: "psbtImportPathField"
+            visible: false
+        }
+
+        Popup {
+            id: unsupportedPsbtPopup
+            objectName: "unsupportedPsbtPopup"
+            anchors.centerIn: parent
+            modal: true
+            padding: 20
+            width: Math.min(parent.width - 40, 360)
+
+            property string message: ""
+
+            onClosed: root.wallet.clearImportedPsbt()
+
+            background: Rectangle {
+                color: Theme.color.background
+                radius: 8
+                border.color: Theme.color.neutral3
+                border.width: 1
+            }
+
+            ColumnLayout {
+                width: parent.width
+                spacing: 16
+
+                CoreText {
+                    objectName: "unsupportedPsbtPopupTitle"
+                    Layout.fillWidth: true
+                    text: qsTr("Not supported")
+                    bold: true
+                    font.pixelSize: 18
+                    color: Theme.color.neutral9
+                    horizontalAlignment: Text.AlignHCenter
+                }
+
+                CoreText {
+                    objectName: "unsupportedPsbtPopupMessage"
+                    Layout.fillWidth: true
+                    text: unsupportedPsbtPopup.message
+                    font.pixelSize: 15
+                    color: Theme.color.neutral7
+                    wrapMode: Text.WordWrap
+                    horizontalAlignment: Text.AlignHCenter
+                }
+
+                ContinueButton {
+                    objectName: "unsupportedPsbtPopupOkButton"
+                    Layout.fillWidth: true
+                    text: qsTr("Ok")
+                    onClicked: unsupportedPsbtPopup.close()
+                }
+            }
+        }
+
         Settings {
             id: settings
             property alias coinControlEnabled: sendOptionsPopup.coinControlEnabled
@@ -341,7 +424,7 @@ PageStack {
             onMultipleRecipientsEnabledChanged: {
                 if (!multipleRecipientsEnabled) {
                     root.wallet.recipients.clearToFront()
-                } else {
+                } else if (root.wallet.recipients.count === 1) {
                     root.wallet.recipients.add()
                 }
             }
@@ -400,6 +483,20 @@ PageStack {
                         id: sendOptionsPopup
                         x: menuButton.x - width + menuButton.width
                         y: menuButton.y + menuButton.height
+                        onClearFormRequested: {
+                            sendOptionsPopup.close()
+                            root.wallet.recipients.clear()
+                        }
+                        onImportPsbtFromFileRequested: {
+                            if (psbtAutomationPathField.text.length > 0) {
+                                const automatedPath = psbtAutomationPathField.text
+                                psbtAutomationPathField.text = ""
+                                sendPage.handlePsbtImportResult(root.wallet.importPsbtFromFile(automatedPath))
+                                return
+                            }
+                            sendOptionsPopup.close()
+                            psbtOpenDialog.open()
+                        }
                     }
                 }
 
@@ -570,6 +667,7 @@ PageStack {
 
                 RowLayout {
                     id: selectAndAddRecipients
+                    objectName: "sendMultipleRecipientsRow"
                     Layout.fillWidth: true
                     Layout.topMargin: 10
                     Layout.bottomMargin: 10
@@ -773,7 +871,6 @@ PageStack {
                 }
 
                 LabeledTextInput {
-                    objectName: "sendNoteInput"
                     id: label
                     objectName: "sendNoteField"
                     inputObjectName: "sendNoteInput"

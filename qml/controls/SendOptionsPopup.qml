@@ -5,6 +5,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import org.bitcoincore.qt 1.0
 
 import "../components"
 import "../controls"
@@ -17,8 +18,10 @@ OptionPopup {
     property alias multipleRecipientsEnabled: multipleRecipientsToggle.checked
 
     signal openPaymentRequest()
+    signal importPsbtFromFileRequested()
+    signal clearFormRequested()
 
-    implicitWidth: 300
+    implicitWidth: 305
     implicitHeight: columnLayout.implicitHeight + 10
 
     clip: true
@@ -27,12 +30,8 @@ OptionPopup {
 
     ColumnLayout {
         id: columnLayout
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.topMargin: 5
-        anchors.leftMargin: 10
-        anchors.rightMargin: 10
+        anchors.fill: parent
+        anchors.margins: 5
         spacing: 0
 
         EllipsisMenuButtonItem {
@@ -57,6 +56,59 @@ OptionPopup {
             objectName: "sendOptionsMultipleRecipientsToggle"
             Layout.fillWidth: true
             text: qsTr("Multiple Recipients")
+        }
+
+        Item {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 9
+
+            Rectangle {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: 10
+                anchors.rightMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                height: 1
+                color: Theme.color.neutral5
+            }
+        }
+
+        EllipsisMenuActionItem {
+            id: fileImportButton
+            objectName: "sendImportPsbtFromFileButton"
+            Layout.fillWidth: true
+            text: qsTr("Import PSBT from file...")
+            leftIconSource: "qrc:/icons/file"
+            onClicked: root.importPsbtFromFileRequested()
+        }
+
+        Item {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 9
+
+            Rectangle {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: 10
+                anchors.rightMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                height: 1
+                color: Theme.color.neutral5
+            }
+        }
+
+        EllipsisMenuActionItem {
+            id: clearFormButton
+            objectName: "sendClearFormButton"
+            Layout.fillWidth: true
+            text: qsTr("Clear form")
+            leftIconSource: "qrc:/icons/cross"
+            onClicked: root.clearFormRequested()
+        }
+
+        Item {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 5
         }
     }
 }

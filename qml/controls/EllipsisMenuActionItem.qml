@@ -7,16 +7,15 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import org.bitcoincore.qt 1.0
 
-Button {
-    property int bgRadius: 0
+AbstractButton {
+    id: root
+
+    property url leftIconSource
     property color bgDefaultColor: "transparent"
     property color bgHoverColor: Theme.color.neutral2
     property color textColor: Theme.color.neutral7
     property color textHoverColor: Theme.color.neutral9
-    property color textActiveColor: Theme.color.neutral7
 
-    id: root
-    checkable: true
     hoverEnabled: AppMode.isDesktop
     padding: 0
 
@@ -31,58 +30,53 @@ Button {
     }
 
     contentItem: RowLayout {
-        spacing: 5
         anchors.fill: parent
         anchors.leftMargin: 10
         anchors.rightMargin: 5
+        spacing: 5
 
         RowLayout {
-            Layout.fillWidth: true
             Layout.alignment: Qt.AlignVCenter
+            Layout.fillWidth: true
             spacing: 7
+
+            Item {
+                Layout.alignment: Qt.AlignVCenter
+                Layout.preferredWidth: 18
+                Layout.preferredHeight: 18
+
+                Icon {
+                    anchors.centerIn: parent
+                    source: root.leftIconSource
+                    color: root.hovered ? root.textHoverColor : root.textColor
+                    size: 18
+                }
+            }
 
             CoreText {
                 id: buttonText
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignVCenter
+                text: root.text
                 horizontalAlignment: Text.AlignLeft
                 font.pixelSize: 15
-                text: root.text
-                color: root.checked ? root.textActiveColor : root.textColor
+                color: root.hovered ? root.textHoverColor : root.textColor
             }
         }
 
         Item {
             Layout.alignment: Qt.AlignVCenter
-            Layout.preferredWidth: 38
-            Layout.preferredHeight: 22
-
-            OptionSwitch {
-                id: optionSwitch
-                anchors.centerIn: parent
-                width: 38
-                height: 22
-                checked: root.checked
-                enabled: false
-            }
+            Layout.preferredWidth: 18
+            Layout.preferredHeight: 18
         }
     }
 
     background: Rectangle {
-        id: bg
-        color: root.bgDefaultColor
-        radius: root.bgRadius
+        color: root.hovered ? root.bgHoverColor : root.bgDefaultColor
+        radius: 0
 
         Behavior on color {
             ColorAnimation { duration: 150 }
         }
     }
-
-    states: [
-        State {
-            name: "HOVER"; when: root.hovered && root.enabled
-            PropertyChanges { target: bg; color: root.bgHoverColor }
-            PropertyChanges { target: buttonText; color: root.textHoverColor }
-        }
-    ]
 }
