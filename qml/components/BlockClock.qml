@@ -230,9 +230,9 @@ Item {
             name: "CONNECTING"; when: !faulted && !paused && !connected
             PropertyChanges {
                 target: root
-                header: "Connecting"
+                header: qsTr("Connecting")
                 headerSize: dial.width * (3/25)
-                subText: "Please wait"
+                subText: qsTr("Please wait")
                 estimating: false
             }
             PropertyChanges {

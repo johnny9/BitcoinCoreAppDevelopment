@@ -49,7 +49,7 @@ ColumnLayout {
             color: Theme.color.neutral9
             placeholderTextColor: enabled ? Theme.color.neutral7 : Theme.color.neutral4
             background: Item {}
-            placeholderText: "0.00000000"
+            placeholderText: root.amount && root.amount.unit === BitcoinAmount.SAT ? "0" : "0.00000000"
             selectByMouse: true
 
             text: root.amount ? root.amount.display : ""
@@ -98,7 +98,7 @@ ColumnLayout {
                 anchors.verticalCenter: parent.verticalCenter
                 text: root.amount ? root.amount.unitLabel : ""
                 font.pixelSize: 18
-                color: enabled ? Theme.color.neutral7 : Theme.color.neutral4
+                color: root.enabled ? Theme.color.neutral7 : Theme.color.neutral4
             }
 
             Icon {

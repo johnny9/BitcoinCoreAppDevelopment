@@ -37,6 +37,7 @@ Page {
             implicitHeight: 46
             text: walletController.selectedWallet.name
             balance: walletController.selectedWallet.balance
+            balanceSatoshi: walletController.selectedWallet.balanceSatoshi
             loading: !walletController.initialized
             noWalletLoaded: !walletController.isWalletLoaded
             noWalletsFound: walletController.noWalletsFound

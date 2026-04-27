@@ -47,7 +47,7 @@ public:
 
     Transaction(uint256 hash, qint64 time);
 
-    QString prettyAmount() const;
+    QString prettyAmount(int display_unit = 0) const;
     QString dateTimeString() const;
     void updateStatus(const interfaces::WalletTxStatus& wtx, int num_blocks, int64_t block_time);
 

@@ -4,6 +4,7 @@
 
 #include <qml/models/walletqmlmodeltransaction.h>
 
+#include <qml/bitcoinunits.h>
 #include <qml/models/sendrecipient.h>
 #include <qml/models/sendrecipientslistmodel.h>
 
@@ -14,9 +15,19 @@ WalletQmlModelTransaction::WalletQmlModelTransaction(const SendRecipientsListMod
 {
 }
 
+QString WalletQmlModelTransaction::formatWithUnit(CAmount value, int display_unit)
+{
+    auto unit = (display_unit == 1) ? QmlBitcoinUnits::Unit::SAT : QmlBitcoinUnits::Unit::BTC;
+    QString num = QmlBitcoinUnits::format(unit, value, false, QmlBitcoinUnits::SeparatorStyle::STANDARD);
+    if (display_unit == 1) {
+        return num + " " + ((qAbs(value) == 1) ? QStringLiteral("sat") : QStringLiteral("sats"));
+    }
+    return num + " ₿";
+}
+
 QString WalletQmlModelTransaction::amount() const
 {
-    return QString::number(m_amount);
+    return formatWithUnit(m_amount, m_display_unit);
 }
 
 QString WalletQmlModelTransaction::address() const
@@ -26,17 +37,27 @@ QString WalletQmlModelTransaction::address() const
 
 QString WalletQmlModelTransaction::fee() const
 {
-    return QString::number(m_fee);
+    return formatWithUnit(m_fee, m_display_unit);
 }
 
 QString WalletQmlModelTransaction::total() const
 {
-    return QString::number(m_amount + m_fee);
+    return formatWithUnit(m_amount + m_fee, m_display_unit);
 }
 
 QString WalletQmlModelTransaction::label() const
 {
     return m_label;
+}
+
+void WalletQmlModelTransaction::setDisplayUnit(int unit)
+{
+    if (unit != m_display_unit) {
+        m_display_unit = unit;
+        Q_EMIT amountChanged();
+        Q_EMIT feeChanged();
+        Q_EMIT totalChanged();
+    }
 }
 
 CTransactionRef& WalletQmlModelTransaction::getWtx()

@@ -35,6 +35,13 @@ PageStack {
     }
 
 
+    Binding {
+        target: root.recipient ? root.recipient.amount : null
+        property: "unit"
+        value: optionsModel.displayUnit
+        when: root.recipient !== null
+    }
+
     initialItem: Page {
         background: null
 
@@ -207,7 +214,7 @@ PageStack {
                             color: Theme.color.neutral9
                             placeholderTextColor: enabled ? Theme.color.neutral7 : Theme.color.neutral4
                             background: Item {}
-                            placeholderText: "0.00000000"
+                            placeholderText: root.recipient.amount.unit === BitcoinAmount.SAT ? "0" : "0.00000000"
                             selectByMouse: true
                             text: root.recipient.amount.display
                             onTextEdited: root.recipient.amount.display = text

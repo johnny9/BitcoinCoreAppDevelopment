@@ -81,6 +81,8 @@
         <file>pages/onboarding/OnboardingStrengthen.qml</file>
         <file>pages/onboarding/OnboardingWizard.qml</file>
         <file>pages/settings/SettingsAbout.qml</file>
+        <file>pages/settings/SettingsDisplayUnit.qml</file>
+        <file>pages/settings/SettingsLanguage.qml</file>
         <file>pages/settings/SettingsBlockClockDisplayMode.qml</file>
         <file>pages/settings/SettingsConnection.qml</file>
         <file>pages/settings/SettingsDebugLog.qml</file>

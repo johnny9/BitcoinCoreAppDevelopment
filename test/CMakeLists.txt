@@ -22,6 +22,7 @@ add_executable(bitcoinqml_unit_tests
   test_qmlinitexecutor_api.cpp
   test_options_model.cpp
   test_banlistmodel.cpp
+  test_display_settings.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../bitcoin/src/util/chaintype.cpp
 )
 

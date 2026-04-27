@@ -1,0 +1,122 @@
+// Copyright (c) 2026 The Bitcoin Core developers
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import "../../controls"
+import "../../components"
+
+Page {
+    id: root
+    signal back
+
+    objectName: "settingsLanguagePage"
+    background: null
+    implicitWidth: 450
+    leftPadding: 20
+    rightPadding: 20
+    topPadding: 30
+
+    header: NavigationBar2 {
+        leftItem: NavButton {
+            objectName: "settingsLanguageBack"
+            iconSource: "image://images/caret-left"
+            text: qsTr("Back")
+            onClicked: root.back()
+        }
+        centerItem: Header {
+            headerBold: true
+            headerSize: 18
+            header: qsTr("Choose language")
+        }
+    }
+
+    ColumnLayout {
+        anchors.fill: parent
+        spacing: 0
+
+        CoreTextField {
+            id: searchField
+            objectName: "languageSearch"
+            Layout.fillWidth: true
+            Layout.bottomMargin: 8
+            placeholderText: qsTr("Search...")
+        }
+
+        Separator {
+            Layout.fillWidth: true
+        }
+
+        ListView {
+            id: languageList
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            clip: true
+
+            model: {
+                const all = optionsModel.availableLanguages
+                if (searchField.text.length === 0) return all
+                const query = searchField.text.toLowerCase()
+                return all.filter(function(tag) {
+                    return optionsModel.languageLabel(tag).toLowerCase().indexOf(query) !== -1
+                })
+            }
+
+            delegate: ItemDelegate {
+                id: delegate
+                // Declare modelData as a required property so Qt properly binds the
+                // list element value (a language tag string) into this delegate and
+                // all of its children. This avoids the delegate-scope leakage that
+                // occurs when model roles are referenced inside a Loader.sourceComponent.
+                required property string modelData
+
+                objectName: "language_" + delegate.modelData
+                Accessible.role: Accessible.ListItem
+                Accessible.name: optionsModel.languageLabel(delegate.modelData)
+                leftPadding: 0
+                rightPadding: 0
+                topPadding: 0
+                bottomPadding: 0
+                width: languageList.width
+
+                background: Item {
+                    Separator {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                    }
+                }
+
+                contentItem: RowLayout {
+                    spacing: 0
+
+                    CoreText {
+                        Layout.fillWidth: true
+                        Layout.topMargin: 14
+                        Layout.bottomMargin: 14
+                        text: optionsModel.languageLabel(delegate.modelData)
+                        font.pixelSize: 18
+                        color: Theme.color.neutral9
+                        horizontalAlignment: Text.AlignLeft
+                        wrap: false
+                        elide: Text.ElideRight
+                    }
+
+                    Icon {
+                        visible: delegate.modelData === optionsModel.language
+                        source: "image://images/check"
+                        color: Theme.color.orange
+                        size: 24
+                    }
+                }
+
+                onClicked: {
+                    optionsModel.language = delegate.modelData
+                    root.back()
+                }
+            }
+        }
+    }
+}

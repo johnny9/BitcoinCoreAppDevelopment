@@ -95,10 +95,13 @@ QString WalletQmlModel::balance() const
     if (!m_wallet) {
         return "0";
     }
-    return QmlBitcoinUnits::format(QmlBitcoinUnits::Unit::BTC, m_wallet->getBalance());
+    QmlBitcoinUnits::Unit unit = (m_display_unit == 1)
+        ? QmlBitcoinUnits::Unit::SAT
+        : QmlBitcoinUnits::Unit::BTC;
+    return QmlBitcoinUnits::format(unit, m_wallet->getBalance());
 }
 
-CAmount WalletQmlModel::balanceSatoshi() const
+qint64 WalletQmlModel::balanceSatoshi() const
 {
     if (!m_wallet) {
         return 0;
@@ -282,6 +285,7 @@ bool WalletQmlModel::prepareTransaction()
         m_current_transaction = new WalletQmlModelTransaction(m_send_recipients, this);
         m_current_transaction->setWtx(newTx);
         m_current_transaction->setTransactionFee(res->fee);
+        m_current_transaction->setDisplayUnit(m_display_unit);
         Q_EMIT currentTransactionChanged();
         return true;
     } else {
@@ -375,5 +379,20 @@ void WalletQmlModel::setFeeTargetBlocks(unsigned int target_blocks)
     if (m_coin_control.m_confirm_target != target_blocks) {
         m_coin_control.m_confirm_target = target_blocks;
         Q_EMIT feeTargetBlocksChanged();
+    }
+}
+
+void WalletQmlModel::setDisplayUnit(int unit)
+{
+    if (unit != m_display_unit) {
+        m_display_unit = unit;
+        if (m_activity_list_model) {
+            m_activity_list_model->setDisplayUnit(unit);
+        }
+        if (m_current_transaction) {
+            m_current_transaction->setDisplayUnit(unit);
+        }
+        Q_EMIT balanceChanged();
+        Q_EMIT displayUnitChanged(unit);
     }
 }

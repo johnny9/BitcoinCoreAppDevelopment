@@ -39,16 +39,19 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
+    void setDisplayUnit(int unit);
+
 private:
     void refreshWallet();
     void updateTransactionStatus(QSharedPointer<Transaction> tx) const;
     void updateTransactionLabel(QSharedPointer<Transaction> tx) const;
-    void subsctribeToCoreSignals();
+    void subscribeToCoreSignals();
     void unsubscribeFromCoreSignals();
     void updateTransaction(const uint256& hash, const interfaces::WalletTxStatus& wtx,
                            int num_blocks, int64_t block_time);
     int findTransactionIndex(const uint256& hash) const;
 
+    int m_display_unit{0};
     QList<QSharedPointer<Transaction>> m_transactions;
     WalletQmlModel* m_wallet_model;
     std::unique_ptr<interfaces::Handler> m_handler_transaction_changed;

@@ -22,6 +22,7 @@ Button {
     property bool showBalance: true
     property bool showIcon: true
     property string balance: "0.0 000 000"
+    property var balanceSatoshi: 0
     property bool loading: false
     property bool noWalletLoaded: false
     property bool noWalletsFound: false
@@ -143,7 +144,7 @@ Button {
                 CoreText {
                     id: balanceText
                     visible: root.showBalance
-                    text: "₿ " + root.balance
+                    text: root.balance + " " + (optionsModel.displayUnit === 1 ? (root.balanceSatoshi === 1 ? qsTr("sat") : qsTr("sats")) : "₿")
                     color: Theme.color.neutral7
                 }
             }
