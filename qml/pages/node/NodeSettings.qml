@@ -5,6 +5,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import org.bitcoincore.qt 1.0
 import "../../controls"
 import "../../components"
 import "../settings"
@@ -128,6 +129,23 @@ PageStack {
                         root.push(debug_log_page)
                     }
                 }
+                Separator {
+                    Layout.fillWidth: true
+                    visible: AppMode.isDesktop
+                }
+                Setting {
+                    id: gotoWindowBehavior
+                    objectName: "settingsWindowBehavior"
+                    visible: AppMode.isDesktop
+                    Layout.fillWidth: true
+                    header: qsTr("Window Behavior")
+                    actionItem: CaretRightIcon {
+                        color: gotoWindowBehavior.stateColor
+                    }
+                    onClicked: {
+                        root.push(window_behavior_page)
+                    }
+                }
                 Item {
                     Layout.fillHeight: true
                 }
@@ -200,6 +218,12 @@ PageStack {
     Component {
         id: debug_log_page
         SettingsDebugLog {
+            onBack: root.pop()
+        }
+    }
+    Component {
+        id: window_behavior_page
+        SettingsWindowBehavior {
             onBack: root.pop()
         }
     }
