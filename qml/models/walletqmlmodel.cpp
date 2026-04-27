@@ -8,6 +8,8 @@
 #include <qml/bitcoinamount.h>
 #include <qml/models/activitylistmodel.h>
 #include <qml/models/paymentrequest.h>
+#include <qml/models/receiverequestentry.h>
+#include <qml/models/receiverequesthistorymodel.h>
 #include <qml/models/sendrecipient.h>
 #include <qml/models/sendrecipientslistmodel.h>
 #include <qml/models/walletqmlmodeltransaction.h>
@@ -36,6 +38,7 @@
 #include <QRegularExpression>
 
 #include <array>
+#include <limits>
 #include <optional>
 
 namespace {
@@ -214,40 +217,6 @@ std::optional<std::vector<wallet::CRecipient>> BuildRecipients(const SendRecipie
     return vec_send;
 }
 
-struct QmlReceiveRequestRecipient
-{
-    static constexpr int CURRENT_VERSION{1};
-    int nVersion{CURRENT_VERSION};
-    std::string address;
-    std::string label;
-    CAmount amount{0};
-    std::string message;
-    std::string sPaymentRequest;
-    std::string authenticatedMerchant;
-
-    SERIALIZE_METHODS(QmlReceiveRequestRecipient, obj)
-    {
-        READWRITE(obj.nVersion, obj.address, obj.label, obj.amount, obj.message, obj.sPaymentRequest, obj.authenticatedMerchant);
-    }
-};
-
-struct QmlRecentRequestEntry
-{
-    static constexpr int CURRENT_VERSION{1};
-    int nVersion{CURRENT_VERSION};
-    int64_t id{0};
-    QDateTime date;
-    QmlReceiveRequestRecipient recipient;
-
-    SERIALIZE_METHODS(QmlRecentRequestEntry, obj)
-    {
-        unsigned int date_timet;
-        SER_WRITE(obj, date_timet = obj.date.toSecsSinceEpoch());
-        READWRITE(obj.nVersion, obj.id, date_timet, obj.recipient);
-        SER_READ(obj, obj.date = QDateTime::fromSecsSinceEpoch(date_timet));
-    }
-};
-
 QString LocalizedString(const bilingual_str& value)
 {
     return QString::fromStdString(value.translated.empty() ? value.original : value.translated);
@@ -265,6 +234,8 @@ WalletQmlModel::WalletQmlModel(std::unique_ptr<interfaces::Wallet> wallet, QObje
     : QObject(parent)
 {
     m_wallet = std::move(wallet);
+    m_receive_requests = new ReceiveRequestHistoryModel(this);
+    reloadReceiveRequests();
     m_activity_list_model = new ActivityListModel(this);
     m_coins_list_model = new CoinsListModel(this);
     m_send_recipients = new SendRecipientsListModel(this);
@@ -286,6 +257,7 @@ WalletQmlModel::WalletQmlModel(QObject* parent)
     m_coins_list_model = new CoinsListModel(this);
     m_send_recipients = new SendRecipientsListModel(this);
     m_current_payment_request = new PaymentRequest(this);
+    m_receive_requests = new ReceiveRequestHistoryModel(this);
     initializeFeeEstimator();
 }
 
@@ -304,6 +276,7 @@ WalletQmlModel::~WalletQmlModel()
     delete m_coins_list_model;
     delete m_send_recipients;
     delete m_current_payment_request;
+    delete m_receive_requests;
     if (m_current_transaction) {
         delete m_current_transaction;
     }
@@ -521,73 +494,105 @@ void WalletQmlModel::removeWallet()
     m_wallet->remove();
 }
 
-void WalletQmlModel::commitPaymentRequest()
+bool WalletQmlModel::commitPaymentRequest()
 {
     if (!m_wallet || !m_current_payment_request) {
-        return;
+        return false;
     }
 
-    if (m_current_payment_request->id().isEmpty()) {
-        m_current_payment_request->setId(nextPaymentRequestId());
-    }
+    m_current_payment_request->setId(nextPaymentRequestId());
 
-    if (m_current_payment_request->address().isEmpty()) {
-        const OutputType output_type = m_wallet->getDefaultAddressType();
-        const auto destination{m_wallet->getNewDestination(output_type, m_current_payment_request->label().toStdString())};
-        if (!destination) {
-            return;
-        }
-        m_current_payment_request->setDestination(destination.value());
+    const OutputType output_type = m_wallet->getDefaultAddressType();
+    const auto destination{m_wallet->getNewDestination(output_type, m_current_payment_request->label().toStdString())};
+    if (!destination) {
+        return false;
     }
+    m_current_payment_request->setDestination(destination.value());
 
-    bool parse_ok{false};
-    const int64_t request_id{m_current_payment_request->id().toLongLong(&parse_ok)};
-    if (!parse_ok || request_id <= 0) {
-        return;
-    }
+    const int64_t request_id{m_current_payment_request->id().toLongLong()};
 
     QmlRecentRequestEntry request_entry;
     request_entry.id = request_id;
     request_entry.date = QDateTime::currentDateTime();
+    m_current_payment_request->setCreated(request_entry.date);
     request_entry.recipient.address = m_current_payment_request->address().toStdString();
     request_entry.recipient.label = m_current_payment_request->label().toStdString();
     request_entry.recipient.amount = m_current_payment_request->amount()->satoshi();
     request_entry.recipient.message = m_current_payment_request->message().toStdString();
+    request_entry.recipient.noteSelf = m_current_payment_request->noteSelf().toStdString();
 
-    DataStream ss{};
-    ss << request_entry;
-
-    m_wallet->setAddressReceiveRequest(
+    const bool persisted = m_wallet->setAddressReceiveRequest(
         m_current_payment_request->destination(),
         m_current_payment_request->id().toStdString(),
-        ss.str());
+        ReceiveRequestHistoryModel::SerializeEntry(request_entry));
+
+    if (!persisted) return false;
+
+    if (m_receive_requests) {
+        m_receive_requests->prependOrReplace(request_entry);
+    }
+
+    if (m_activity_list_model) {
+        m_activity_list_model->addReceiveRequest(
+            m_current_payment_request->address(),
+            m_current_payment_request->label(),
+            m_current_payment_request->amount()->satoshi(),
+            QDateTime::currentSecsSinceEpoch());
+    }
+    return true;
+}
+
+void WalletQmlModel::reloadReceiveRequests()
+{
+    if (!m_receive_requests) return;
+    if (!m_wallet) {
+        m_receive_requests->setEntries({});
+        return;
+    }
+    m_receive_requests->setEntries(
+        ReceiveRequestHistoryModel::DeserializeEntries(m_wallet->getAddressReceiveRequests()));
+}
+
+bool WalletQmlModel::removeReceiveRequest(const QString& request_id)
+{
+    if (!m_wallet || !m_receive_requests) return false;
+    const auto entry = m_receive_requests->entryById(request_id);
+    if (!entry) return false;
+    const CTxDestination destination = DecodeDestination(entry->recipient.address);
+    if (!IsValidDestination(destination)) return false;
+    if (!m_wallet->setAddressReceiveRequest(destination, request_id.toStdString(), std::string{})) {
+        return false;
+    }
+    m_receive_requests->removeByRequestId(request_id);
+    return true;
+}
+
+bool WalletQmlModel::loadPaymentRequest(const QString& request_id)
+{
+    if (!m_current_payment_request || !m_receive_requests) return false;
+    const auto entry = m_receive_requests->entryById(request_id);
+    if (!entry) return false;
+
+    const CTxDestination destination = DecodeDestination(entry->recipient.address);
+    if (!IsValidDestination(destination)) return false;
+
+    m_current_payment_request->clear();
+    m_current_payment_request->setDestination(destination);
+    m_current_payment_request->setLabel(QString::fromStdString(entry->recipient.label));
+    m_current_payment_request->setMessage(QString::fromStdString(entry->recipient.message));
+    m_current_payment_request->setNoteSelf(QString::fromStdString(entry->recipient.noteSelf));
+    m_current_payment_request->amount()->setSatoshi(entry->recipient.amount);
+    if (entry->id < 0 || entry->id > std::numeric_limits<unsigned int>::max()) return false;
+    m_current_payment_request->setId(static_cast<unsigned int>(entry->id));
+    m_current_payment_request->setCreated(entry->date);
+    return true;
 }
 
 unsigned int WalletQmlModel::nextPaymentRequestId() const
 {
-    if (!m_wallet) {
-        return 1;
-    }
-
-    int64_t max_id{0};
-    for (const std::string& request : m_wallet->getAddressReceiveRequests()) {
-        std::vector<uint8_t> data(request.begin(), request.end());
-        DataStream ss{data};
-        QmlRecentRequestEntry entry;
-        try {
-            ss >> entry;
-        } catch (const std::ios_base::failure&) {
-            continue;
-        }
-        if (entry.id > max_id) {
-            max_id = entry.id;
-        }
-    }
-
-    if (max_id <= 0 || max_id >= std::numeric_limits<unsigned int>::max() - 1) {
-        return 1;
-    }
-
+    if (!m_receive_requests) return 1;
+    const int64_t max_id = m_receive_requests->maxId();
+    if (max_id <= 0 || max_id >= std::numeric_limits<unsigned int>::max() - 1) return 1;
     return static_cast<unsigned int>(max_id + 1);
 }
 

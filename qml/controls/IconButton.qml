@@ -30,8 +30,7 @@ Button {
         id: bg
         anchors.fill: parent
         radius: 5
-        color: Theme.color.background
-
+        color: root.hovered || root.pressed ? Theme.color.neutral2 : Theme.color.background
 
         Behavior on color {
             ColorAnimation { duration: 150 }
@@ -41,7 +40,7 @@ Button {
     contentItem: Icon {
         id: icon
         anchors.fill: parent
-        source: "image://images/ellipsis"
+        source: ""
         size: root.size
         color: iconColor
         hoverEnabled: false
@@ -63,7 +62,7 @@ Button {
             PropertyChanges { target: bg; color: Theme.color.neutral2 }
         },
         State {
-            name: "HOVER"; when: root.hovered
+            name: "HOVER"; when: root.hovered && root.enabled
             // Background subtly highlights on hover; icon colour stays at
             // iconColor (neutral5). Only CHECKED/PRESSED animate it to orange.
             PropertyChanges { target: bg; color: Theme.color.neutral2 }
@@ -71,7 +70,6 @@ Button {
         State {
             name: "DISABLED"; when: !root.enabled
             PropertyChanges { target: icon; color: Theme.color.neutral4 }
-            PropertyChanges { target: bg; color: Theme.color.background }
         }
     ]
 }

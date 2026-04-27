@@ -45,7 +45,7 @@ Button {
 
     states: [
         State {
-            name: "HOVER"; when: root.hovered
+            name: "HOVER"; when: root.hovered && root.enabled
             PropertyChanges { target: buttonText; color: Theme.color.orange }
         }
     ]

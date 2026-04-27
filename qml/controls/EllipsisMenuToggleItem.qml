@@ -19,12 +19,7 @@ Button {
     implicitWidth: 280
     implicitHeight: 44
 
-    MouseArea {
-        anchors.fill: parent
-        enabled: false
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-    }
+    HoverHandler { cursorShape: Qt.PointingHandCursor }
 
     onClicked: {
         optionSwitch.checked = !optionSwitch.checked
@@ -33,7 +28,6 @@ Button {
     contentItem: RowLayout {
         spacing: 7
         anchors.fill: parent
-        anchors.centerIn: parent
         anchors.margins: 10
         CoreText {
             id: buttonText
