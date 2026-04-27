@@ -25,6 +25,7 @@ Item {
     readonly property bool showDialState: dial.visible
     readonly property real strokeWidth: Math.max(1, root.width / 12)
     readonly property color dialGlyphColor: root.pageSelected ? Theme.color.confirmationColors[5] : Theme.color.neutral9
+    readonly property color pausedGlyphColor: root.pageSelected ? Theme.color.confirmationColors[5] : Theme.color.neutral6
 
     implicitWidth: iconSize
     implicitHeight: iconSize
@@ -100,7 +101,7 @@ Item {
             radius: width / 2
             color: "transparent"
             border.width: root.strokeWidth
-            border.color: Theme.color.neutral6
+            border.color: root.pausedGlyphColor
         }
 
         Rectangle {
@@ -109,7 +110,7 @@ Item {
             width: Math.max(root.strokeWidth, parent.width * 0.11)
             height: parent.height * 0.42
             radius: width / 2
-            color: Theme.color.neutral6
+            color: root.pausedGlyphColor
         }
 
         Rectangle {
@@ -118,7 +119,7 @@ Item {
             width: Math.max(root.strokeWidth, parent.width * 0.11)
             height: parent.height * 0.42
             radius: width / 2
-            color: Theme.color.neutral6
+            color: root.pausedGlyphColor
         }
     }
 
