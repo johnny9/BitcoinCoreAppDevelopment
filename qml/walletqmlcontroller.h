@@ -45,6 +45,8 @@ public:
     ~WalletQmlController();
 
     Q_INVOKABLE void setSelectedWallet(QString path);
+    Q_INVOKABLE bool isWalletOpen(const QString& path);
+    Q_INVOKABLE void closeWallet(const QString& path);
     Q_INVOKABLE bool createSingleSigWallet(const QString &name, const QString &passphrase);
     Q_INVOKABLE bool createExternalSignerWallet(const QString& name);
     Q_INVOKABLE void importWallet(const QString& path);
@@ -85,6 +87,7 @@ Q_SIGNALS:
     void initializedChanged();
     void isWalletLoadedChanged();
     void noWalletsFoundChanged();
+    void openWalletsChanged(const QStringList& wallet_names);
     void walletLoadInProgressChanged();
     void walletLoadErrorChanged();
     void walletLoadWarningsChanged();
@@ -104,6 +107,7 @@ public Q_SLOTS:
     void initialize();
 
 private:
+    QStringList openWalletNames() const;
     enum class WalletLoadAction {
         None,
         Load,
@@ -128,6 +132,7 @@ private:
     void clearLastImportedWalletInfo();
     QString makeSuggestedExternalSignerWalletName(const QString& signer_name) const;
     void setExternalSignerStatus(bool path_configured, int signer_count, const QString& signer_name, const QString& error);
+    void notifyOpenWalletsChanged();
 
     bool m_initialized{false};
     interfaces::Node& m_node;
@@ -135,7 +140,7 @@ private:
     WalletQmlModel* m_selected_wallet;
     QObject* m_worker;
     QThread* m_worker_thread;
-    QMutex m_wallets_mutex;
+    mutable QMutex m_wallets_mutex;
     std::vector<WalletQmlModel*> m_wallets;
     std::unique_ptr<interfaces::Handler> m_handler_load_wallet;
     bool m_is_wallet_loaded{false};

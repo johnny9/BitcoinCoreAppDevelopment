@@ -17,6 +17,7 @@ int RunDesktopWindowBehaviorModelTests(int argc, char* argv[]);
 int RunNodeModelTests(int argc, char* argv[]);
 int RunBanListModelTests(int argc, char* argv[]);
 int RunDisplaySettingsTests(int argc, char* argv[]);
+int RunWalletListModelTests(int argc, char* argv[]);
 int RunWalletQmlModelTests(int argc, char* argv[]);
 
 int main(int argc, char* argv[])
@@ -32,6 +33,7 @@ int main(int argc, char* argv[])
     status |= RunNodeModelTests(argc, argv);
     status |= RunBanListModelTests(argc, argv);
     status |= RunDisplaySettingsTests(argc, argv);
+    status |= RunWalletListModelTests(argc, argv);
     status |= RunWalletQmlModelTests(argc, argv);
 
     for (const auto& test : qttestregistry::SortedEntries()) {

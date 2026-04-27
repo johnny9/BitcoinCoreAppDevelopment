@@ -8,6 +8,8 @@
 #include <interfaces/wallet.h>
 #include <QAbstractListModel>
 #include <QList>
+#include <QSet>
+#include <QStringList>
 
 namespace interfaces {
 class Node;
@@ -18,11 +20,18 @@ class WalletListModel : public QAbstractListModel
     Q_OBJECT
 
 public:
+    enum class LoadState {
+        Closed = 0,
+        Open = 1,
+    };
+    Q_ENUM(LoadState)
+
     WalletListModel(interfaces::Node& node, QObject *parent = nullptr);
     ~WalletListModel() = default;
 
     enum Roles {
-        NameRole = Qt::UserRole + 1
+        NameRole = Qt::UserRole + 1,
+        LoadStateRole,
     };
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -31,6 +40,7 @@ public:
 
 public Q_SLOTS:
     void listWalletDir();
+    void setOpenWalletNames(const QStringList& wallet_names);
 
 private:
     struct Item {
@@ -38,8 +48,10 @@ private:
     };
 
     void addItem(const Item &item);
+    void updateLoadStateForAllRows();
 
     QList<Item> m_items;
+    QSet<QString> m_open_wallet_names;
     interfaces::Node& m_node;
 };
 

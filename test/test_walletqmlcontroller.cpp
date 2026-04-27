@@ -5,11 +5,14 @@
 #include <QtTest/QtTest>
 
 #include <common/settings.h>
+#include <common/types.h>
 #include <interfaces/handler.h>
 #include <interfaces/wallet.h>
+#include <outputtype.h>
 #include <qml/walletqmlcontroller.h>
 #include <scheduler.h>
 #include <test/mocks/mocknode.h>
+#include <test/mocks/mockwallet.h>
 #include <util/translation.h>
 #include <wallet/walletutil.h>
 
@@ -117,6 +120,29 @@ public:
     }
 };
 
+class FakeWallet : public StubWallet
+{
+public:
+    struct State {
+        int remove_calls{0};
+    };
+
+    explicit FakeWallet(std::string wallet_name, State* state)
+        : m_wallet_name(std::move(wallet_name)), m_state(state) {}
+
+    std::string getWalletName() override { return m_wallet_name; }
+    void remove() override
+    {
+        if (m_state) {
+            ++m_state->remove_calls;
+        }
+    }
+
+private:
+    std::string m_wallet_name;
+    State* m_state;
+};
+
 void ExpectControllerInitialization(MockNode& node, FakeWalletLoader& loader)
 {
     using ::testing::_;
@@ -151,6 +177,10 @@ private Q_SLOTS:
     void selectWalletBeforeInitializationSetsLoadError();
     void initializedControllerPropagatesCreateErrors();
     void initializedControllerForwardsMigrationPassphrase();
+    void initializedControllerClosesSelectedWalletAndSelectsRemainingLoadedWallet();
+    void initializedControllerClosesNonSelectedWalletWithoutChangingSelection();
+    void initializedControllerEmitsOpenWalletsChanged();
+    void initializedControllerUnloadWalletsClearsSelectionAndOpenWallets();
 };
 
 void WalletQmlControllerTests::externalSignerCreationRequiresConfiguredPath()
@@ -326,6 +356,140 @@ void WalletQmlControllerTests::initializedControllerForwardsMigrationPassphrase(
     QCOMPARE(loader.migrate_wallet_calls, 1);
     QCOMPARE(controller.walletMigrationError(), QString{"Migration failed."});
     QVERIFY(!controller.walletMigrationInProgress());
+}
+
+void WalletQmlControllerTests::initializedControllerClosesSelectedWalletAndSelectsRemainingLoadedWallet()
+{
+    using ::testing::StrictMock;
+
+    StrictMock<MockNode> node;
+    FakeWalletLoader loader;
+    FakeWallet::State alpha_state;
+    FakeWallet::State beta_state;
+    loader.get_wallets_fn = [&]() {
+        std::vector<std::unique_ptr<interfaces::Wallet>> wallets;
+        wallets.emplace_back(std::make_unique<FakeWallet>("alpha_wallet", &alpha_state));
+        wallets.emplace_back(std::make_unique<FakeWallet>("beta_wallet", &beta_state));
+        return wallets;
+    };
+    ExpectControllerInitialization(node, loader);
+
+    WalletQmlController controller(node);
+    controller.initialize();
+
+    QCOMPARE(controller.selectedWallet()->name(), QString{"alpha_wallet"});
+    QVERIFY(controller.isWalletLoaded());
+    QVERIFY(controller.isWalletOpen("alpha_wallet"));
+    QVERIFY(controller.isWalletOpen("beta_wallet"));
+
+    QSignalSpy selected_spy(&controller, &WalletQmlController::selectedWalletChanged);
+    QSignalSpy open_wallets_spy(&controller, &WalletQmlController::openWalletsChanged);
+
+    controller.closeWallet("alpha_wallet");
+
+    QCOMPARE(alpha_state.remove_calls, 1);
+    QCOMPARE(beta_state.remove_calls, 0);
+    QCOMPARE(selected_spy.count(), 1);
+    QCOMPARE(open_wallets_spy.count(), 1);
+    QCOMPARE(open_wallets_spy.at(0).at(0).toStringList(), QStringList({"beta_wallet"}));
+    QCOMPARE(controller.selectedWallet()->name(), QString{"beta_wallet"});
+    QVERIFY(controller.isWalletLoaded());
+    QVERIFY(!controller.isWalletOpen("alpha_wallet"));
+    QVERIFY(controller.isWalletOpen("beta_wallet"));
+}
+
+void WalletQmlControllerTests::initializedControllerClosesNonSelectedWalletWithoutChangingSelection()
+{
+    using ::testing::StrictMock;
+
+    StrictMock<MockNode> node;
+    FakeWalletLoader loader;
+    FakeWallet::State alpha_state;
+    FakeWallet::State beta_state;
+    loader.get_wallets_fn = [&]() {
+        std::vector<std::unique_ptr<interfaces::Wallet>> wallets;
+        wallets.emplace_back(std::make_unique<FakeWallet>("alpha_wallet", &alpha_state));
+        wallets.emplace_back(std::make_unique<FakeWallet>("beta_wallet", &beta_state));
+        return wallets;
+    };
+    ExpectControllerInitialization(node, loader);
+
+    WalletQmlController controller(node);
+    controller.initialize();
+
+    QSignalSpy selected_spy(&controller, &WalletQmlController::selectedWalletChanged);
+    QSignalSpy open_wallets_spy(&controller, &WalletQmlController::openWalletsChanged);
+
+    controller.closeWallet("beta_wallet");
+
+    QCOMPARE(alpha_state.remove_calls, 0);
+    QCOMPARE(beta_state.remove_calls, 1);
+    QCOMPARE(selected_spy.count(), 0);
+    QCOMPARE(open_wallets_spy.count(), 1);
+    QCOMPARE(open_wallets_spy.at(0).at(0).toStringList(), QStringList({"alpha_wallet"}));
+    QCOMPARE(controller.selectedWallet()->name(), QString{"alpha_wallet"});
+    QVERIFY(controller.isWalletLoaded());
+    QVERIFY(controller.isWalletOpen("alpha_wallet"));
+    QVERIFY(!controller.isWalletOpen("beta_wallet"));
+}
+
+void WalletQmlControllerTests::initializedControllerEmitsOpenWalletsChanged()
+{
+    using ::testing::StrictMock;
+
+    StrictMock<MockNode> node;
+    FakeWalletLoader loader;
+    FakeWallet::State alpha_state;
+    FakeWallet::State beta_state;
+    loader.get_wallets_fn = [&]() {
+        std::vector<std::unique_ptr<interfaces::Wallet>> wallets;
+        wallets.emplace_back(std::make_unique<FakeWallet>("alpha_wallet", &alpha_state));
+        wallets.emplace_back(std::make_unique<FakeWallet>("beta_wallet", &beta_state));
+        return wallets;
+    };
+    ExpectControllerInitialization(node, loader);
+
+    WalletQmlController controller(node);
+    QSignalSpy open_wallets_spy(&controller, &WalletQmlController::openWalletsChanged);
+
+    controller.initialize();
+
+    QCOMPARE(open_wallets_spy.count(), 1);
+    QCOMPARE(open_wallets_spy.at(0).at(0).toStringList(), QStringList({"alpha_wallet", "beta_wallet"}));
+}
+
+void WalletQmlControllerTests::initializedControllerUnloadWalletsClearsSelectionAndOpenWallets()
+{
+    using ::testing::StrictMock;
+
+    StrictMock<MockNode> node;
+    FakeWalletLoader loader;
+    FakeWallet::State alpha_state;
+    FakeWallet::State beta_state;
+    loader.get_wallets_fn = [&]() {
+        std::vector<std::unique_ptr<interfaces::Wallet>> wallets;
+        wallets.emplace_back(std::make_unique<FakeWallet>("alpha_wallet", &alpha_state));
+        wallets.emplace_back(std::make_unique<FakeWallet>("beta_wallet", &beta_state));
+        return wallets;
+    };
+    ExpectControllerInitialization(node, loader);
+
+    WalletQmlController controller(node);
+    controller.initialize();
+
+    QSignalSpy selected_spy(&controller, &WalletQmlController::selectedWalletChanged);
+    QSignalSpy open_wallets_spy(&controller, &WalletQmlController::openWalletsChanged);
+
+    controller.unloadWallets();
+
+    QCOMPARE(selected_spy.count(), 1);
+    QCOMPARE(open_wallets_spy.count(), 1);
+    QCOMPARE(open_wallets_spy.at(0).at(0).toStringList(), QStringList{});
+    QCOMPARE(controller.selectedWallet()->name(), QString{});
+    QVERIFY(!controller.isWalletOpen("alpha_wallet"));
+    QVERIFY(!controller.isWalletOpen("beta_wallet"));
+    QCOMPARE(alpha_state.remove_calls, 0);
+    QCOMPARE(beta_state.remove_calls, 0);
 }
 
 #ifdef BITCOINQML_NO_TEST_MAIN
