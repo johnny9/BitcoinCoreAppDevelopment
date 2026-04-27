@@ -12,6 +12,11 @@ import "../../components"
 import "../settings"
 
 Page {
+    signal showTransaction(string txid)
+
+    property string txid: ""
+    property bool canBump: false
+    property string replacedByTxid: ""
     property string message: ""
     property string amount: ""
     property string label: ""
@@ -23,10 +28,10 @@ Page {
     property int status: 0
 
     property color iconColor: {
-        if (delegate.status == Transaction.Confirmed) {
-            if (delegate.type == Transaction.RecvWithAddress ||
-                delegate.type == Transaction.RecvFromOther ||
-                delegate.type == Transaction.Generated) {
+        if (root.status == Transaction.Confirmed) {
+            if (root.type == Transaction.RecvWithAddress ||
+                root.type == Transaction.RecvFromOther ||
+                root.type == Transaction.Generated) {
                 Theme.color.green
             } else {
                 Theme.color.orange
@@ -36,9 +41,9 @@ Page {
         }
     }
     property color amountColor: {
-        if (delegate.type == Transaction.RecvWithAddress
-            || delegate.type == Transaction.RecvFromOther
-            || delegate.type == Transaction.Generated) {
+        if (root.type == Transaction.RecvWithAddress
+            || root.type == Transaction.RecvFromOther
+            || root.type == Transaction.Generated) {
             Theme.color.green
         } else {
             Theme.color.neutral9
@@ -80,6 +85,7 @@ Page {
             id: columnLayout
             anchors.horizontalCenter: parent.horizontalCenter
             width: Math.min(parent.width, 450)
+            opacity: root.replacedByTxid !== "" ? 0.4 : 1.0
             spacing: 0
 
             Rectangle {
@@ -192,6 +198,56 @@ Page {
                     }
                 }
             }
+
+            InfoBanner {
+                objectName: "speedUpBanner"
+                visible: root.canBump
+                Layout.fillWidth: true
+                Layout.topMargin: 20
+                bannerLayout: InfoBanner.Layout.Vertical
+                message: qsTr("This transaction is still unconfirmed. You can speed it up by increasing the fee.")
+                primaryButtonText: qsTr("Speed up")
+                onPrimaryClicked: speedUpOverlay.open()
+            }
+
+        }
+    }
+
+    InfoBanner {
+        objectName: "replacedBanner"
+        visible: root.replacedByTxid !== ""
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.margins: 20
+        anchors.bottomMargin: 30
+        title: qsTr("This transaction was updated with a faster one")
+        message: qsTr("You increased the fee while this transaction was still unconfirmed. Only the new one will confirm on-chain.")
+        primaryButtonText: qsTr("View updated transaction")
+        onPrimaryClicked: root.showTransaction(root.replacedByTxid)
+    }
+
+    SpeedUpOverlay {
+        id: speedUpOverlay
+        txid: root.txid
+        anchors.centerIn: parent
+        onBumpSucceeded: {
+            var page = root.StackView.view.push("SendResult.qml", {
+                resultType: SendResult.ResultType.SpeedUp
+            })
+            page.done.connect(function() {
+                if (walletController.selectedWallet) {
+                    walletController.selectedWallet.activityListModel.reload()
+                }
+                root.StackView.view.pop(null)
+            })
+            page.viewNewTransaction.connect(function() {
+                if (walletController.selectedWallet) {
+                    walletController.selectedWallet.activityListModel.reload()
+                }
+                root.StackView.view.pop(null)
+                root.showTransaction(speedUpOverlay.newTxid)
+            })
         }
     }
 }

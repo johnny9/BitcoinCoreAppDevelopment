@@ -5,37 +5,40 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtQuick.Dialogs
 import org.bitcoincore.qt 1.0
 
 import "../../controls"
 import "../../components"
 
-Popup {
+Page {
     id: root
     objectName: "sendResultPopup"
-    modal: true
-    anchors.centerIn: parent
-    Overlay.modal: Rectangle {
-        color: Qt.rgba(0.25, 0.25, 0.25, 0.9)
-    }
 
+    property bool opened: visible
     property string descriptionText: qsTr("Based on your selected fee, it should be confirmed within the next 10 minutes.")
-    property string actionText: qsTr("Close window")
+    property string actionText: qsTr("Done")
 
     background: Rectangle {
-        anchors.centerIn: parent
-        width: columnLayout.width + 40
-        height: columnLayout.height + 40
-        color: Theme.color.neutral0
-        border.color: Theme.color.neutral4
-        border.width: 1
-        radius: 5
+        color: Theme.color.background
     }
+
+    enum ResultType {
+        Regular,
+        SpeedUp
+        /*, Cancel */
+    }
+
+    property int resultType: SendResult.ResultType.Regular
+
+    signal done()
+    signal viewNewTransaction()
 
     ColumnLayout {
         id: columnLayout
-        anchors.centerIn: parent
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: -60
+        width: Math.min(parent.width - 80, 450)
         spacing: 20
 
         Item {
@@ -44,7 +47,6 @@ Popup {
             Layout.alignment: Qt.AlignHCenter
             Rectangle {
                 anchors.fill: parent
-                Layout.alignment: Qt.AlignHCenter
                 radius: 30
                 color: Theme.color.green
                 opacity: 0.2
@@ -54,13 +56,14 @@ Popup {
                 source: "qrc:/icons/check"
                 color: Theme.color.green
                 size: 30
-                opacity: 1.0
             }
         }
 
         CoreText {
             Layout.alignment: Qt.AlignHCenter
-            text: qsTr("Transaction sent")
+            text: root.resultType === SendResult.ResultType.SpeedUp
+                ? qsTr("Transaction updated")
+                : qsTr("Transaction sent")
             font.pixelSize: 28
             bold: true
         }
@@ -68,26 +71,33 @@ Popup {
         CoreText {
             Layout.alignment: Qt.AlignHCenter
             Layout.maximumWidth: 350
+            Layout.topMargin: 10
+            Layout.bottomMargin: 20
             color: Theme.color.neutral7
             text: root.descriptionText
             font.pixelSize: 18
         }
 
-        ContinueButton {
-            Layout.preferredWidth: Math.min(200, parent.width - 2 * Layout.leftMargin)
-            Layout.leftMargin: 20
-            Layout.rightMargin: Layout.leftMargin
+        RowLayout {
             Layout.alignment: Qt.AlignCenter
-            text: root.actionText
-            borderColor: Theme.color.neutral6
-            borderHoverColor: Theme.color.neutral9
-            borderPressedColor: Theme.color.neutral9
-            textColor: Theme.color.neutral9
-            backgroundColor: "transparent"
-            backgroundHoverColor: "transparent"
-            backgroundPressedColor: "transparent"
-            onClicked: {
-                root.close()
+            spacing: 15
+
+            OutlineButton {
+                text: root.resultType === SendResult.ResultType.SpeedUp
+                    ? qsTr("View new transaction")
+                    : qsTr("View transaction")
+                Layout.fillWidth: true
+                Layout.preferredWidth: 1
+                Layout.minimumWidth: 150
+                onClicked: root.viewNewTransaction()
+            }
+
+            ContinueButton {
+                Layout.fillWidth: true
+                Layout.preferredWidth: 1
+                Layout.minimumWidth: 150
+                text: root.actionText
+                onClicked: root.done()
             }
         }
     }

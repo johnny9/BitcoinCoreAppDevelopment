@@ -33,9 +33,15 @@ public:
         DepthRole,
         LabelRole,
         StatusRole,
-        TypeRole
+        TypeRole,
+        TxidRole,
+        CanBumpRole,
+        ReplacesTxidRole,
+        ReplacedByTxidRole
     };
 
+    Q_INVOKABLE void reload();
+    Q_INVOKABLE QVariantMap transactionDetails(const QString& txid) const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;

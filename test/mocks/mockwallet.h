@@ -125,6 +125,10 @@ public:
     MOCK_METHOD(CoinsList, listCoins, (), (override));
     MOCK_METHOD(OutputType, getDefaultAddressType, (), (override));
     MOCK_METHOD((std::unique_ptr<interfaces::Handler>), handleTransactionChanged, (TransactionChangedFn), (override));
+    MOCK_METHOD(bool, transactionCanBeBumped, (const Txid&), (override));
+    MOCK_METHOD(bool, createBumpTransaction, (const Txid&, const wallet::CCoinControl&, std::vector<bilingual_str>&, CAmount&, CAmount&, CMutableTransaction&), (override));
+    MOCK_METHOD(bool, signBumpTransaction, (CMutableTransaction&), (override));
+    MOCK_METHOD(bool, commitBumpTransaction, (const Txid&, CMutableTransaction&&, std::vector<bilingual_str>&, Txid&), (override));
 };
 
 #endif // BITCOIN_QML_TEST_MOCKS_MOCKWALLET_H

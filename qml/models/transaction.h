@@ -64,6 +64,9 @@ public:
     QString timestamp;
     Type type;
     QString txid;
+    CAmount fee{0};
+    QString replacesTxid;
+    QString replacedByTxid;
     bool countsForBalance;
     bool involvesWatchAddress;
     bool isPendingRequest{false};

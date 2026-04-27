@@ -123,6 +123,7 @@ def write_datadir(datadir, rpc_port, p2p_port, extra_lines=None):
         conf.write("connect=0\n")
         conf.write("listen=0\n")
         conf.write("shrinkdebugfile=0\n")
+        conf.write("fallbackfee=0.0001\n")
         if extra_lines:
             for line in extra_lines:
                 conf.write(f"{line}\n")

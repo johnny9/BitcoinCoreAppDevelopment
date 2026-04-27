@@ -6,6 +6,7 @@
 #define BITCOIN_QML_MODELS_WALLETQMLMODEL_H
 
 #include <qml/models/activitylistmodel.h>
+#include <qml/models/bumptransactionmodel.h>
 #include <qml/models/coinslistmodel.h>
 #include <qml/models/paymentrequest.h>
 #include <qml/models/receiverequesthistorymodel.h>
@@ -51,6 +52,7 @@ class WalletQmlModel : public QObject
     Q_PROPERTY(bool customFeeRateValid READ customFeeRateValid NOTIFY customFeeRateValidChanged)
     Q_PROPERTY(bool feeEstimatePending READ feeEstimatePending NOTIFY feeEstimatePendingChanged)
     Q_PROPERTY(int feeEstimateRevision READ feeEstimateRevision NOTIFY feeEstimateRevisionChanged)
+    Q_PROPERTY(BumpTransactionModel* bumpModel READ bumpModel CONSTANT)
     Q_PROPERTY(bool isWalletLoaded READ isWalletLoaded NOTIFY walletIsLoadedChanged)
     Q_PROPERTY(int displayUnit READ displayUnit WRITE setDisplayUnit NOTIFY displayUnitChanged)
     Q_PROPERTY(bool isEncrypted READ isEncrypted NOTIFY securityStateChanged)
@@ -79,6 +81,7 @@ public:
     Q_INVOKABLE bool loadPaymentRequest(const QString& request_id);
 
     ActivityListModel* activityListModel() const { return m_activity_list_model; }
+    BumpTransactionModel* bumpModel() const { return m_bump_transaction_model; }
     CoinsListModel* coinsListModel() const { return m_coins_list_model; }
     SendRecipientsListModel* sendRecipientList() const { return m_send_recipients; }
     PaymentRequest* currentPaymentRequest() const { return m_current_payment_request; }
@@ -117,6 +120,8 @@ public:
     virtual std::unique_ptr<interfaces::Handler> handleTransactionChanged(TransactionChangedFn fn);
     using StatusChangedFn = std::function<void()>;
     virtual std::unique_ptr<interfaces::Handler> handleStatusChanged(StatusChangedFn fn);
+
+    bool canBumpTransaction(const uint256& txid) const;
 
     interfaces::Wallet::CoinsList listCoins() const;
     bool lockCoin(const COutPoint& output);
@@ -187,6 +192,7 @@ private:
 
     std::unique_ptr<interfaces::Wallet> m_wallet;
     ActivityListModel* m_activity_list_model{nullptr};
+    BumpTransactionModel* m_bump_transaction_model{nullptr};
     CoinsListModel* m_coins_list_model{nullptr};
     SendRecipientsListModel* m_send_recipients{nullptr};
     PaymentRequest* m_current_payment_request{nullptr};

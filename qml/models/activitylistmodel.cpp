@@ -76,6 +76,14 @@ QVariant ActivityListModel::data(const QModelIndex &index, int role) const
         return tx->status;
     case TypeRole:
         return tx->type;
+    case TxidRole:
+        return tx->txid;
+    case CanBumpRole:
+        return m_wallet_model ? m_wallet_model->canBumpTransaction(tx->hash) : false;
+    case ReplacesTxidRole:
+        return tx->replacesTxid;
+    case ReplacedByTxidRole:
+        return tx->replacedByTxid;
     default:
         return QVariant();
     }
@@ -91,6 +99,10 @@ QHash<int, QByteArray> ActivityListModel::roleNames() const
     roles[LabelRole] = "label";
     roles[StatusRole] = "status";
     roles[TypeRole] = "type";
+    roles[TxidRole] = "txid";
+    roles[CanBumpRole] = "canBump";
+    roles[ReplacesTxidRole] = "replacesTxid";
+    roles[ReplacedByTxidRole] = "replacedByTxid";
     return roles;
 }
 
@@ -102,6 +114,37 @@ void ActivityListModel::setDisplayUnit(int unit)
             Q_EMIT dataChanged(index(0), index(m_transactions.size() - 1), {AmountRole});
         }
     }
+}
+
+void ActivityListModel::reload()
+{
+    beginResetModel();
+    m_transactions.clear();
+    refreshWallet();
+    endResetModel();
+}
+
+QVariantMap ActivityListModel::transactionDetails(const QString& txid) const
+{
+    for (const auto& tx : m_transactions) {
+        if (tx->txid == txid) {
+            updateTransactionStatus(tx);
+            updateTransactionLabel(tx);
+            return {
+                {"txid", tx->txid},
+                {"canBump", m_wallet_model ? m_wallet_model->canBumpTransaction(tx->hash) : false},
+                {"replacedByTxid", tx->replacedByTxid},
+                {"amount", tx->prettyAmount(m_display_unit)},
+                {"date", tx->dateTimeString()},
+                {"depth", tx->depth},
+                {"type", tx->type},
+                {"status", tx->status},
+                {"address", tx->address},
+                {"label", tx->label}
+            };
+        }
+    }
+    return {};
 }
 
 void ActivityListModel::refreshWallet()
@@ -195,13 +238,18 @@ void ActivityListModel::updateTransaction(const uint256& hash, const interfaces:
         // new transaction
         interfaces::WalletTx wtx = m_wallet_model->getWalletTx(hash);
         auto transactions = Transaction::fromWalletTx(wtx);
+        if (transactions.isEmpty()) {
+            return;
+        }
         for (const auto& tx : transactions) {
             tx->updateStatus(tx_status, num_blocks, block_time);
             removePendingRequestForAddress(tx->address);
-            beginInsertRows(QModelIndex(), 0, 0);
-            m_transactions.push_front(tx);
-            endInsertRows();
         }
+        beginInsertRows(QModelIndex(), 0, transactions.size() - 1);
+        for (auto it = transactions.crbegin(); it != transactions.crend(); ++it) {
+            m_transactions.push_front(*it);
+        }
+        endInsertRows();
     }
 }
 
