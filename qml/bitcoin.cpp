@@ -34,6 +34,7 @@
 #include <qml/models/banlistmodel.h>
 #include <qml/models/bitcoinaddress.h>
 #include <qml/models/chainmodel.h>
+#include <qml/models/debuglogmodel.h>
 #include <qml/models/networktraffictower.h>
 #include <qml/models/nodemodel.h>
 #include <qml/models/options_model.h>
@@ -333,6 +334,10 @@ int QmlGuiMain(int argc, char* argv[])
     engine.rootContext()->setContextProperty("peerTableModel", &peer_model);
     engine.rootContext()->setContextProperty("peerListModelProxy", &peer_model_sort_proxy);
     engine.rootContext()->setContextProperty("banListModel", &ban_list_model);
+
+    DebugLogModel debug_log_model{gArgs.GetDataDirNet() / "debug.log"};
+    engine.rootContext()->setContextProperty("debugLogModel", &debug_log_model);
+
 #ifdef ENABLE_WALLET
     WalletListModel wallet_list_model{*node, nullptr};
     engine.rootContext()->setContextProperty("walletController", &wallet_controller);
@@ -351,6 +356,7 @@ int QmlGuiMain(int argc, char* argv[])
     qmlRegisterType<BlockClockDial>("org.bitcoincore.qt", 1, 0, "BlockClockDial");
     qmlRegisterType<LineGraph>("org.bitcoincore.qt", 1, 0, "LineGraph");
     qmlRegisterUncreatableType<PeerDetailsModel>("org.bitcoincore.qt", 1, 0, "PeerDetailsModel", "");
+    qmlRegisterUncreatableType<DebugLogModel>("org.bitcoincore.qt", 1, 0, "DebugLogModel", "");
     qmlRegisterType<BitcoinAmount>("org.bitcoincore.qt", 1, 0, "BitcoinAmount");
     qmlRegisterType<BitcoinAddress>("org.bitcoincore.qt", 1, 0, "BitcoinAddress");
     qmlRegisterType<PaymentRequest>("org.bitcoincore.qt", 1, 0, "PaymentRequest");

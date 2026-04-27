@@ -17,11 +17,11 @@
 #include <QDateTime>
 #include <QMetaObject>
 #include <QObject>
-#include <QTimerEvent>
-#include <QString>
-#include <QUrl>
-#include <QThread>
 #include <QDebug>
+#include <QString>
+#include <QThread>
+#include <QTimerEvent>
+#include <QUrl>
 
 NodeModel::NodeModel(interfaces::Node& node)
     : m_node{node}
@@ -132,11 +132,11 @@ void NodeModel::initializeResult(bool success, interfaces::BlockAndHeaderTipInfo
 {
     if (!success) {
         setErrorState(true);
+    } else {
+        setBlockTipHeight(tip_info.block_height);
+        setVerificationProgress(tip_info.verification_progress);
+        Q_EMIT setTimeRatioListInitial();
     }
-    setBlockTipHeight(tip_info.block_height);
-    setVerificationProgress(tip_info.verification_progress);
-
-    Q_EMIT setTimeRatioListInitial();
     Q_EMIT nodeInitialized();
 }
 

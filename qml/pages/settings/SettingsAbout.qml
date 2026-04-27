@@ -11,6 +11,7 @@ import "../../components"
 InformationPage {
     property bool onboarding: false
     id: root
+    objectName: "settingsAbout"
     bannerActive: false
     bannerMargin: 0
     bold: true

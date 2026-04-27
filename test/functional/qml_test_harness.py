@@ -54,7 +54,6 @@ def setup_datadir(tmpdir):
     with open(conf_path, "w", encoding="utf8") as f:
         f.write("regtest=1\n")
         f.write("[regtest]\n")
-        f.write("server=1\n")
         f.write("discover=0\n")
         f.write("dnsseed=0\n")
         f.write("fixedseeds=0\n")

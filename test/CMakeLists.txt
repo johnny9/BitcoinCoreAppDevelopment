@@ -43,6 +43,7 @@ target_link_libraries(bitcoinqml_unit_tests
     bitcoin_wallet
     bitcoin_common
     bitcoin_util
+    bitcoin_node
     GTest::gmock
     Qt6::Core
     Qt6::Gui

@@ -6,6 +6,7 @@
 
 #include <qml/models/walletqmlmodel.h>
 
+#include <common/args.h>
 #include <interfaces/node.h>
 #include <support/allocators/secure.h>
 #include <util/result.h>
@@ -472,6 +473,10 @@ void WalletQmlController::handleLoadWallet(std::unique_ptr<interfaces::Wallet> w
 
 void WalletQmlController::initialize()
 {
+    // wallet_loader is not set when -disablewallet is passed; bail out.
+    if (gArgs.GetBoolArg("-disablewallet", false)) {
+        return;
+    }
     m_handler_load_wallet = m_node.walletLoader().handleLoadWallet([this](std::unique_ptr<interfaces::Wallet> wallet) {
         handleLoadWallet(std::move(wallet));
     });

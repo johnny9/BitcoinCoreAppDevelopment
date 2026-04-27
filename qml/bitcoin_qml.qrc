@@ -12,6 +12,7 @@
         <file>components/ExternalPopup.qml</file>
         <file>components/FeeSelection.qml</file>
         <file>components/MiniBlockClock.qml</file>
+        <file>components/MonospaceOutputView.qml</file>
         <file>components/NetworkTrafficGraph.qml</file>
         <file>components/NetworkIndicator.qml</file>
         <file>components/OptionPopup.qml</file>
@@ -82,6 +83,7 @@
         <file>pages/settings/SettingsAbout.qml</file>
         <file>pages/settings/SettingsBlockClockDisplayMode.qml</file>
         <file>pages/settings/SettingsConnection.qml</file>
+        <file>pages/settings/SettingsDebugLog.qml</file>
         <file>pages/settings/SettingsDeveloper.qml</file>
         <file>pages/settings/SettingsDisplay.qml</file>
         <file>pages/settings/SettingsProxy.qml</file>
@@ -151,8 +153,10 @@
         <file alias="pending-dark">res/icons/pending-dark.png</file>
         <file alias="pending-light">res/icons/pending-light.png</file>
         <file alias="plus">res/icons/plus.png</file>
+        <file alias="refresh">res/icons/refresh.png</file>
         <file alias="plus-big-filled">res/icons/plus-big-filled.png</file>
         <file alias="pending">res/icons/pending.png</file>
+        <file alias="search">res/icons/search.png</file>
         <file alias="shutdown">res/icons/shutdown.png</file>
         <file alias="singlesig-wallet">res/icons/singlesig-wallet.png</file>
         <file alias="storage-dark">res/icons/storage-dark.png</file>
