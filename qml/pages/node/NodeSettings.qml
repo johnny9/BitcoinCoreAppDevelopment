@@ -146,6 +146,19 @@ PageStack {
                         root.push(window_behavior_page)
                     }
                 }
+                Separator { Layout.fillWidth: true }
+                Setting {
+                    id: gotoConsole
+                    objectName: "settingsConsole"
+                    Layout.fillWidth: true
+                    header: qsTr("Console")
+                    actionItem: CaretRightIcon {
+                        color: gotoConsole.stateColor
+                    }
+                    onClicked: {
+                        root.push(console_page)
+                    }
+                }
                 Item {
                     Layout.fillHeight: true
                 }
@@ -224,6 +237,12 @@ PageStack {
     Component {
         id: window_behavior_page
         SettingsWindowBehavior {
+            onBack: root.pop()
+        }
+    }
+    Component {
+        id: console_page
+        CommandConsole {
             onBack: root.pop()
         }
     }

@@ -67,6 +67,7 @@
         <file>pages/initerrormessage.qml</file>
         <file>pages/main.qml</file>
         <file>pages/node/BannedPeers.qml</file>
+        <file>pages/node/CommandConsole.qml</file>
         <file>pages/node/NetworkTraffic.qml</file>
         <file>pages/node/NodeRunner.qml</file>
         <file>pages/node/NodeSettings.qml</file>
@@ -135,9 +136,7 @@
         <file alias="circle-green-check">res/icons/circle-green-check.png</file>
         <file alias="circle-red-cross">res/icons/circle-red-cross.png</file>
         <file alias="coinbase">res/icons/coinbase.png</file>
-        <file alias="circle-file">res/icons/circle-file.png</file>
-        <file alias="circle-green-check">res/icons/circle-green-check.png</file>
-        <file alias="circle-red-cross">res/icons/circle-red-cross.png</file>
+        <file alias="console">res/icons/console.png</file>
         <file alias="cross">res/icons/cross.png</file>
         <file alias="ellipsis">res/icons/ellipsis.png</file>
         <file alias="error">res/icons/error.png</file>

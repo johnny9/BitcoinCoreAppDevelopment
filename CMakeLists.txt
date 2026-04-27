@@ -116,6 +116,8 @@ target_link_libraries(bitcoinqml
     Qt6::Quick
     Qt6::QuickControls2
     Qt6::Widgets
+  PRIVATE
+    bitcoin_cli
 )
 
 # Compile QML-app-specific translations (.ts → .qm) and embed as resources.
