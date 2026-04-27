@@ -74,6 +74,7 @@ void QmlInitExecutorApiTests::initializeEmitsResultAndRunsOffMainThread()
     QCOMPARE(tip_info.header_height, 105);
     QCOMPARE(tip_info.header_time, 1'700'000'099LL);
     QCOMPARE(tip_info.verification_progress, 0.75);
+    QVERIFY(testing::Mock::VerifyAndClearExpectations(&node));
 }
 
 void QmlInitExecutorApiTests::initializeEmitsRunawayExceptionOnFailure()
@@ -100,6 +101,7 @@ void QmlInitExecutorApiTests::initializeEmitsRunawayExceptionOnFailure()
     QCOMPARE(runaway_spy.count(), 1);
     QCOMPARE(initialize_spy.count(), 0);
     QCOMPARE(runaway_spy.takeFirst().at(0).toString(), QString{"Translated init failure"});
+    QVERIFY(testing::Mock::VerifyAndClearExpectations(&node));
 }
 
 void QmlInitExecutorApiTests::shutdownEmitsResultAndRunsOffMainThread()
@@ -124,6 +126,7 @@ void QmlInitExecutorApiTests::shutdownEmitsResultAndRunsOffMainThread()
     QCOMPARE(shutdown_spy.count(), 1);
     QCOMPARE(runaway_spy.count(), 0);
     QVERIFY(ran_off_main_thread);
+    QVERIFY(testing::Mock::VerifyAndClearExpectations(&node));
 }
 
 void QmlInitExecutorApiTests::shutdownEmitsRunawayExceptionOnFailure()
@@ -149,6 +152,7 @@ void QmlInitExecutorApiTests::shutdownEmitsRunawayExceptionOnFailure()
     QCOMPARE(runaway_spy.count(), 1);
     QCOMPARE(shutdown_spy.count(), 0);
     QCOMPARE(runaway_spy.takeFirst().at(0).toString(), QString{"Translated shutdown failure"});
+    QVERIFY(testing::Mock::VerifyAndClearExpectations(&node));
 }
 
 #ifdef BITCOINQML_NO_TEST_MAIN

@@ -100,6 +100,7 @@ void PeerListModelTests::mapsRoleData()
     QCOMPARE(model.flags(QModelIndex{}), Qt::NoItemFlags);
     QVERIFY(model.flags(index).testFlag(Qt::ItemIsSelectable));
     QVERIFY(model.flags(index).testFlag(Qt::ItemIsEnabled));
+    QVERIFY(testing::Mock::VerifyAndClearExpectations(&node));
 }
 
 void PeerListModelTests::refreshUpdatesRows()
@@ -142,6 +143,7 @@ void PeerListModelTests::refreshUpdatesRows()
     QCOMPARE(model.rowCount(), 2);
     QCOMPARE(model.data(model.index(0, 0), PeerListModel::NetNodeId).toLongLong(), 2LL);
     QCOMPARE(model.data(model.index(1, 0), PeerListModel::NetNodeId).toLongLong(), 3LL);
+    QVERIFY(testing::Mock::VerifyAndClearExpectations(&node));
 }
 
 void PeerListModelTests::refreshHandlesGetNodesStatsFailure()
@@ -167,6 +169,7 @@ void PeerListModelTests::refreshHandlesGetNodesStatsFailure()
     model.refresh();
     QCOMPARE(model.rowCount(), 1);
     QCOMPARE(model.data(model.index(0, 0), PeerListModel::NetNodeId).toLongLong(), 1LL);
+    QVERIFY(testing::Mock::VerifyAndClearExpectations(&node));
 }
 
 void PeerListModelTests::startStopAutoRefresh()
@@ -199,6 +202,7 @@ void PeerListModelTests::startStopAutoRefresh()
     const int calls_after_stop = get_nodes_stats_calls;
     QTest::qWait(AUTO_REFRESH_STOP_WAIT);
     QCOMPARE(get_nodes_stats_calls, calls_after_stop);
+    QVERIFY(testing::Mock::VerifyAndClearExpectations(&node));
 }
 
 void PeerListModelTests::sortProxySortsByRoles()
@@ -288,6 +292,7 @@ void PeerListModelTests::sortProxySortsByRoles()
     assert_sort("sent", [](const CNodeStats& left, const CNodeStats& right) { return left.nSendBytes < right.nSendBytes; });
     assert_sort("received", [](const CNodeStats& left, const CNodeStats& right) { return left.nRecvBytes < right.nRecvBytes; });
     assert_sort("subversion", [](const CNodeStats& left, const CNodeStats& right) { return left.cleanSubVer.compare(right.cleanSubVer) < 0; });
+    QVERIFY(testing::Mock::VerifyAndClearExpectations(&node));
 }
 
 #ifdef BITCOINQML_NO_TEST_MAIN

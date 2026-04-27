@@ -4,6 +4,19 @@
 
 #include <QApplication>
 
+#ifdef Assert
+#pragma push_macro("Assert")
+#undef Assert
+#define BITCOIN_QML_RESTORE_ASSERT_MACRO
+#endif
+
+#include <gmock/gmock.h>
+
+#ifdef BITCOIN_QML_RESTORE_ASSERT_MACRO
+#pragma pop_macro("Assert")
+#undef BITCOIN_QML_RESTORE_ASSERT_MACRO
+#endif
+
 #include <chainparams.h>
 #include <test/qt_test_registry.h>
 #include <util/translation.h>
@@ -22,6 +35,7 @@ int RunWalletQmlModelTests(int argc, char* argv[]);
 
 int main(int argc, char* argv[])
 {
+    testing::InitGoogleMock(&argc, argv);
     QApplication app(argc, argv);
     SelectParams(ChainType::REGTEST);
 
