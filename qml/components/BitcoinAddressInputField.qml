@@ -19,7 +19,6 @@ ColumnLayout {
     property alias text: addressInput.text
     property alias inputObjectName: addressInput.objectName
 
-    signal textChanged()
     signal editingFinished()
 
     Layout.fillWidth: true
@@ -67,7 +66,6 @@ ColumnLayout {
                 if (root.address) {
                     cursorPosition = root.address.setAddress(text, cursorPosition)
                 }
-                root.textChanged()
             }
 
             onEditingFinished: {

@@ -187,7 +187,7 @@ def select_wallet(gui, wallet_name):
                     gui.get_list_item_property(
                         view_object_name="walletSelectList",
                         row_index=row_index,
-                        prop="text",
+                        prop="name",
                     )
                 )
             except QmlDriverError:

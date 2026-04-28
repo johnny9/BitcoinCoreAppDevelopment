@@ -1084,7 +1084,9 @@ public:
         TxidRole,
         CanBumpRole,
         ReplacesTxidRole,
-        ReplacedByTxidRole
+        ReplacedByTxidRole,
+        RequestIdRole,
+        IsPendingRequestRole
     };
 
     int rowCount(const QModelIndex& parent = QModelIndex{}) const override
@@ -1109,6 +1111,8 @@ public:
             case CanBumpRole: return false;
             case ReplacesTxidRole: return QString{};
             case ReplacedByTxidRole: return QString{};
+            case RequestIdRole: return QString{};
+            case IsPendingRequestRole: return false;
             default: return {};
             }
         }
@@ -1124,6 +1128,8 @@ public:
         case CanBumpRole: return true;
         case ReplacesTxidRole: return QString{};
         case ReplacedByTxidRole: return QString{};
+        case RequestIdRole: return QString{};
+        case IsPendingRequestRole: return false;
         default: return {};
         }
     }
@@ -1142,6 +1148,8 @@ public:
             {CanBumpRole, "canBump"},
             {ReplacesTxidRole, "replacesTxid"},
             {ReplacedByTxidRole, "replacedByTxid"},
+            {RequestIdRole, "requestId"},
+            {IsPendingRequestRole, "isPendingRequest"},
         };
     }
 

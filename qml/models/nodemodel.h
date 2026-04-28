@@ -144,6 +144,7 @@ private:
     bool m_faulted{false};
     double m_snapshot_progress{0.0};
     bool m_initialization_requested{false};
+    bool m_shutdown_requested{false};
     int m_shutdown_polling_timer_id{0};
     int m_snapshot_timer_id{0};
     bool m_snapshot_loading{false};

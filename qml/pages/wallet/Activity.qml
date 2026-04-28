@@ -21,6 +21,15 @@ PageStack {
         page.showTransaction.connect(stackView.navigateToTransaction)
     }
 
+    function navigateToPaymentRequest(requestId) {
+        if (!walletController.selectedWallet || requestId === "") return
+        if (!walletController.selectedWallet.loadPaymentRequest(requestId)) return
+        var page = stackView.push("PaymentRequestDetail.qml")
+        page.done.connect(function() {
+            stackView.pop()
+        })
+    }
+
     Connections {
         target: walletController
         function onSelectedWalletChanged() {
@@ -108,7 +117,9 @@ PageStack {
                     model: walletController.selectedWallet.activityListModel
                     delegate: ItemDelegate {
                         id: delegate
-                        objectName: "activityItem_" + delegate.txid
+                        objectName: delegate.isPendingRequest && delegate.requestId !== ""
+                            ? "activityPaymentRequest_" + delegate.requestId
+                            : "activityItem_" + delegate.txid
                         required property string address;
                         required property string amount;
                         required property string date;
@@ -119,6 +130,8 @@ PageStack {
                         required property string txid;
                         required property bool canBump;
                         required property string replacedByTxid;
+                        required property string requestId;
+                        required property bool isPendingRequest;
 
                         HoverHandler {
                             cursorShape: Qt.PointingHandCursor
@@ -127,6 +140,10 @@ PageStack {
                         opacity: (delegate.replacedByTxid !== "" || delegate.status === Transaction.Conflicted) ? 0.4 : 1.0
 
                         onClicked: {
+                            if (delegate.isPendingRequest) {
+                                stackView.navigateToPaymentRequest(delegate.requestId)
+                                return
+                            }
                             var page = stackView.push(detailsPage)
                             page.showTransaction.connect(stackView.navigateToTransaction)
                         }

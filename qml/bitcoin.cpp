@@ -48,6 +48,7 @@
 #include <qml/models/rpcconsolemodel.h>
 #include <qml/models/receiverequesthistorymodel.h>
 #include <qml/models/sendrecipient.h>
+#include <qml/models/settings_keys.h>
 #include <qml/models/walletlistmodel.h>
 #include <qml/models/walletqmlmodel.h>
 #include <qml/models/walletqmlmodeltransaction.h>
@@ -345,6 +346,10 @@ int QmlGuiMain(int argc, char* argv[])
         settings.remove(QStringLiteral("fHideTrayIcon"));
         settings.remove(QStringLiteral("fMinimizeToTray"));
         settings.remove(QStringLiteral("fMinimizeOnClose"));
+        settings.remove(SettingsKeys::LANGUAGE);
+        settings.remove(SettingsKeys::DISPLAY_UNIT);
+        settings.remove(QStringLiteral("coinControlEnabled"));
+        settings.remove(QStringLiteral("multipleRecipientsEnabled"));
     }
 
     QObject::connect(&node_model, &NodeModel::setTimeRatioList, &chain_model, &ChainModel::setTimeRatioList);
@@ -359,10 +364,7 @@ int QmlGuiMain(int argc, char* argv[])
     QObject::connect(qGuiApp, &QGuiApplication::lastWindowClosed, [&] {
         // When the tray icon is visible the node keeps running in the background.
         if (desktop_tray_icon_controller.visible()) return;
-#ifdef ENABLE_WALLET
-        wallet_controller.unloadWallets();
-#endif
-        node->startShutdown();
+        node_model.requestShutdown();
     });
 
     PeerListModel peer_model{*node, nullptr};

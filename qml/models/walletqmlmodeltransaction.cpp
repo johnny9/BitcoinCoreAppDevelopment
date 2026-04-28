@@ -15,6 +15,7 @@ WalletQmlModelTransaction::WalletQmlModelTransaction(const SendRecipientsListMod
       m_address(recipient->recipients().at(0)->address()->address()),
       m_amount(recipient->totalAmountSatoshi()),
       m_fee(0),
+      m_amount_amount(new BitcoinAmount(this)),
       m_fee_amount(new BitcoinAmount(this)),
       m_total_amount(new BitcoinAmount(this)),
       m_label(recipient->recipients().at(0)->label()),
@@ -23,6 +24,8 @@ WalletQmlModelTransaction::WalletQmlModelTransaction(const SendRecipientsListMod
     const BitcoinAmount::Unit display_unit = recipient->count() == 1
         ? recipient->recipients().at(0)->amount()->unit()
         : BitcoinAmount::Unit::BTC;
+    m_amount_amount->setUnit(display_unit);
+    m_amount_amount->setSatoshi(m_amount);
     m_fee_amount->setUnit(display_unit);
     m_fee_amount->setSatoshi(m_fee);
     m_total_amount->setUnit(display_unit);
@@ -54,6 +57,11 @@ QString WalletQmlModelTransaction::fee() const
     return formatWithUnit(m_fee, m_display_unit);
 }
 
+BitcoinAmount* WalletQmlModelTransaction::amountAmount() const
+{
+    return m_amount_amount;
+}
+
 BitcoinAmount* WalletQmlModelTransaction::feeAmount() const
 {
     return m_fee_amount;
@@ -78,6 +86,12 @@ void WalletQmlModelTransaction::setDisplayUnit(int unit)
 {
     if (unit != m_display_unit) {
         m_display_unit = unit;
+        const BitcoinAmount::Unit amount_unit = unit == 1
+            ? BitcoinAmount::Unit::SAT
+            : BitcoinAmount::Unit::BTC;
+        m_amount_amount->setUnit(amount_unit);
+        m_fee_amount->setUnit(amount_unit);
+        m_total_amount->setUnit(amount_unit);
         Q_EMIT amountChanged();
         Q_EMIT feeChanged();
         Q_EMIT totalChanged();
@@ -133,6 +147,8 @@ void WalletQmlModelTransaction::reassignAmounts(int nChangePosRet)
 
     if (m_amount != reassigned_amount) {
         m_amount = reassigned_amount;
+        m_amount_amount->setSatoshi(m_amount);
+        m_total_amount->setSatoshi(m_amount + m_fee);
         Q_EMIT amountChanged();
         Q_EMIT totalChanged();
     }

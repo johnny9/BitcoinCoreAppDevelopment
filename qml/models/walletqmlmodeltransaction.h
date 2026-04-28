@@ -20,6 +20,7 @@ class WalletQmlModelTransaction : public QObject
     Q_PROPERTY(QString label READ label CONSTANT)
     Q_PROPERTY(QString fee READ fee NOTIFY feeChanged)
     Q_PROPERTY(QString total READ total NOTIFY totalChanged)
+    Q_PROPERTY(BitcoinAmount* amountAmount READ amountAmount CONSTANT)
     Q_PROPERTY(BitcoinAmount* feeAmount READ feeAmount CONSTANT)
     Q_PROPERTY(BitcoinAmount* totalAmount READ totalAmount CONSTANT)
 public:
@@ -28,6 +29,7 @@ public:
     QString address() const;
     QString amount() const;
     QString fee() const;
+    BitcoinAmount* amountAmount() const;
     BitcoinAmount* feeAmount() const;
     QString label() const;
     QString total() const;
@@ -60,6 +62,7 @@ private:
     QString m_address;
     CAmount m_amount;
     CAmount m_fee;
+    BitcoinAmount* m_amount_amount;
     BitcoinAmount* m_fee_amount;
     BitcoinAmount* m_total_amount;
     QString m_label;

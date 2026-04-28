@@ -81,8 +81,8 @@ Page {
                 labelText: qsTr("Amount")
                 labelPixelSize: 15
                 labelColor: Theme.color.neutral7
-                amountText: root.recipient ? root.recipient.amount.display : ""
-                unitText: root.recipient ? root.recipient.amount.unitLabel : ""
+                amountText: root.transaction ? root.transaction.amountAmount.display : ""
+                unitText: root.transaction ? root.transaction.amountAmount.unitLabel : ""
             }
 
             BitcoinAmountDisplayField {

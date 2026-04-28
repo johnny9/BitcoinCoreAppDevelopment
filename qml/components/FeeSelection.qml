@@ -109,7 +109,7 @@ ColumnLayout {
                 cursorShape: Qt.PointingHandCursor
             }
 
-            onPressed: feePopup.open()
+            onClicked: feePopup.open()
 
             contentItem: RowLayout {
                 spacing: 0

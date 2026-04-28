@@ -93,13 +93,26 @@ def _open_receive(gui):
 
 
 def _create_request(gui, amount, name, message):
+    try:
+        if gui.get_property("requestPaymentClearButton", "visible"):
+            gui.click("requestPaymentClearButton")
+    except QmlDriverError:
+        pass
     gui.set_text("requestPaymentAmountInput", amount)
     gui.set_text("requestPaymentYourNameInput", name)
     gui.set_text("requestPaymentMessageInput", message)
     before = gui.get_property("requestHistoryCount", "count")
     gui.click("requestPaymentCreateButton")
-    gui.wait_for_page("paymentRequestDetailPage", timeout_ms=20000)
     gui.wait_for_property("requestHistoryCount", "count", before + 1, timeout_ms=20000)
+    return before + 1
+
+
+def _open_request_detail_from_activity(gui, request_id):
+    gui.click("desktopWalletsActivityTab")
+    object_name = f"activityPaymentRequest_{request_id}"
+    gui.wait_for_property(object_name, "visible", True, timeout_ms=10000)
+    gui.click(object_name)
+    gui.wait_for_page("paymentRequestDetailPage", timeout_ms=20000)
 
 
 def run_test():
@@ -109,12 +122,14 @@ def run_test():
         gui = _import_wallet(harness)
         _open_receive(gui)
 
-        _create_request(gui, "0.0001", "Alice", "pizza")
+        request_id = _create_request(gui, "0.0001", "Alice", "pizza")
+        _open_request_detail_from_activity(gui, request_id)
         qr_code = gui.get_property("paymentRequestDetailQRCode", "code")
         assert qr_code.startswith("bitcoin:"), f"QR payload missing BIP21 prefix: {qr_code!r}"
         assert "amount=0.00010000" in qr_code, f"QR payload missing amount: {qr_code!r}"
         assert "label=Alice" in qr_code, f"QR payload missing label: {qr_code!r}"
         assert "message=pizza" in qr_code, f"QR payload missing message: {qr_code!r}"
+        gui.click("paymentRequestDetailDone")
         print(f"[qml_receive_requests] created request with QR: {qr_code}")
 
         _stop_gui(harness)
@@ -124,14 +139,20 @@ def run_test():
         gui.wait_for_property("walletBadge", "text", WALLET_NAME, timeout_ms=30000)
         _open_receive(gui)
         gui.wait_for_property("requestHistoryCount", "count", 1, timeout_ms=20000)
+        _open_request_detail_from_activity(gui, 1)
+        gui.wait_for_page("paymentRequestDetailPage", timeout_ms=20000)
+        gui.click("paymentRequestDetailDone")
         print("[qml_receive_requests] history persisted across restart")
 
         # Create a second request and verify history grows
+        _open_receive(gui)
         _create_request(gui, "0.005", "Bob", "coffee")
+        _open_request_detail_from_activity(gui, 2)
         qr_code2 = gui.get_property("paymentRequestDetailQRCode", "code")
         assert "amount=0.00500000" in qr_code2, f"Second QR missing amount: {qr_code2!r}"
         assert "label=Bob" in qr_code2, f"Second QR missing label: {qr_code2!r}"
         gui.click("paymentRequestDetailDone")
+        _open_receive(gui)
         gui.wait_for_page("requestPaymentPage", timeout_ms=10000)
         gui.wait_for_property("requestHistoryCount", "count", 2, timeout_ms=20000)
         print("[qml_receive_requests] second request created, history count is 2")

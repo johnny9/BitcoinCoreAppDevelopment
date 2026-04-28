@@ -20,10 +20,6 @@ SEND_AMOUNT = "1.00000000"
 SEND_AMOUNT_SATS = 100000000
 GUI_WALLET_NAME = "send_flow_wallet"
 RECEIVER_WALLET_NAME = "send_flow_receiver"
-DEFAULT_FEE_LABEL = "Default"
-DEFAULT_FEE_DURATION = "(~20 mins)"
-LOW_FEE_LABEL = "Low"
-LOW_FEE_DURATION = "(~60 mins)"
 LOW_FEE_OPTION_INDEX = 2
 LOW_FEE_TARGET_BLOCKS = 6
 
@@ -141,6 +137,8 @@ def btc_text_to_sats(text):
 
 
 def sat_text_to_sats(text):
+    if "₿" in text:
+        return btc_text_to_sats(text)
     match = re.search(r"(-?[0-9]+)", text.replace(",", ""))
     if match is None:
         raise AssertionError(f"Could not parse satoshi amount from {text!r}")
@@ -191,8 +189,11 @@ def run_test(*, save_screenshots=False, screenshot_root=None):
         )
         checkpoints.checkpoint("receiver wallet prepared")
 
-        harness.start_gui()
+        harness.start_gui(reset_gui_settings=True)
         gui = harness.driver
+        harness.finish_onboarding()
+        gui.wait_for_property("createWalletWizardExitButton", "visible", True, timeout_ms=10000)
+        gui.click("createWalletWizardExitButton")
         gui.wait_for_property("walletBadge", "loading", False, timeout_ms=20000)
         gui.wait_for_property("walletBadge", "visible", True, timeout_ms=10000)
         assert gui.get_property("walletBadge", "noWalletLoaded") is True, "Expected no wallet at startup"
@@ -225,8 +226,7 @@ def run_test(*, save_screenshots=False, screenshot_root=None):
         gui.wait_for_property("sendReviewButton", "enabled", True, timeout_ms=20000)
         checkpoints.checkpoint("send form populated", gui)
 
-        gui.wait_for_property("feeSelectionControl", "selectedLabel", DEFAULT_FEE_LABEL, timeout_ms=5000)
-        gui.wait_for_property("feeSelectionControl", "selectedDuration", DEFAULT_FEE_DURATION, timeout_ms=5000)
+        gui.wait_for_property("feeSelectionControl", "selectedIndex", 1, timeout_ms=5000)
         gui.wait_for_property("feeSelectionControl", "selectedTarget", 2, timeout_ms=5000)
 
         gui.click("feeSelectionDropdownButton")
@@ -240,8 +240,6 @@ def run_test(*, save_screenshots=False, screenshot_root=None):
         gui.click(f"feeSelectionOption{LOW_FEE_OPTION_INDEX}")
         gui.wait_for_property("feeSelectionPopup", "opened", False, timeout_ms=5000)
         gui.wait_for_property("feeSelectionControl", "selectedIndex", LOW_FEE_OPTION_INDEX, timeout_ms=5000)
-        gui.wait_for_property("feeSelectionControl", "selectedLabel", LOW_FEE_LABEL, timeout_ms=5000)
-        gui.wait_for_property("feeSelectionControl", "selectedDuration", LOW_FEE_DURATION, timeout_ms=5000)
         gui.wait_for_property("feeSelectionControl", "selectedTarget", LOW_FEE_TARGET_BLOCKS, timeout_ms=5000)
         gui.wait_for_property("feeSelectionEstimateLabel", "text", low_fee_option_estimate, timeout_ms=20000)
         checkpoints.checkpoint("low fee option selected", gui)

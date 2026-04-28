@@ -630,6 +630,7 @@ bool WalletQmlModel::commitPaymentRequest()
 
     if (m_activity_list_model) {
         m_activity_list_model->addReceiveRequest(
+            m_current_payment_request->id(),
             m_current_payment_request->address(),
             m_current_payment_request->label(),
             m_current_payment_request->amount()->satoshi(),

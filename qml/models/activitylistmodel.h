@@ -37,7 +37,9 @@ public:
         TxidRole,
         CanBumpRole,
         ReplacesTxidRole,
-        ReplacedByTxidRole
+        ReplacedByTxidRole,
+        RequestIdRole,
+        IsPendingRequestRole
     };
 
     Q_INVOKABLE void reload();
@@ -47,7 +49,7 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     void setDisplayUnit(int unit);
-    void addReceiveRequest(const QString& address, const QString& label,
+    void addReceiveRequest(const QString& request_id, const QString& address, const QString& label,
                            CAmount amount, qint64 timestamp);
 
 private:

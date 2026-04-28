@@ -149,7 +149,7 @@ def set_amount_unit(gui, unit_label):
 def prepare_single_send(gui, address, amount, amount_unit="btc"):
     open_send_page(gui)
     set_multiple_recipients(gui, False)
-    set_amount_unit(gui, "sat" if amount_unit == "sat" else "₿")
+    set_amount_unit(gui, "sats" if amount_unit == "sat" else "₿")
     gui.set_text("sendAddressInput", address)
     gui.set_text("sendAmountInput", amount)
     gui.wait_for_property("sendReviewButton", "enabled", True, timeout_ms=10000)
@@ -161,7 +161,7 @@ def prepare_multi_send(gui, first_address, first_amount_btc, second_address, sec
     open_send_page(gui)
     set_multiple_recipients(gui, True)
 
-    set_amount_unit(gui, "sat")
+    set_amount_unit(gui, "sats")
     gui.set_text("sendAddressInput", second_address)
     gui.set_text("sendAmountInput", second_amount_sat)
     gui.click("sendRecipientPrevButton")
@@ -237,9 +237,9 @@ def case_single_sat(harness, gui, wallet_name, checkpoints):
         checkpoints=checkpoints,
         label="single-sat review",
     )
-    assert gui.get_text("sendReviewAmountField") == "1250 sat"
-    assert_unit_suffix(gui, "sendReviewFeeField", "sat")
-    assert_unit_suffix(gui, "sendReviewTotalField", "sat")
+    assert gui.get_text("sendReviewAmountField") == "1250 sats"
+    assert_unit_suffix(gui, "sendReviewFeeField", "sats")
+    assert_unit_suffix(gui, "sendReviewTotalField", "sats")
     return_to_send_page(gui, "sendReviewBackButton")
 
 
@@ -261,7 +261,7 @@ def case_multi_review(harness, gui, wallet_name, checkpoints):
     assert gui.get_property("multipleSendReviewPage", "recipient0AmountText") == "0.50000000 ₿"
     assert gui.get_property("multipleSendReviewPage", "recipient1AddressText") == format_short_address(second_address)
     assert gui.get_property("multipleSendReviewPage", "recipient1FullAddressText") == format_full_address(second_address)
-    assert gui.get_property("multipleSendReviewPage", "recipient1AmountText") == "2000 sat"
+    assert gui.get_property("multipleSendReviewPage", "recipient1AmountText") == "2000 sats"
     assert gui.get_list_item_property(
         view_object_name="multipleSendReviewRecipientsList",
         row_index=1,

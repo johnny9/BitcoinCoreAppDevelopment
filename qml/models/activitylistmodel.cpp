@@ -79,11 +79,15 @@ QVariant ActivityListModel::data(const QModelIndex &index, int role) const
     case TxidRole:
         return tx->txid;
     case CanBumpRole:
-        return m_wallet_model ? m_wallet_model->canBumpTransaction(tx->hash) : false;
+        return !tx->isPendingRequest && m_wallet_model ? m_wallet_model->canBumpTransaction(tx->hash) : false;
     case ReplacesTxidRole:
         return tx->replacesTxid;
     case ReplacedByTxidRole:
         return tx->replacedByTxid;
+    case RequestIdRole:
+        return tx->requestId;
+    case IsPendingRequestRole:
+        return tx->isPendingRequest;
     default:
         return QVariant();
     }
@@ -103,6 +107,8 @@ QHash<int, QByteArray> ActivityListModel::roleNames() const
     roles[CanBumpRole] = "canBump";
     roles[ReplacesTxidRole] = "replacesTxid";
     roles[ReplacedByTxidRole] = "replacedByTxid";
+    roles[RequestIdRole] = "requestId";
+    roles[IsPendingRequestRole] = "isPendingRequest";
     return roles;
 }
 
@@ -183,6 +189,7 @@ void ActivityListModel::addPendingReceiveRequests()
 
     for (int i = 0; i < history->rowCount(); ++i) {
         QModelIndex idx = history->index(i);
+        QString request_id = history->data(idx, ReceiveRequestHistoryModel::IdRole).toString();
         QString address = history->data(idx, ReceiveRequestHistoryModel::AddressRole).toString();
         if (address.isEmpty() || existing_addresses.contains(address)) continue;
 
@@ -191,17 +198,18 @@ void ActivityListModel::addPendingReceiveRequests()
         QString dateIso = history->data(idx, ReceiveRequestHistoryModel::DateIsoRole).toString();
         qint64 timestamp = QDateTime::fromString(dateIso, Qt::ISODate).toSecsSinceEpoch();
 
-        addReceiveRequest(address, label, amount, timestamp);
+        addReceiveRequest(request_id, address, label, amount, timestamp);
     }
 }
 
-void ActivityListModel::addReceiveRequest(const QString& address, const QString& label,
+void ActivityListModel::addReceiveRequest(const QString& request_id, const QString& address, const QString& label,
                                           CAmount amount, qint64 timestamp)
 {
     uint256 zero_hash;
     auto tx = QSharedPointer<Transaction>::create(zero_hash, timestamp,
         Transaction::RecvWithAddress, address, CAmount{0}, amount);
     tx->label = label.isEmpty() ? QStringLiteral("Payment request") : label;
+    tx->requestId = request_id;
     tx->status = Transaction::Unconfirmed;
     tx->isPendingRequest = true;
 

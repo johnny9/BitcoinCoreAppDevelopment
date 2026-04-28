@@ -67,6 +67,7 @@ public:
     CAmount fee{0};
     QString replacesTxid;
     QString replacedByTxid;
+    QString requestId;
     bool countsForBalance;
     bool involvesWatchAddress;
     bool isPendingRequest{false};

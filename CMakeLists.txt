@@ -153,7 +153,13 @@ endforeach()
 qt6_add_resources(bitcoinqml "bitcoin_qt_translations"
     PREFIX "/translations"
     FILES ${BITCOIN_QT_QM_FILES}
+    OUTPUT_TARGETS BITCOIN_QT_TRANSLATION_RESOURCE_TARGETS
 )
+if(TARGET bitcoinqt_lrelease)
+    foreach(resource_target IN LISTS BITCOIN_QT_TRANSLATION_RESOURCE_TARGETS)
+        add_dependencies(${resource_target} bitcoinqt_lrelease)
+    endforeach()
+endif()
 add_dependencies(bitcoinqml bitcoin-qt)
 
 # Put it all together

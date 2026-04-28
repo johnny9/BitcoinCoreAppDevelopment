@@ -60,7 +60,7 @@ def pick_unused_port():
         return sock.getsockname()[1]
 
 
-def rpc_call(port, method, params=None, wallet=None):
+def rpc_call(port, method, params=None, wallet=None, timeout=60):
     payload = json.dumps({
         "jsonrpc": "1.0",
         "id": "qml_wallet_test",
@@ -72,7 +72,7 @@ def rpc_call(port, method, params=None, wallet=None):
     if wallet:
         path = f"/wallet/{wallet}"
 
-    conn = http.client.HTTPConnection("127.0.0.1", port, timeout=60)
+    conn = http.client.HTTPConnection("127.0.0.1", port, timeout=timeout)
     credentials = base64.b64encode(f"{RPC_USER}:{RPC_PASS}".encode("utf-8")).decode("ascii")
     conn.request(
         "POST",
@@ -158,7 +158,7 @@ class WalletFlowHarness:
         self.name = name
         self.port_offset = port_offset
         self.gui_binary = find_gui_binary()
-        self.bitcoind_binary = None
+        self.bitcoind_binary = find_bitcoind()
         self.tmpdir = tempfile.mkdtemp(prefix=f"{name}_")
         self.socket_path = os.path.join(self.tmpdir, "test_bridge.sock")
         self.gui_datadir = os.path.join(self.tmpdir, "gui_node")
@@ -236,12 +236,19 @@ class WalletFlowHarness:
 
     def stop_gui(self):
         if self.gui_process and self.gui_process.poll() is None:
-            self.gui_process.send_signal(signal.SIGTERM)
             try:
-                self.gui_process.wait(timeout=10)
+                rpc_call(self.gui_rpc_port, "stop", timeout=5)
+            except Exception:
+                self.gui_process.send_signal(signal.SIGTERM)
+            try:
+                self.gui_process.wait(timeout=20)
             except subprocess.TimeoutExpired:
-                self.gui_process.kill()
-                self.gui_process.wait()
+                self.gui_process.send_signal(signal.SIGTERM)
+                try:
+                    self.gui_process.wait(timeout=10)
+                except subprocess.TimeoutExpired:
+                    self.gui_process.kill()
+                    self.gui_process.wait()
         self.gui_process = None
         if self.driver:
             self.driver.close()
@@ -264,6 +271,8 @@ class WalletFlowHarness:
 
     def process_output(self, process):
         if not process:
+            return ""
+        if process.poll() is None:
             return ""
         stdout = process.stdout.read().decode("utf-8", errors="replace") if process.stdout else ""
         stderr = process.stderr.read().decode("utf-8", errors="replace") if process.stderr else ""

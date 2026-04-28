@@ -146,6 +146,10 @@ void NodeModel::startNodeInitializionThread()
 
 void NodeModel::requestShutdown()
 {
+    if (m_shutdown_requested) return;
+    m_shutdown_requested = true;
+    stopShutdownPolling();
+    m_node.startShutdown();
     Q_EMIT requestedShutdown();
 }
 
@@ -164,20 +168,21 @@ void NodeModel::initializeResult(bool success, interfaces::BlockAndHeaderTipInfo
 
 void NodeModel::startShutdownPolling()
 {
+    if (m_shutdown_polling_timer_id != 0) return;
     m_shutdown_polling_timer_id = startTimer(200ms);
 }
 
 void NodeModel::stopShutdownPolling()
 {
+    if (m_shutdown_polling_timer_id == 0) return;
     killTimer(m_shutdown_polling_timer_id);
+    m_shutdown_polling_timer_id = 0;
 }
 
 void NodeModel::timerEvent(QTimerEvent* event)
 {
-    Q_UNUSED(event)
-    if (m_node.shutdownRequested()) {
-        stopShutdownPolling();
-        Q_EMIT requestedShutdown();
+    if (event->timerId() == m_shutdown_polling_timer_id && m_node.shutdownRequested()) {
+        requestShutdown();
     }
 }
 

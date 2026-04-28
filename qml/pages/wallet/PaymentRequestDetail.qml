@@ -21,6 +21,12 @@ Page {
     property PaymentRequest request: wallet ? wallet.currentPaymentRequest : null
     property bool detailsExpanded: false
 
+    Binding {
+        target: root.request ? root.request.amount : null
+        property: "unit"
+        value: optionsModel.displayUnit
+    }
+
     function formatRelativeTime(isoString) {
         if (!isoString) return ""
         var then = new Date(isoString)
