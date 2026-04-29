@@ -7,9 +7,24 @@
 import os
 import shutil
 import sys
+import time
 
 from qml_test_harness import dump_qml_tree
 from qml_wallet_test_lib import WalletFlowHarness, find_legacy_bitcoind, rpc_call
+
+
+def wait_for_migrated_wallet(rpc_port, wallet_name, timeout=60):
+    deadline = time.time() + timeout
+    last_error = None
+    while time.time() < deadline:
+        try:
+            wallet_info = rpc_call(rpc_port, "getwalletinfo", wallet=wallet_name, timeout=5)
+            if wallet_info.get("descriptors") is True and wallet_info.get("format") == "sqlite":
+                return wallet_info
+        except Exception as err:  # noqa: BLE001 - retry while the GUI migrates and loads the wallet
+            last_error = err
+        time.sleep(0.25)
+    raise AssertionError(f"Timed out waiting for migrated wallet {wallet_name}: {last_error}")
 
 
 def run_test():
@@ -65,18 +80,14 @@ def run_test():
         gui.wait_for_object(f"walletSelectItem_{wallet_name}", timeout_ms=5000)
         gui.click(f"walletSelectItem_{wallet_name}")
 
-        gui.wait_for_page("importWalletMigration", timeout_ms=10000)
-        gui.wait_for_property("walletMigrationActionButton", "text", "Update wallet", timeout_ms=5000)
-        gui.click("walletMigrationActionButton")
-        gui.wait_for_property("walletMigrationActionButton", "text", "Next", timeout_ms=30000)
-        gui.click("walletMigrationActionButton")
+        gui.wait_for_property("walletMigrationPopup", "opened", True, timeout_ms=10000)
+        gui.click("walletMigrationConfirmButton")
 
-        gui.wait_for_property("walletBadge", "text", wallet_name, timeout_ms=20000)
+        wallet_info = wait_for_migrated_wallet(harness.gui_rpc_port, wallet_name)
         wallet_dat_path = os.path.join(target_wallet_path, "wallet.dat")
         with open(wallet_dat_path, "rb") as wallet_file:
             assert wallet_file.read(16) == b"SQLite format 3\x00", "Migrated wallet should be SQLite"
 
-        wallet_info = rpc_call(harness.gui_rpc_port, "getwalletinfo", wallet=wallet_name)
         assert wallet_info["descriptors"] is True, "Migrated wallet should be descriptor based"
         assert wallet_info["format"] == "sqlite", "Migrated wallet should be stored as sqlite"
 
