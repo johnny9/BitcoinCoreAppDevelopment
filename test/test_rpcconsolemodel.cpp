@@ -57,7 +57,7 @@ public:
     std::string getWalletDir() override { return {}; }
 
     util::Result<std::unique_ptr<interfaces::Wallet>> restoreWallet(
-        const fs::path&, const std::string&, std::vector<bilingual_str>&, bool) override
+        const fs::path&, const std::string&, std::vector<bilingual_str>&) override
     { return util::Error{}; }
 
     util::Result<interfaces::WalletMigrationResult> migrateWallet(
@@ -96,7 +96,7 @@ public:
     void forceSetting(const std::string&, const common::SettingsValue&) override {}
     void resetSettings() override {}
     void mapPort(bool) override {}
-    std::optional<Proxy> getProxy(Network) override { return std::nullopt; }
+    bool getProxy(Network, Proxy&) override { return false; }
     size_t getNodeCount(ConnectionDirection) override { return 0; }
     bool getNodesStats(NodesStats&) override { return false; }
     bool getBanned(banmap_t&) override { return false; }
@@ -123,7 +123,6 @@ public:
     CFeeRate getDustRelayFee() override { return {}; }
     UniValue executeRpc(const std::string&, const UniValue&, const std::string&) override { return {}; }
     std::vector<std::string> listRpcCommands() override { return {}; }
-    std::unique_ptr<interfaces::Snapshot> snapshot(const fs::path&) override { return {}; }
     std::optional<Coin> getUnspentOutput(const COutPoint&) override { return std::nullopt; }
     node::TransactionError broadcastTransaction(CTransactionRef, CAmount, std::string&) override
     { return {}; }
@@ -133,7 +132,6 @@ public:
     std::unique_ptr<interfaces::Handler> handleMessageBox(MessageBoxFn) override { return {}; }
     std::unique_ptr<interfaces::Handler> handleQuestion(QuestionFn) override { return {}; }
     std::unique_ptr<interfaces::Handler> handleShowProgress(ShowProgressFn) override { return {}; }
-    std::unique_ptr<interfaces::Handler> handleSnapshotLoadProgress(SnapshotLoadProgressFn) override { return {}; }
     std::unique_ptr<interfaces::Handler> handleInitWallet(InitWalletFn) override { return {}; }
     std::unique_ptr<interfaces::Handler> handleNotifyNumConnectionsChanged(NotifyNumConnectionsChangedFn) override { return {}; }
     std::unique_ptr<interfaces::Handler> handleNotifyNetworkActiveChanged(NotifyNetworkActiveChangedFn) override { return {}; }
