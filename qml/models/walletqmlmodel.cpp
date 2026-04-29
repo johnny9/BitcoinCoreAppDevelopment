@@ -145,12 +145,14 @@ std::optional<CAmount> TryPreviewFee(interfaces::Wallet& wallet,
                                      const std::vector<wallet::CRecipient>& recipients,
                                      const wallet::CCoinControl& coin_control)
 {
-    const auto result = wallet.createTransaction(recipients, coin_control, /*sign=*/false, std::nullopt);
+    int change_pos{-1};
+    CAmount fee{0};
+    const auto result = wallet.createTransaction(recipients, coin_control, /*sign=*/false, change_pos, fee);
     if (!result) {
         return std::nullopt;
     }
 
-    return result->fee;
+    return fee;
 }
 
 std::optional<QString> EstimatePreviewFee(interfaces::Wallet& wallet,
@@ -732,7 +734,7 @@ QString WalletQmlModel::getAddressLabel(const QString& address) const
     }
 
     std::string label;
-    if (!m_wallet->getAddress(destination, &label, nullptr)) {
+    if (!m_wallet->getAddress(destination, &label, /* is_mine= */ nullptr, /* purpose= */ nullptr)) {
         return {};
     }
 
@@ -979,20 +981,20 @@ bool WalletQmlModel::prepareTransactionInternal(const std::optional<QString>& pa
         return false;
     }
 
-    const auto& result = m_wallet->createTransaction(*vec_send, coin_control, /*sign=*/false, std::nullopt);
+    int change_pos{-1};
+    CAmount fee{0};
+    const auto& result = m_wallet->createTransaction(*vec_send, coin_control, /*sign=*/false, change_pos, fee);
     if (result) {
         if (m_current_transaction) {
             delete m_current_transaction;
         }
-        const CTransactionRef& newTx = result->tx;
+        const CTransactionRef& newTx = *result;
         m_current_transaction = new WalletQmlModelTransaction(m_send_recipients, this);
         m_current_transaction->setWtx(newTx);
-        m_current_transaction->setTransactionFee(result->fee);
+        m_current_transaction->setTransactionFee(fee);
         m_current_transaction->setDisplayUnit(m_display_unit);
         if (subtract_fee_from_amount) {
-            m_current_transaction->reassignAmounts(result->change_pos.has_value()
-                ? static_cast<int>(*result->change_pos)
-                : -1);
+            m_current_transaction->reassignAmounts(change_pos);
         }
         if (relock) {
             m_wallet->lock();

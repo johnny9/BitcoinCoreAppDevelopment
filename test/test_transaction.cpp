@@ -9,13 +9,14 @@
 #include <primitives/transaction.h>
 #include <script/script.h>
 #include <uint256.h>
+#include <wallet/types.h>
 
 #include <QtTest/QtTest>
 
 namespace {
 constexpr CAmount COIN_VALUE{100'000'000};
-constexpr bool ISMINE_NO{false};
-constexpr bool ISMINE_SPENDABLE{true};
+constexpr wallet::isminetype ISMINE_NO{wallet::ISMINE_NO};
+constexpr wallet::isminetype ISMINE_SPENDABLE{wallet::ISMINE_SPENDABLE};
 
 CTxDestination Destination(unsigned char value)
 {
@@ -25,9 +26,9 @@ CTxDestination Destination(unsigned char value)
 }
 
 interfaces::WalletTx MakeWalletTx(
-    const std::vector<bool>& txin_is_mine,
+    const std::vector<wallet::isminetype>& txin_is_mine,
     const std::vector<CAmount>& output_values,
-    const std::vector<bool>& txout_is_mine,
+    const std::vector<wallet::isminetype>& txout_is_mine,
     const std::vector<bool>& txout_is_change,
     CAmount debit,
     CAmount credit = 0)
@@ -36,7 +37,7 @@ interfaces::WalletTx MakeWalletTx(
     mtx.vin.emplace_back(COutPoint{Txid::FromUint256(uint256{1}), 0});
 
     std::vector<CTxDestination> addresses;
-    std::vector<bool> address_is_mine;
+    std::vector<wallet::isminetype> address_is_mine;
     for (size_t i = 0; i < output_values.size(); ++i) {
         mtx.vout.emplace_back(output_values[i], CScript{});
         addresses.push_back(Destination(static_cast<unsigned char>(i + 1)));

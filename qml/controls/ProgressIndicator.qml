@@ -7,7 +7,6 @@ import QtQuick.Controls 2.15
 
 Control {
     property real progress: 0
-    property color progressColor: Theme.color.orange
     Behavior on progress {
         NumberAnimation {
             easing.type: Easing.Bezier
@@ -27,7 +26,7 @@ Control {
                 width: contentItem.width
                 height: contentItem.height
                 radius: contentItem.radius
-                color: progressColor
+                color: Theme.color.orange
             }
         }
     }

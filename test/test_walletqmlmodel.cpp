@@ -186,13 +186,18 @@ public:
         return !path.empty();
     }
     std::string getWalletName() override { return "fake-wallet"; }
-    util::Result<wallet::CreatedTransactionResult> createTransaction(const std::vector<wallet::CRecipient>& recipients,
+    util::Result<CTransactionRef> createTransaction(const std::vector<wallet::CRecipient>& recipients,
                                                                      const wallet::CCoinControl& coin_control,
                                                                      bool sign,
-                                                                     std::optional<unsigned int> change_pos) override
+                                                                     int& change_pos,
+                                                                     CAmount& fee) override
     {
         create_transaction_sign_args.push_back(sign);
-        return create_transaction_fn(recipients, coin_control, sign, change_pos);
+        auto result = create_transaction_fn(recipients, coin_control, sign, change_pos == -1 ? std::nullopt : std::make_optional(static_cast<unsigned int>(change_pos)));
+        if (!result) return util::Error{util::ErrorString(result)};
+        fee = result->fee;
+        change_pos = result->change_pos ? static_cast<int>(*result->change_pos) : -1;
+        return result->tx;
     }
     void commitTransaction(CTransactionRef, interfaces::WalletValueMap, interfaces::WalletOrderForm) override
     {

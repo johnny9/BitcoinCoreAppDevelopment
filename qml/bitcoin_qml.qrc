@@ -28,7 +28,6 @@
         <file>components/PaymentDetailOptionsPopup.qml</file>
         <file>components/ReceiveOptionsPopup.qml</file>
         <file>components/Separator.qml</file>
-        <file>components/SnapshotLoadSettings.qml</file>
         <file>components/StorageOptions.qml</file>
         <file>components/StorageSettings.qml</file>
         <file>components/ThemeSettings.qml</file>
@@ -47,7 +46,6 @@
         <file>controls/EditableKeyValueRow.qml</file>
         <file>controls/ExternalLink.qml</file>
         <file>controls/FocusBorder.qml</file>
-        <file>controls/GreenCheckIcon.qml</file>
         <file>controls/Header.qml</file>
         <file>controls/Icon.qml</file>
         <file>controls/IconButton.qml</file>
@@ -107,7 +105,6 @@
         <file>pages/settings/SettingsDeveloper.qml</file>
         <file>pages/settings/SettingsDisplay.qml</file>
         <file>pages/settings/SettingsProxy.qml</file>
-        <file>pages/settings/SettingsSnapshotLoad.qml</file>
         <file>pages/settings/SettingsWallet.qml</file>
         <file>pages/settings/SettingsStorage.qml</file>
         <file>pages/settings/SettingsTheme.qml</file>

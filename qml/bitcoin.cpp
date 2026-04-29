@@ -137,6 +137,7 @@ AppMode SetupAppMode()
 
 bool InitErrorMessageBox(
     const bilingual_str& message,
+    [[maybe_unused]] const std::string& caption,
     [[maybe_unused]] unsigned int style)
 {
     QQmlApplicationEngine engine;
